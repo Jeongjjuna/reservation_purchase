@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+@DisplayName("MemberCreate 단위테스트")
 class MemberCreateTest {
 
     @DisplayName("비밀번호 8자리 미만이라면 예외발생")
