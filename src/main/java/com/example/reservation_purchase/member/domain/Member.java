@@ -37,4 +37,8 @@ public class Member {
                 .greetings(memberCreate.getGreetings())
                 .build();
     }
+
+    public void applyEncodedPassword(final String encodedPassword) {
+        this.password = encodedPassword;
+    }
 }
