@@ -13,4 +13,10 @@ public class MemberException extends GlobalException {
             super(errorCode);
         }
     }
+
+    public static class MemberDuplicatedException extends MemberException {
+        public MemberDuplicatedException(final MemberErrorCode errorCode) {
+            super(errorCode);
+        }
+    }
 }
