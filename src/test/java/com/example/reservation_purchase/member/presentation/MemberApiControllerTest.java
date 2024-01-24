@@ -41,5 +41,23 @@ class MemberApiControllerTest {
                 .andExpect(status().isOk());
     }
 
-    // TODO : 예외발생시 응답코드를 반환하도록 구현, 그리고 테스트도 작성해야함
+    @DisplayName("회원가입 테스트 : 비밀번호 8자리 미만일 경우 예외발생")
+    @Test
+    void 회원가입_요청시_비밀번호가_8자리_미만이면_예외발생() throws Exception {
+        // given
+        String json = """
+                {
+                  "email" : "user1@naver.com",
+                  "password" : "1234567",
+                  "name" : "정지훈",
+                  "greetings" : "hello"
+                }
+                """;
+
+        // when, then
+        mockMvc.perform(post("/api/members")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isBadRequest());
+    }
 }

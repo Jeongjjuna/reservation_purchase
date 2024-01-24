@@ -1,5 +1,7 @@
 package com.example.reservation_purchase.member.domain;
 
+import com.example.reservation_purchase.member.exception.MemberErrorCode;
+import com.example.reservation_purchase.member.exception.MemberException.InvalidPasswordException;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,7 +27,7 @@ public class MemberCreate {
 
     public void validate() {
         if (this.password.length() < MIN_PASSWORD_LENGTH) {
-            throw new IllegalArgumentException("비밀번호는 8자리 이상이어야 함");
+            throw new InvalidPasswordException(MemberErrorCode.INVALID_PASSWORD_ERROR);
         }
     }
 }
