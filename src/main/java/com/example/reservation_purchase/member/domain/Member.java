@@ -28,4 +28,13 @@ public class Member {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
+
+    public static Member create(final MemberCreate memberCreate) {
+        return Member.builder()
+                .email(memberCreate.getEmail())
+                .password(memberCreate.getPassword())
+                .name(memberCreate.getName())
+                .greetings(memberCreate.getGreetings())
+                .build();
+    }
 }
