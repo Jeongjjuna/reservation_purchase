@@ -35,6 +35,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(final HttpServletRequest request, final HttpServletResponse response, final FilterChain filterChain) throws ServletException, IOException, ServletException, IOException {
 
+        // TODO : 해당 필터 동작 이후에 securityConfig의 경로를 확인하여 인증을 적용하는지 확인 필요.
         try {
             final String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
 
@@ -55,8 +56,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             log.error("[ERROR] 지원되지 않는 jwt 토큰 입니다.");
         } catch (IllegalArgumentException e) {
             log.error("[ERROR] 잘못된 jwt 토큰 입니다.");
+        } catch (NullPointerException e) {
+            log.info("인증토큰이 없는 요청이 들어왔습니다.");
         } catch (Exception e) {
-            log.error("[ERROR] 기타 인증 정보가 잘못됐습니다.");
+            log.error("[ERROR] 기타 인증 정보가 잘못됐습니다. {}", e.getMessage());
         } finally {
             filterChain.doFilter(request, response);
         }
