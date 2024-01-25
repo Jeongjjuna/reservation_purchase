@@ -41,4 +41,17 @@ public class Member {
     public void applyEncodedPassword(final String encodedPassword) {
         this.password = encodedPassword;
     }
+
+    public void saveProfile(final String profileUrl) {
+        this.profileUrl = profileUrl;
+    }
+
+    public boolean isProfileUploaded() {
+        return this.profileUrl != null;
+    }
+
+    public void update(final MemberUpdate memberUpdate) {
+        this.name = memberUpdate.getName();
+        this.greetings = memberUpdate.getGreetings();
+    }
 }

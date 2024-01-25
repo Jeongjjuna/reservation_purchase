@@ -2,6 +2,7 @@ package com.example.reservation_purchase.member.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -39,5 +40,73 @@ class MemberTest {
 
         // then
         assertThat(member.getPassword()).isEqualTo("encodedPassword");
+    }
+
+    @DisplayName("프로필이미지 저장 테스트")
+    @Test
+    void 프로필이미지_저장테스트() {
+        // given
+        Member member = Member.builder()
+                .email("test@email.com")
+                .password("12345678")
+                .name("name")
+                .greetings("hello")
+                .build();
+
+        // when
+        member.saveProfile("url");
+
+        // then
+        assertThat(member.getProfileUrl()).isEqualTo("url");
+    }
+
+    @DisplayName("이미 프로필을 등록한 상태인지 확인 테스트")
+    @Test
+    void 프로필_이미지가_업로드된_상태인지_테스트() {
+        // given
+        Member member = Member.builder()
+                .email("test@email.com")
+                .password("12345678")
+                .name("name")
+                .greetings("hello")
+                .build();
+
+        // when
+        boolean expectedFalse = member.isProfileUploaded();
+        member.saveProfile("url");
+        boolean expectedTrue = member.isProfileUploaded();
+
+        // then
+        assertAll(
+                () -> assertThat(expectedFalse).isFalse(),
+                () -> assertThat(expectedTrue).isTrue()
+        );
+
+    }
+
+    @DisplayName("이미 프로필을 등록한 상태인지 확인 테스트")
+    @Test
+    void 회원정보_업데이트_테스트() {
+        // given
+        Member member = Member.builder()
+                .email("test@email.com")
+                .password("12345678")
+                .name("name")
+                .greetings("hello")
+                .build();
+        MemberUpdate memberUpdate = MemberUpdate.builder()
+                .name("newName")
+                .greetings("newGreetings")
+                .build();
+
+        // when
+        member.update(memberUpdate);
+
+        // then
+        assertAll(
+                () -> assertThat(member.getName()).isEqualTo("newName"),
+                () -> assertThat(member.getGreetings()).isEqualTo("newGreetings")
+        );
+
     }
 }

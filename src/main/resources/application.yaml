@@ -14,3 +14,11 @@ logging:
     org:
       springframework:
         web: DEBUG
+jwt:
+  secret-key: reservation_purchase_2024_secret_key
+  accessToken.expired-time-ms: 2592000000
+
+file:
+  local:
+    upload:
+      path: /Users/jeongjihun/dev/2024/01-reservation_purchase/reservation_purchase/db/profile
