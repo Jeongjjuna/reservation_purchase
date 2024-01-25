@@ -14,7 +14,6 @@ public class Follow {
     private LocalDateTime deletedAt;
 
     @Builder
-
     public Follow(final Long id, final Member followerMember, final Member followingMember, final LocalDateTime deletedAt) {
         this.id = id;
         this.followerMember = followerMember;
