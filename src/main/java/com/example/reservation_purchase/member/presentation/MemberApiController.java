@@ -2,14 +2,18 @@ package com.example.reservation_purchase.member.presentation;
 
 import com.example.reservation_purchase.auth.domain.UserDetailsImpl;
 import com.example.reservation_purchase.member.application.MemberJoinService;
+import com.example.reservation_purchase.member.application.MemberReadService;
 import com.example.reservation_purchase.member.application.MemberUpdateService;
 import com.example.reservation_purchase.member.application.ProfileService;
+import com.example.reservation_purchase.member.domain.Member;
 import com.example.reservation_purchase.member.domain.MemberCreate;
 import com.example.reservation_purchase.member.domain.MemberUpdate;
 import com.example.reservation_purchase.member.domain.PasswordUpdate;
 import com.example.reservation_purchase.member.presentation.response.MemberJoinResponse;
+import com.example.reservation_purchase.member.presentation.response.MemberResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,11 +27,13 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("/api/members")
 public class MemberApiController {
 
+    private final MemberReadService memberReadService;
     private final MemberJoinService memberJoinService;
     private final MemberUpdateService memberUpdateService;
     private final ProfileService profileService;
 
-    public MemberApiController(final MemberJoinService memberJoinService, final MemberUpdateService memberUpdateService, final ProfileService profileService) {
+    public MemberApiController(final MemberReadService memberReadService, final MemberJoinService memberJoinService, final MemberUpdateService memberUpdateService, final ProfileService profileService) {
+        this.memberReadService = memberReadService;
         this.memberJoinService = memberJoinService;
         this.memberUpdateService = memberUpdateService;
         this.profileService = profileService;
@@ -59,5 +65,12 @@ public class MemberApiController {
                                                @AuthenticationPrincipal UserDetailsImpl userDetails) {
         memberUpdateService.updatePassword(passwordUpdate, id, userDetails.getId());
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<MemberResponse> read(@PathVariable("id") final Long id,
+                                               @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        Member member = memberReadService.read(id, userDetails.getId());
+        return ResponseEntity.ok(MemberResponse.from(member));
     }
 }

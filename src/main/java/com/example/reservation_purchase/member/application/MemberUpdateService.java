@@ -5,7 +5,7 @@ import com.example.reservation_purchase.member.domain.Member;
 import com.example.reservation_purchase.member.domain.MemberUpdate;
 import com.example.reservation_purchase.member.domain.PasswordUpdate;
 import com.example.reservation_purchase.member.exception.MemberErrorCode;
-import com.example.reservation_purchase.member.exception.MemberException.MemberDuplicatedException;
+import com.example.reservation_purchase.member.exception.MemberException.MemberNotFoundException;
 import com.example.reservation_purchase.member.exception.MemberException.MemberUnauthorizedException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -57,7 +57,7 @@ public class MemberUpdateService {
 
     private Member findExistMember(Long id) {
         return memberRepository.findById(id).orElseThrow(() ->
-                new MemberDuplicatedException(MemberErrorCode.MEMBER_NOT_FOUND));
+                new MemberNotFoundException(MemberErrorCode.MEMBER_NOT_FOUND));
 
     }
 

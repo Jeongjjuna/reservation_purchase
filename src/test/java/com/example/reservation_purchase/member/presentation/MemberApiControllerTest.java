@@ -1,5 +1,6 @@
 package com.example.reservation_purchase.member.presentation;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -193,5 +194,31 @@ class MemberApiControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isUnauthorized());
+    }
+
+    @DisplayName("회원 단건 조회 테스트 : 권한이 없으면 예외발생")
+    @Test
+    void 권한이_없는경우_회원단건조회_테스트() throws Exception {
+        // given
+        Member saved = saveMember();
+        setPrincipal(saved.getEmail());
+
+        // when, then
+        mockMvc.perform(get("/api/members/{memberId}", 9999L)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @DisplayName("회원 단건 조회 테스트 : 회원 정보를 조회 할 수 있다.")
+    @Test
+    void 회원단건조회_테스트() throws Exception {
+        // given
+        Member saved = saveMember();
+        setPrincipal(saved.getEmail());
+
+        // when, then
+        mockMvc.perform(get("/api/members/{memberId}", saved.getId())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
     }
 }
