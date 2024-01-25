@@ -83,4 +83,30 @@ class MemberTest {
         );
 
     }
+
+    @DisplayName("이미 프로필을 등록한 상태인지 확인 테스트")
+    @Test
+    void 회원정보_업데이트_테스트() {
+        // given
+        Member member = Member.builder()
+                .email("test@email.com")
+                .password("12345678")
+                .name("name")
+                .greetings("hello")
+                .build();
+        MemberUpdate memberUpdate = MemberUpdate.builder()
+                .name("newName")
+                .greetings("newGreetings")
+                .build();
+
+        // when
+        member.update(memberUpdate);
+
+        // then
+        assertAll(
+                () -> assertThat(member.getName()).isEqualTo("newName"),
+                () -> assertThat(member.getGreetings()).isEqualTo("newGreetings")
+        );
+
+    }
 }

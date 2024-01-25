@@ -25,4 +25,10 @@ public class MemberException extends GlobalException {
             super(errorCode);
         }
     }
+
+    public static class MemberUnauthorizedException extends MemberException {
+        public MemberUnauthorizedException(final MemberErrorCode errorCode) {
+            super(errorCode);
+        }
+    }
 }

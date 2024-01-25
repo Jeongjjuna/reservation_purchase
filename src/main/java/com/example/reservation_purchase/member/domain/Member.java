@@ -49,4 +49,9 @@ public class Member {
     public boolean isProfileUploaded() {
         return this.profileUrl != null;
     }
+
+    public void update(final MemberUpdate memberUpdate) {
+        this.name = memberUpdate.getName();
+        this.greetings = memberUpdate.getGreetings();
+    }
 }

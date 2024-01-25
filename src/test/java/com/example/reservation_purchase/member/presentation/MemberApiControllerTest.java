@@ -1,5 +1,6 @@
 package com.example.reservation_purchase.member.presentation;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -11,6 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +30,25 @@ class MemberApiControllerTest {
 
     @Autowired
     private MemberRepository memberRepository;
+
+    @Autowired
+    private UserDetailsService userDetailsService;
+
+    private Member saveMember() {
+        Member member = Member.builder()
+                .email("user1@naver.com")
+                .password("12345678")
+                .name("홍길동")
+                .greetings("hi")
+                .build();
+        return memberRepository.save(member);
+    }
+
+    private void setPrincipal(String email) {
+        UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+        UsernamePasswordAuthenticationToken principal = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(principal);
+    }
 
     @DisplayName("회원가입 테스트 : 성공")
     @Test
@@ -91,5 +115,83 @@ class MemberApiControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isConflict());
+    }
+
+    @DisplayName("회원정보 수정 테스트 : 이름, 인사말을 수정할 수 있다.")
+    @Test
+    void 회원수정_테스트() throws Exception {
+        // given
+        Member saved = saveMember();
+        setPrincipal(saved.getEmail());
+        String json = """
+                {
+                  "name" : "정지훈",
+                  "greetings" : "hello"
+                }
+                """;
+
+        // when, then
+        mockMvc.perform(patch("/api/members/{memberId}", saved.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isOk());
+    }
+
+    @DisplayName("회원정보 수정 테스트 : 권한이 없으면 예외발생")
+    @Test
+    void 권한이_없는경우_회원수정_테스트() throws Exception {
+        // given
+        Member saved = saveMember();
+        setPrincipal(saved.getEmail());
+        String json = """
+                {
+                  "name" : "정지훈",
+                  "greetings" : "hello"
+                }
+                """;
+
+        // when, then
+        mockMvc.perform(patch("/api/members/{memberId}", 9999L)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @DisplayName("비밀번호 수정 테스트 : 비밀번호를 수정할 수 있다.")
+    @Test
+    void 비밀번호_수정_테스트() throws Exception {
+        // given
+        Member saved = saveMember();
+        setPrincipal(saved.getEmail());
+        String json = """
+                {
+                "password" : " abcedfgh"
+                }
+                """;
+
+        // when, then
+        mockMvc.perform(patch("/api/members/{memberId}/password", saved.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isOk());
+    }
+
+    @DisplayName("비밀번호 수정 테스트 : 권한이 없으면 예외발생")
+    @Test
+    void 권한이_없는경우_비밀번호수정_테스트() throws Exception {
+        // given
+        Member saved = saveMember();
+        setPrincipal(saved.getEmail());
+        String json = """
+                {
+                "password" : " abcedfgh"
+                }
+                """;
+
+        // when, then
+        mockMvc.perform(patch("/api/members/{memberId}/password", 9999L)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isUnauthorized());
     }
 }
