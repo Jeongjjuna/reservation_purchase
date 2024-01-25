@@ -8,6 +8,7 @@ import com.example.reservation_purchase.member.exception.MemberException.MemberD
 import com.example.reservation_purchase.member.presentation.response.MemberJoinResponse;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class MemberJoinService {
@@ -20,6 +21,7 @@ public class MemberJoinService {
         this.passwordEncoder = passwordEncoder;
     }
 
+    @Transactional
     public MemberJoinResponse join(final MemberCreate memberCreate) {
         memberCreate.validate();
         checkDuplicatedEmail(memberCreate.getEmail());

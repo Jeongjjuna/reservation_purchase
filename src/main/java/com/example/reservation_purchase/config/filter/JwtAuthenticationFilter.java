@@ -35,7 +35,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(final HttpServletRequest request, final HttpServletResponse response, final FilterChain filterChain) throws ServletException, IOException, ServletException, IOException {
 
-        // TODO : 해당 필터 동작 이후에 securityConfig의 경로를 확인하여 인증을 적용하는지 확인 필요.
         try {
             final String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
 

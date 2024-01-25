@@ -20,6 +20,9 @@ public class ProfileService {
         this.profileRepository = profileRepository;
     }
 
+    /*
+      TODO : 파일 업로드 트랜잭션 고민해야함
+     */
     @Transactional
     public String upload(final Long memberId, final Long principalId, final MultipartFile file) {
 
@@ -31,7 +34,6 @@ public class ProfileService {
             throw new IllegalArgumentException("설정할 파일이 없습니다.");
         }
 
-        // TODO : 만약 로컬파일에 저장 되고나서 트랜잭션이 발생되면, 로컬에 저장된 파일도 롤백되는가? 확인해야한다.
         Member member = memberRepository.findById(principalId).orElseThrow(() ->
                 new MemberException.MemberNotFoundException(MemberErrorCode.MEMBER_NOT_FOUND));
 
