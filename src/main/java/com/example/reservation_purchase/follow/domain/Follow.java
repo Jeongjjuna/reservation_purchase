@@ -21,4 +21,11 @@ public class Follow {
         this.followingMember = followingMember;
         this.deletedAt = deletedAt;
     }
+
+    public static Follow create(final Member followerMember, final Member folloingMember) {
+        return Follow.builder()
+                .followerMember(followerMember)
+                .followingMember(folloingMember)
+                .build();
+    }
 }
