@@ -19,4 +19,10 @@ public class MemberException extends GlobalException {
             super(errorCode);
         }
     }
+
+    public static class MemberNotFoundException extends MemberException {
+        public MemberNotFoundException(final MemberErrorCode errorCode) {
+            super(errorCode);
+        }
+    }
 }
