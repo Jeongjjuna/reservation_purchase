@@ -39,3 +39,7 @@ out/
 
 ### 로컬 DB데이터
 /db/mysql/data
+
+
+### 개발용 설정파일
+src/main/resources/application-dev.yaml
