@@ -17,6 +17,9 @@ public enum NewsfeedType {
         this.newsfeedType = newsfeedType;
     }
 
+    /**
+     * 존재하는 문자열 형태만 생성한다.
+     */
     public static NewsfeedType create(String newsfeedType) {
         return Arrays.stream(NewsfeedType.values())
                 .filter(value -> value.newsfeedType.equals(newsfeedType))

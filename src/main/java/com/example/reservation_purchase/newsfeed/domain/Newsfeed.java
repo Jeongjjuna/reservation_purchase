@@ -15,7 +15,14 @@ public class Newsfeed {
     private NewsfeedType newsfeedType;
 
     @Builder
-    public Newsfeed(final Long id, final Long receiverId, final Long senderId, final LocalDateTime createdAt, final boolean viewed, final NewsfeedType newsfeedType) {
+    public Newsfeed(
+            final Long id,
+            final Long receiverId,
+            final Long senderId,
+            final LocalDateTime createdAt,
+            final boolean viewed,
+            final NewsfeedType newsfeedType
+    ) {
         this.id = id;
         this.receiverId = receiverId;
         this.senderId = senderId;
