@@ -26,6 +26,12 @@ public class MemberException extends GlobalException {
         }
     }
 
+    public static class ProfileNotFoundException extends MemberException {
+        public ProfileNotFoundException(final MemberErrorCode errorCode) {
+            super(errorCode);
+        }
+    }
+
     public static class MemberUnauthorizedException extends MemberException {
         public MemberUnauthorizedException(final MemberErrorCode errorCode) {
             super(errorCode);
