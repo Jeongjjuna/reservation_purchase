@@ -6,13 +6,13 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class FollowRequest {
+public class FollowCreate {
 
     private Long followerMemberId;
     private Long followingMemberId;
 
     @Builder
-    public FollowRequest(final Long followerMemberId, final Long followingMemberId) {
+    public FollowCreate(final Long followerMemberId, final Long followingMemberId) {
         this.followerMemberId = followerMemberId;
         this.followingMemberId = followingMemberId;
     }

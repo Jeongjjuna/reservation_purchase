@@ -5,6 +5,7 @@ import com.example.reservation_purchase.follow.domain.Follow;
 import com.example.reservation_purchase.follow.infrastructure.entity.FollowEntity;
 import org.springframework.stereotype.Repository;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Repository
@@ -26,6 +27,11 @@ public class FollowRepositoryImpl implements FollowRepository {
         return followJpaRepository.findByFollowingMember(followerId).stream()
                 .map(FollowEntity::toModel)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public Optional<Follow> findByFollowerAndFollowing(final Long followerMemberId, final Long followingMemberId) {
+        return followJpaRepository.findByFollowerAndFollowing(followerMemberId, followingMemberId).map(FollowEntity::toModel);
     }
 
 }

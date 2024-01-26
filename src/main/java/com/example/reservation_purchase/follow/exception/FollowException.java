@@ -13,4 +13,10 @@ public class FollowException extends GlobalException {
             super(errorCode);
         }
     }
+
+    public static class FollowDuplicatedException extends FollowException {
+        public FollowDuplicatedException(final FollowErrorCode errorCode) {
+            super(errorCode);
+        }
+    }
 }
