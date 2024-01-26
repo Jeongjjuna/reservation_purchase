@@ -64,8 +64,6 @@ class FollowApiControllerTest {
                 .build();
         Member followingMember = memberRepository.save(member);
 
-        System.out.println(saved.getId());
-        System.out.println(followingMember.getId());
         String json = """
                 {
                   "followerMemberId" : %d,
@@ -95,8 +93,6 @@ class FollowApiControllerTest {
                 .build();
         Member followingMember = memberRepository.save(member);
 
-        System.out.println(saved.getId());
-        System.out.println(followingMember.getId());
         String json = """
                 {
                   "followerMemberId" : %d,

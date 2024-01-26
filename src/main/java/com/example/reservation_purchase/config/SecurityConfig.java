@@ -31,6 +31,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST, "/api/members").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/login").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/newsfeed").permitAll()
                         .anyRequest().authenticated())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(handle -> handle.authenticationEntryPoint(customAuthenticationEntryPoint))

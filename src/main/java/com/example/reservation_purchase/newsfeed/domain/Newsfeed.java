@@ -23,4 +23,15 @@ public class Newsfeed {
         this.viewed = viewed;
         this.newsfeedType = newsfeedType;
     }
+
+    public static Newsfeed create(final NewsfeedCreate newsfeedCreate) {
+
+        NewsfeedType type = NewsfeedType.create(newsfeedCreate.getNewsfeedType());
+
+        return Newsfeed.builder()
+                .receiverId(newsfeedCreate.getReceiverId())
+                .senderId(newsfeedCreate.getSenderId())
+                .newsfeedType(type)
+                .build();
+    }
 }
