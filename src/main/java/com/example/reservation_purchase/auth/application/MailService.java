@@ -28,6 +28,9 @@ public class MailService {
         this.redisMailRepository = redisMailRepository;
     }
 
+    /**
+     * 인증 메일을 전송한다
+     */
     public void sendAuthenticationEmail(String toEmail) {
         // 메일 세팅
         String randomNumber = generateNumber();

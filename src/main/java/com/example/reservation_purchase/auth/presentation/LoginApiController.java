@@ -20,7 +20,7 @@ public class LoginApiController {
 
     @PostMapping
     public ResponseEntity<String> login(@RequestBody LoginInfo loginInfo) {
-        String token = loginService.jwtLogin(loginInfo);
+        String token = loginService.login(loginInfo);
         return ResponseEntity.ok(token);
     }
 }

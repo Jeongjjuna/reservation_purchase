@@ -17,13 +17,20 @@ public class LoginService {
     private final JwtTokenProvider jwtTokenProvider;
     private final BCryptPasswordEncoder passwordEncoder;
 
-    public LoginService(final MemberRepository memberRepository, final JwtTokenProvider jwtTokenProvider, final BCryptPasswordEncoder passwordEncoder) {
+    public LoginService(
+            final MemberRepository memberRepository,
+            final JwtTokenProvider jwtTokenProvider,
+            final BCryptPasswordEncoder passwordEncoder
+    ) {
         this.memberRepository = memberRepository;
         this.jwtTokenProvider = jwtTokenProvider;
         this.passwordEncoder = passwordEncoder;
     }
 
-    public String jwtLogin(LoginInfo loginInfo) {
+    /**
+     * 로그인
+     */
+    public String login(LoginInfo loginInfo) {
         String email = loginInfo.getEmail();
         String password = loginInfo.getPassword();
 
