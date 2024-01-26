@@ -24,6 +24,9 @@ public class MemberJoinService {
         this.redisMailRepository = redisMailRepository;
     }
 
+    /**
+     * 회원가입
+     */
     @Transactional
     public MemberJoinResponse signup(final MemberCreate memberCreate) {
 
@@ -40,11 +43,11 @@ public class MemberJoinService {
         return MemberJoinResponse.from(saved);
     }
 
-    /*
-      현재 인증 진행중인지 확인
-       -> 1. 이미 인증 유효기간이 만료된 경우 NPE -> InvalidAuthenticException
-       -> 2. 애초에 인증절차를 거치지 않은 경우 NPE -> InvalidAuthenticException
-    */
+    /**
+     * 이메일 인증번호 검사
+     * - 이미 인증 유효기간이 만료된 경우 NPE -> InvalidAuthenticException
+     * - 애초에 인증절차를 거치지 않은 경우 NPE -> InvalidAuthenticException
+     */
     private void checkAuthenticNumber(final MemberCreate memberCreate) {
         String authenticationNumber = redisMailRepository.getData(memberCreate.getEmail());
         memberCreate.checkAuthenticated(authenticationNumber);

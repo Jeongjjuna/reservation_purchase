@@ -15,6 +15,9 @@ public class MemberReadService {
         this.memberRepository = memberRepository;
     }
 
+    /**
+     * 회원 단건 조회
+     */
     public Member read(final Long targetId, final Long principalId) {
         checkAuthorized(targetId, principalId);
         return findExistMember(targetId);
