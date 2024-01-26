@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import java.net.URI;
 
 @RestController
 @RequestMapping("/api/members")
@@ -41,14 +42,16 @@ public class MemberApiController {
 
     @PostMapping
     public ResponseEntity<MemberJoinResponse> join(@RequestBody final MemberCreate memberCreate) {
-        return ResponseEntity.ok(memberJoinService.join(memberCreate));
+        MemberJoinResponse response = memberJoinService.join(memberCreate);
+        return ResponseEntity.created(URI.create("/api/members/" + response.getId())).body(response);
     }
 
     @PostMapping("/{id}/profile")
     public ResponseEntity<String> uploadProfile(@PathVariable("id") final Long memberId,
                                                 @RequestParam("file") MultipartFile multipartFile,
                                                 @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return ResponseEntity.ok(profileService.upload(memberId, userDetails.getId(), multipartFile));
+        String url = profileService.upload(memberId, userDetails.getId(), multipartFile);
+        return ResponseEntity.created(URI.create("/api/members/" + memberId)).body(url);
     }
 
     @PatchMapping("/{id}")

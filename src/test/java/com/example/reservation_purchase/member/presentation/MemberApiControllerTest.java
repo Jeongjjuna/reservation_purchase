@@ -78,7 +78,7 @@ class MemberApiControllerTest {
         mockMvc.perform(post("/api/members")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated());
     }
 
     @DisplayName("회원가입 테스트 : 비밀번호 8자리 미만일 경우 예외발생")
