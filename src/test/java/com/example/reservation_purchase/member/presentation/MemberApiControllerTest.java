@@ -1,10 +1,13 @@
 package com.example.reservation_purchase.member.presentation;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.example.reservation_purchase.auth.application.port.RedisMailRepository;
 import com.example.reservation_purchase.member.application.port.MemberRepository;
 import com.example.reservation_purchase.member.domain.Member;
 import org.junit.jupiter.api.DisplayName;
@@ -12,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -34,6 +38,9 @@ class MemberApiControllerTest {
 
     @Autowired
     private UserDetailsService userDetailsService;
+
+    @MockBean
+    private RedisMailRepository redisMailRepository;
 
     private Member saveMember() {
         Member member = Member.builder()
@@ -60,9 +67,12 @@ class MemberApiControllerTest {
                   "email" : "user1@naver.com",
                   "password" : "12345678",
                   "name" : "정지훈",
-                  "greetings" : "hello"
+                  "greetings" : "hello",
+                  "authenticNumber" : "123456"
                 }
                 """;
+
+        when(redisMailRepository.getData(any())).thenReturn("123456");
 
         // when, then
         mockMvc.perform(post("/api/members")
@@ -80,7 +90,8 @@ class MemberApiControllerTest {
                   "email" : "user1@naver.com",
                   "password" : "1234567",
                   "name" : "정지훈",
-                  "greetings" : "hello"
+                  "greetings" : "hello",
+                  "authenticNumber" : "123456"
                 }
                 """;
 
@@ -107,7 +118,8 @@ class MemberApiControllerTest {
                   "email" : "user1@naver.com",
                   "password" : "12345678",
                   "name" : "정지훈",
-                  "greetings" : "hello"
+                  "greetings" : "hello",
+                  "authenticNumber" : "123456"
                 }
                 """;
 
