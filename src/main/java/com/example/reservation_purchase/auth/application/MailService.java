@@ -1,5 +1,6 @@
 package com.example.reservation_purchase.auth.application;
 
+import com.example.reservation_purchase.util.RedisUtil;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,6 +15,7 @@ import java.util.stream.IntStream;
 public class MailService {
 
     private final JavaMailSender emailSender;
+    private final RedisUtil redisUtil;
 
     @Value("${email.id}")
     private String emailId;
@@ -21,16 +23,18 @@ public class MailService {
     private static final String TITLE = "회원 가입 인증 이메일 입니다.";
     private static final String CONTENT = "인증번호는 %s 입니다.";
 
-    public MailService(final JavaMailSender emailSender) {
+    public MailService(final JavaMailSender emailSender, final RedisUtil redisUtil) {
         this.emailSender = emailSender;
+        this.redisUtil = redisUtil;
     }
 
     public void sendAuthenticationEmail(String toEmail) {
         // 메일 세팅
+        String randomNumber = generateNumber();
         String setFrom = emailId;
         String toMail = toEmail;
         String title = TITLE;
-        String content = CONTENT.formatted(generateNumber());
+        String content = CONTENT.formatted(randomNumber);
 
         // 메일 전송
         MimeMessage message = emailSender.createMimeMessage();
@@ -45,7 +49,8 @@ public class MailService {
             e.printStackTrace();
         }
 
-        // TODO : redis 에 {email, 마감최종시간, 비밀번호} 를 저장한다.
+        // 약 3분동안 인증정보를 저장해놓는다.
+        redisUtil.setDataExpire(toEmail, randomNumber, 180L);
     }
 
     /*

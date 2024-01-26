@@ -13,4 +13,10 @@ public class AuthException extends GlobalException {
             super(errorCode);
         }
     }
+
+    public static class InvalidAuthenticNumberException extends AuthException {
+        public InvalidAuthenticNumberException(final AuthErrorCode errorCode) {
+            super(errorCode);
+        }
+    }
 }

@@ -11,8 +11,7 @@ spring:
             hibernate:
                 show_sql: false
                 dialect: org.hibernate.dialect.MySQL8Dialect
-    cache:
-        type: redis
+    data:
         redis:
             host: ${REDIS_HOST}
             port: ${REDIS_PORT}

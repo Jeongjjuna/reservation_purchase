@@ -6,6 +6,7 @@ import com.example.reservation_purchase.member.domain.MemberCreate;
 import com.example.reservation_purchase.member.exception.MemberErrorCode;
 import com.example.reservation_purchase.member.exception.MemberException.MemberDuplicatedException;
 import com.example.reservation_purchase.member.presentation.response.MemberJoinResponse;
+import com.example.reservation_purchase.util.RedisUtil;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,27 +16,40 @@ public class MemberJoinService {
 
     private final MemberRepository memberRepository;
     private final BCryptPasswordEncoder passwordEncoder;
+    private final RedisUtil redisUtil;
 
-    public MemberJoinService(final MemberRepository memberRepository, final BCryptPasswordEncoder passwordEncoder) {
+    public MemberJoinService(final MemberRepository memberRepository, final BCryptPasswordEncoder passwordEncoder, final RedisUtil redisUtil) {
         this.memberRepository = memberRepository;
         this.passwordEncoder = passwordEncoder;
+        this.redisUtil = redisUtil;
     }
 
     @Transactional
     public MemberJoinResponse join(final MemberCreate memberCreate) {
+
         memberCreate.validate();
+
         checkDuplicatedEmail(memberCreate.getEmail());
 
-        // TODO : 인증번호와 함께 받아와서 시간안에 등록됐는지 확인한다.
-        /*
-          redis 에 {email, 마감최종시간, 비밀번호} 를 확인하여 가입을 진행한다.
-         */
+        checkAuthenticNumber(memberCreate);
 
         Member member = Member.create(memberCreate);
         encodePassword(member);
 
         Member saved = memberRepository.save(member);
         return MemberJoinResponse.from(saved);
+    }
+
+    /*
+      현재 인증 진행중인지 확인
+       -> 1. 이미 인증 유효기간이 만료된 경우 NPE -> InvalidAuthenticException
+       -> 2. 애초에 인증절차를 거치지 않은 경우 NPE -> InvalidAuthenticException
+    */
+    private void checkAuthenticNumber(final MemberCreate memberCreate) {
+        String authenticationNumber = redisUtil.getData(memberCreate.getEmail());
+        memberCreate.checkAuthenticated(authenticationNumber);
+
+        redisUtil.deleteData(memberCreate.getEmail());
     }
 
     private void checkDuplicatedEmail(String email) {
