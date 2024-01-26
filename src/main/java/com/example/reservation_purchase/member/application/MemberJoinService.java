@@ -26,6 +26,11 @@ public class MemberJoinService {
         memberCreate.validate();
         checkDuplicatedEmail(memberCreate.getEmail());
 
+        // TODO : 인증번호와 함께 받아와서 시간안에 등록됐는지 확인한다.
+        /*
+          redis 에 {email, 마감최종시간, 비밀번호} 를 확인하여 가입을 진행한다.
+         */
+
         Member member = Member.create(memberCreate);
         encodePassword(member);
 
