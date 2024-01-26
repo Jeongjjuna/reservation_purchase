@@ -25,7 +25,7 @@ public class MemberJoinService {
     }
 
     @Transactional
-    public MemberJoinResponse join(final MemberCreate memberCreate) {
+    public MemberJoinResponse signup(final MemberCreate memberCreate) {
 
         memberCreate.validate();
 

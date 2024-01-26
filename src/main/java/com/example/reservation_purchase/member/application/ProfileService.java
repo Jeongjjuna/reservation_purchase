@@ -26,6 +26,10 @@ public class ProfileService {
         this.profileRepository = profileRepository;
     }
 
+    /**
+     * 프로필 이미지 업로드
+     * 만약 이미 저장 되어있다면, 업데이트 한다.
+     */
     @Transactional
     public String upload(final Long targetId, final Long principalId, final MultipartFile file) {
 
