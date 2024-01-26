@@ -23,6 +23,9 @@ public class FollowService {
         this.memberRepository = memberRepository;
     }
 
+    /**
+     * 팔로우 하기
+     */
     @Transactional
     public void follow(final Long principalId, final FollowRequest followRequest) {
 

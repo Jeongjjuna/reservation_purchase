@@ -20,9 +20,14 @@ public class FollowApiController {
         this.followService = followService;
     }
 
+    /**
+     * 팔로우 하기
+     */
     @PostMapping
-    public ResponseEntity<Void> follow(@RequestBody final FollowRequest followRequest,
-                                       @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<Void> follow(
+            @RequestBody final FollowRequest followRequest,
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
         followService.follow(userDetails.getId(), followRequest);
         return ResponseEntity.ok().build();
     }
