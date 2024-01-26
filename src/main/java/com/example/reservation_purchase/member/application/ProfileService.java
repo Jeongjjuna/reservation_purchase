@@ -1,14 +1,20 @@
 package com.example.reservation_purchase.member.application;
 
+import com.example.reservation_purchase.exception.GlobalException;
 import com.example.reservation_purchase.member.application.port.MemberRepository;
 import com.example.reservation_purchase.member.application.port.ProfileRepository;
 import com.example.reservation_purchase.member.domain.Member;
 import com.example.reservation_purchase.member.exception.MemberErrorCode;
-import com.example.reservation_purchase.member.exception.MemberException;
+import com.example.reservation_purchase.member.exception.MemberException.MemberNotFoundException;
+import com.example.reservation_purchase.member.exception.MemberException.MemberUnauthorizedException;
+import com.example.reservation_purchase.member.exception.MemberException.ProfileNotFoundException;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+@Slf4j
 @Service
 public class ProfileService {
 
@@ -20,35 +26,53 @@ public class ProfileService {
         this.profileRepository = profileRepository;
     }
 
-    /*
-      TODO : 파일 업로드 트랜잭션 고민해야함
+    /**
+     * 프로필 이미지 업로드
+     * - 만약 이미 저장 되어있다면, 업데이트 한다.
      */
     @Transactional
-    public String upload(final Long memberId, final Long principalId, final MultipartFile file) {
+    public String upload(final Long targetId, final Long principalId, final MultipartFile file) {
 
-        if (!memberId.equals(principalId)) {
-            throw new IllegalArgumentException("본인 것만 프로필 설정 가능");
+        checkAuthorized(targetId, principalId);
+        checkNullProfile(file);
+
+        Member member = findExistMember(targetId);
+
+        String savedUrl = replaceProfile(member, file); // 로컬 DB 저장
+
+        try {
+            member.saveProfile(savedUrl);
+            memberRepository.save(member);
+        } catch (Exception e) {
+            profileRepository.delete(member.getProfileUrl()); // CHECK : 여기서 또 에러나면? -> 별도의 후처리 검사
+            log.error("local image db rollback");
+            throw new GlobalException(HttpStatus.INTERNAL_SERVER_ERROR, "profile Image save error");
         }
+        return savedUrl;
+    }
 
+    private void checkNullProfile(final MultipartFile file) {
         if (file == null) {
-            throw new IllegalArgumentException("설정할 파일이 없습니다.");
+            throw new ProfileNotFoundException(MemberErrorCode.PROFILE_NOT_FOUND);
         }
+    }
 
-        Member member = memberRepository.findById(principalId).orElseThrow(() ->
-                new MemberException.MemberNotFoundException(MemberErrorCode.MEMBER_NOT_FOUND));
+    private void checkAuthorized(final Long targetId, final Long principalId) {
+        if (!targetId.equals(principalId)) {
+            throw new MemberUnauthorizedException(MemberErrorCode.UNAUTHORIZED_ACCESS_ERROR);
+        }
+    }
 
-        // 이미 등록된 프로필 이미지가 있다면, 삭제한다.
+    private Member findExistMember(Long id) {
+        return memberRepository.findById(id).orElseThrow(() ->
+                new MemberNotFoundException(MemberErrorCode.MEMBER_NOT_FOUND));
+    }
+
+    private String replaceProfile(Member member, MultipartFile file) {
         if (member.isProfileUploaded()) {
             profileRepository.delete(member.getProfileUrl());
         }
-
-        // 새로운 프로필 이미지 등록
-        String savedUrl = profileRepository.upload(file);
-
-        // 등록된 경로 저장
-        member.saveProfile(savedUrl);
-        memberRepository.save(member);
-
-        return savedUrl;
+        return profileRepository.upload(file);
     }
+
 }

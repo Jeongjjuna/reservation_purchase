@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import java.net.URI;
 
 /*
   추후에 내부 서버들에서 호출할 예정이다.
@@ -31,7 +32,7 @@ public class NewsfeedApiController {
     @PostMapping
     public ResponseEntity<Void> create(@RequestBody final NewsfeedCreate newsfeedCreate) {
         newsfeedService.create(newsfeedCreate);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.created(URI.create("api/newsfeeds/my")).build();
     }
 
     // 내가 팔로우한 모든 사용자의 뉴스피드를 보여준다.

@@ -15,7 +15,13 @@ public class MemberResponse {
     protected LocalDateTime createdAt;
 
     @Builder
-    public MemberResponse(final Long id, final String email, final String name, final String greetings, final LocalDateTime createdAt) {
+    public MemberResponse(
+            final Long id,
+            final String email,
+            final String name,
+            final String greetings,
+            final LocalDateTime createdAt
+    ) {
         this.id = id;
         this.email = email;
         this.name = name;

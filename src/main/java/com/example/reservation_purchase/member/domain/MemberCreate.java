@@ -21,7 +21,13 @@ public class MemberCreate {
     private String authenticNumber;
 
     @Builder
-    public MemberCreate(final String email, final String password, final String name, final String greetings, final String authenticNumber) {
+    public MemberCreate(
+            final String email,
+            final String password,
+            final String name,
+            final String greetings,
+            final String authenticNumber
+    ) {
         this.email = email;
         this.password = password;
         this.name = name;

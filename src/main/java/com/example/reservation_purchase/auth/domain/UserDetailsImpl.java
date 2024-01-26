@@ -25,9 +25,10 @@ public class UserDetailsImpl implements UserDetails {
     }
 
     public static UserDetailsImpl from(Member member) {
-        // 추후 역할권한이 필요할 때 추가 작성
-        // Set<MemberRole> roleTypes = Set.of(member.getMemberRole());
-
+        /**
+         * 추후에 역할 권한이 필요하면 추가로 작성한다.
+         * Set<MemberRole> roleTypes = Set.of(member.getMemberRole());
+         */
         return UserDetailsImpl.builder()
                 .id(member.getId())
                 .email(member.getEmail())

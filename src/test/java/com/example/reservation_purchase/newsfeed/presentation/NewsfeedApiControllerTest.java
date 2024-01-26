@@ -66,7 +66,7 @@ class NewsfeedApiControllerTest {
         mockMvc.perform(post("/api/newsfeeds")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated());
     }
 
     @DisplayName("내 뉴스피드 조회 테스트 : 성공")

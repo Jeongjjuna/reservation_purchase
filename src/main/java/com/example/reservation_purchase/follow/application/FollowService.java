@@ -2,13 +2,16 @@ package com.example.reservation_purchase.follow.application;
 
 import com.example.reservation_purchase.follow.application.port.FollowRepository;
 import com.example.reservation_purchase.follow.domain.Follow;
-import com.example.reservation_purchase.follow.domain.FollowRequest;
+import com.example.reservation_purchase.follow.domain.FollowCreate;
 import com.example.reservation_purchase.follow.exception.FollowErrorCode;
+import com.example.reservation_purchase.follow.exception.FollowException.FollowDuplicatedException;
 import com.example.reservation_purchase.follow.exception.FollowException.FollowUnauthorizedException;
 import com.example.reservation_purchase.member.application.port.MemberRepository;
 import com.example.reservation_purchase.member.domain.Member;
 import com.example.reservation_purchase.member.exception.MemberErrorCode;
 import com.example.reservation_purchase.member.exception.MemberException;
+import com.example.reservation_purchase.newsfeed.application.NewsfeedService;
+import com.example.reservation_purchase.newsfeed.domain.NewsfeedCreate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,29 +21,59 @@ public class FollowService {
     private final FollowRepository followRepository;
     private final MemberRepository memberRepository;
 
-    public FollowService(final FollowRepository followRepository, final MemberRepository memberRepository) {
+    private final NewsfeedService newsfeedService;
+
+    public FollowService(final FollowRepository followRepository, final MemberRepository memberRepository, final NewsfeedService newsfeedService) {
         this.followRepository = followRepository;
         this.memberRepository = memberRepository;
+        this.newsfeedService = newsfeedService;
     }
 
+    /**
+     * 팔로우 하기
+     */
     @Transactional
-    public void follow(final Long principalId, final FollowRequest followRequest) {
+    public void follow(final Long principalId, final FollowCreate followCreate) {
 
-        // TODO : 이미 팔로우가 되어있다면 어떻게 처리할 것인가?
-        if (!principalId.equals(followRequest.getFollowerMemberId())) {
-            throw new FollowUnauthorizedException(FollowErrorCode.UNAUTHORIZED_ACCESS_ERROR);
-        }
+        Member followerMember = findExistMember(followCreate.getFollowerMemberId());
+        Member folloingMember = findExistMember(followCreate.getFollowingMemberId());
 
-        // TODO : 추후에 데이터를 가져오지말고 있는지만 확인해보자.(최적화)
-        Member followerMember = memberRepository.findById(followRequest.getFollowerMemberId())
-                .orElseThrow(() -> new MemberException.MemberNotFoundException(MemberErrorCode.MEMBER_NOT_FOUND));
-
-        Member folloingMember = memberRepository.findById(followRequest.getFollowingMemberId())
-                .orElseThrow(() -> new MemberException.MemberNotFoundException(MemberErrorCode.MEMBER_NOT_FOUND));
+        System.out.println("test");
+        checkAuthorized(followCreate.getFollowerMemberId(), principalId);
+        checkDuplicated(followCreate);
 
         Follow follow = Follow.create(followerMember, folloingMember);
         followRepository.save(follow);
 
-        // TODO : 팔로우 했다고 folloingMember 피드에 등록해줘야 한다.
+        /**
+         * 뉴스피드에 팔로우 기록 추가
+         * 추후에 서비스로 분리 후 RestTemplate 으로 호출한다.
+         */
+        NewsfeedCreate newsfeedCreate = NewsfeedCreate.builder()
+                .receiverId(followCreate.getFollowingMemberId())
+                .senderId(followCreate.getFollowerMemberId())
+                .newsfeedType("follow")
+                .build();
+        newsfeedService.create(newsfeedCreate);
+    }
+
+    private void checkDuplicated(final FollowCreate followCreate) {
+        Long followerMemberId = followCreate.getFollowerMemberId();
+        Long followingMemberId = followCreate.getFollowingMemberId();
+
+        followRepository.findByFollowerAndFollowing(followerMemberId, followingMemberId).ifPresent(it -> {
+            throw new FollowDuplicatedException(FollowErrorCode.FOLLOW_DUPLICATED);
+        });
+    }
+
+    private void checkAuthorized(Long targetId, Long principalId) {
+        if (!principalId.equals(targetId)) {
+            throw new FollowUnauthorizedException(FollowErrorCode.UNAUTHORIZED_ACCESS_ERROR);
+        }
+    }
+
+    private Member findExistMember(Long id) {
+        return memberRepository.findById(id).orElseThrow(() ->
+                new MemberException.MemberNotFoundException(MemberErrorCode.MEMBER_NOT_FOUND));
     }
 }

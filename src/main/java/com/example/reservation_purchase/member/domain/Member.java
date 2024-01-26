@@ -17,8 +17,15 @@ public class Member {
     protected LocalDateTime updatedAt;
 
     @Builder
-    public Member(final Long id, final String email, final String password, final String name, final String greetings,
-                  final String profileUrl, final LocalDateTime createdAt, final LocalDateTime updatedAt) {
+    public Member(final Long id,
+                  final String email,
+                  final String password,
+                  final String name,
+                  final String greetings,
+                  final String profileUrl,
+                  final LocalDateTime createdAt,
+                  final LocalDateTime updatedAt
+    ) {
         this.id = id;
         this.email = email;
         this.password = password;

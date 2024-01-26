@@ -17,6 +17,9 @@ public class LocalProfileRepository implements ProfileRepository {
     @Value("${file.local.upload.path}")
     private String uploadPath;
 
+    /**
+     * 로컬 저장소에 이미지 저장
+     */
     @Override
     public String upload(final MultipartFile file) {
 
@@ -33,6 +36,9 @@ public class LocalProfileRepository implements ProfileRepository {
         }
     }
 
+    /**
+     * 로컬 저장소 이미지 삭제
+     */
     @Override
     public void delete(String fileName) {
         Path filePath = Paths.get(uploadPath, fileName);

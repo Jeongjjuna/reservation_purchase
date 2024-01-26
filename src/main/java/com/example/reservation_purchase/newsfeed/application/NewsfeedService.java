@@ -25,30 +25,33 @@ public class NewsfeedService {
         this.followRepository = followRepository;
     }
 
+    /**
+     * 뉴스피드 생성
+     * - 추후 특정 회원이 하는 동작에 따라 뉴스피드를 생성해주도록 내부 요청으로 사용된다.
+     */
     @Transactional
     public void create(final NewsfeedCreate newsfeedCreate) {
         Newsfeed newsfeed = Newsfeed.create(newsfeedCreate);
         newsfeedRepository.save(newsfeed);
     }
 
+    /**
+     * 나의 뉴스피드 조회
+     */
     public Page<Newsfeed> my(final Long principalId) {
 
-        /*
-         1. 내가 팔로우한 모든 사용자 id를 가져온다.
-         TODO : 진짜 만약 팔로우를 걸어놓은 사람이 엄청 많다면? 만명이상?
-        */
+        // TODO : 진짜 만약 팔로우를 걸어놓은 사람이 엄청 많다면? 만명이상?
         List<Long> followingIds = followRepository.findByFollowingMember(principalId).stream()
                 .map(Follow::getFollowingMember)
                 .map(Member::getId)
                 .toList();
 
-        /*
-         2. 사용자 id에 따른 모든 뉴스피드를 최신순으로 가져온다.
-            가장 최신의 피드 20개만 보여준다.
-            TODO : 만약 확인하지 않은 뉴스피드만 가져오고 싶다면? viewed 필드를 활용해보자.
-        */
+        // TODO : 마지막으로 확인한 시점 이후로 최신 데이터를 가져온다.
         Pageable pageable = PageRequest.of(
-                0, 20, Sort.by(Sort.Direction.DESC, "createdAt"));
+                0,
+                20,
+                Sort.by(Sort.Direction.DESC, "createdAt")
+        );
         Page<Newsfeed> ness = newsfeedRepository.findAllByFollowingIds(followingIds, pageable);
         return ness;
     }

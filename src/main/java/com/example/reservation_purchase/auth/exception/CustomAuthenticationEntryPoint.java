@@ -23,7 +23,11 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
     }
 
     @Override
-    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException {
+    public void commence(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            AuthenticationException authException
+    ) throws IOException {
         log.error("[ERROR] occurs CustomAuthenticationEntryPoint -> commence()");
         ErrorResponse body = new ErrorResponse(LocalDateTime.now(), HttpStatus.UNAUTHORIZED.getReasonPhrase());
         response.setContentType("application/json");

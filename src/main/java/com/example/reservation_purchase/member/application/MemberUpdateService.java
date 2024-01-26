@@ -22,6 +22,9 @@ public class MemberUpdateService {
         this.passwordEncoder = passwordEncoder;
     }
 
+    /**
+     * 이름, 인사말 업데이트
+     */
     @Transactional
     public void update(final MemberUpdate memberUpdate, final Long targetId, final Long principalId) {
 
@@ -34,6 +37,9 @@ public class MemberUpdateService {
         memberRepository.save(member);
     }
 
+    /**
+     * 비밀번호 업데이트
+     */
     @Transactional
     public void updatePassword(final PasswordUpdate passwordUpdate, final Long targetId, final Long principalId) {
 
