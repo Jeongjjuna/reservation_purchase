@@ -26,7 +26,8 @@ public class FollowService {
     @Transactional
     public void follow(final Long principalId, final FollowRequest followRequest) {
 
-        if (principalId != followRequest.getFollowerMemberId()) {
+        // TODO : 이미 팔로우가 되어있다면 어떻게 처리할 것인가?
+        if (!principalId.equals(followRequest.getFollowerMemberId())) {
             throw new FollowUnauthorizedException(FollowErrorCode.UNAUTHORIZED_ACCESS_ERROR);
         }
 
@@ -37,10 +38,8 @@ public class FollowService {
         Member folloingMember = memberRepository.findById(followRequest.getFollowingMemberId())
                 .orElseThrow(() -> new MemberException.MemberNotFoundException(MemberErrorCode.MEMBER_NOT_FOUND));
 
-        System.out.println("aa");
         Follow follow = Follow.create(followerMember, folloingMember);
         followRepository.save(follow);
-        System.out.println("bb");
 
         // TODO : 팔로우 했다고 folloingMember 피드에 등록해줘야 한다.
     }
