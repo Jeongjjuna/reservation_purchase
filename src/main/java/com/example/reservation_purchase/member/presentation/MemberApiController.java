@@ -33,19 +33,33 @@ public class MemberApiController {
     private final MemberUpdateService memberUpdateService;
     private final ProfileService profileService;
 
-    public MemberApiController(final MemberReadService memberReadService, final MemberJoinService memberJoinService, final MemberUpdateService memberUpdateService, final ProfileService profileService) {
+    public MemberApiController(
+            final MemberReadService memberReadService,
+            final MemberJoinService memberJoinService,
+            final MemberUpdateService memberUpdateService,
+            final ProfileService profileService
+    ) {
         this.memberReadService = memberReadService;
         this.memberJoinService = memberJoinService;
         this.memberUpdateService = memberUpdateService;
         this.profileService = profileService;
     }
 
+    /**
+     * 회원가입
+     */
     @PostMapping
-    public ResponseEntity<MemberJoinResponse> join(@RequestBody final MemberCreate memberCreate) {
-        MemberJoinResponse response = memberJoinService.join(memberCreate);
+    public ResponseEntity<MemberJoinResponse> signup(
+            @RequestBody final MemberCreate memberCreate
+    ) {
+        MemberJoinResponse response = memberJoinService.signup(memberCreate);
         return ResponseEntity.created(URI.create("/api/members/" + response.getId())).body(response);
     }
 
+    /**
+     * 프로필 이미지 업로드
+     * (기존 이미지 있을 시 대체)
+     */
     @PostMapping("/{id}/profile")
     public ResponseEntity<String> uploadProfile(@PathVariable("id") final Long memberId,
                                                 @RequestParam("file") MultipartFile multipartFile,
@@ -54,25 +68,39 @@ public class MemberApiController {
         return ResponseEntity.created(URI.create("/api/members/" + memberId)).body(url);
     }
 
+    /**
+     * 이름, 인사말 업데이트
+     */
     @PatchMapping("/{id}")
-    public ResponseEntity<Void> update(@RequestBody final MemberUpdate memberUpdate,
-                                       @PathVariable("id") final Long id,
-                                       @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<Void> update(
+            @RequestBody final MemberUpdate memberUpdate,
+            @PathVariable("id") final Long id,
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
         memberUpdateService.update(memberUpdate, id, userDetails.getId());
         return ResponseEntity.ok().build();
     }
 
+    /**
+     * 비밀번호 업데이트
+     */
     @PatchMapping("/{id}/password")
-    public ResponseEntity<Void> updatePassword(@RequestBody final PasswordUpdate passwordUpdate,
-                                               @PathVariable("id") final Long id,
-                                               @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<Void> updatePassword(
+            @RequestBody final PasswordUpdate passwordUpdate,
+            @PathVariable("id") final Long id,
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
         memberUpdateService.updatePassword(passwordUpdate, id, userDetails.getId());
         return ResponseEntity.ok().build();
     }
 
+    /**
+     * 회원 정보 단건 조회
+     */
     @GetMapping("/{id}")
-    public ResponseEntity<MemberResponse> read(@PathVariable("id") final Long id,
-                                               @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<MemberResponse> read(
+            @PathVariable("id") final Long id,
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
         Member member = memberReadService.read(id, userDetails.getId());
         return ResponseEntity.ok(MemberResponse.from(member));
     }
