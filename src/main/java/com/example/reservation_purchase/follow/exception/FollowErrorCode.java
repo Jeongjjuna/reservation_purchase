@@ -1,0 +1,17 @@
+package com.example.reservation_purchase.follow.exception;
+
+import lombok.Getter;
+import org.springframework.http.HttpStatus;
+
+@Getter
+public enum FollowErrorCode {
+    UNAUTHORIZED_ACCESS_ERROR(HttpStatus.UNAUTHORIZED, "[ERROR] 권한이 없습니다.");
+
+    private final HttpStatus status;
+    private final String message;
+
+    FollowErrorCode(final HttpStatus status, final String message) {
+        this.status = status;
+        this.message = message;
+    }
+}

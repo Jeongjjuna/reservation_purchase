@@ -21,7 +21,7 @@ public class MemberReadService {
     }
 
     private void checkAuthorized(Long targetId, Long principalId) {
-        if (targetId != principalId) {
+        if (!targetId.equals(principalId)) {
             throw new MemberException.MemberUnauthorizedException(MemberErrorCode.UNAUTHORIZED_ACCESS_ERROR);
         }
     }
