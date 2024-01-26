@@ -1,5 +1,6 @@
 package com.example.reservation_purchase.member.application;
 
+import com.example.reservation_purchase.auth.application.port.RedisMailRepository;
 import com.example.reservation_purchase.member.application.port.MemberRepository;
 import com.example.reservation_purchase.member.domain.Member;
 import com.example.reservation_purchase.member.domain.MemberCreate;
@@ -15,22 +16,40 @@ public class MemberJoinService {
 
     private final MemberRepository memberRepository;
     private final BCryptPasswordEncoder passwordEncoder;
+    private final RedisMailRepository redisMailRepository;
 
-    public MemberJoinService(final MemberRepository memberRepository, final BCryptPasswordEncoder passwordEncoder) {
+    public MemberJoinService(final MemberRepository memberRepository, final BCryptPasswordEncoder passwordEncoder, final RedisMailRepository redisMailRepository) {
         this.memberRepository = memberRepository;
         this.passwordEncoder = passwordEncoder;
+        this.redisMailRepository = redisMailRepository;
     }
 
     @Transactional
     public MemberJoinResponse join(final MemberCreate memberCreate) {
+
         memberCreate.validate();
+
         checkDuplicatedEmail(memberCreate.getEmail());
+
+        checkAuthenticNumber(memberCreate);
 
         Member member = Member.create(memberCreate);
         encodePassword(member);
 
         Member saved = memberRepository.save(member);
         return MemberJoinResponse.from(saved);
+    }
+
+    /*
+      현재 인증 진행중인지 확인
+       -> 1. 이미 인증 유효기간이 만료된 경우 NPE -> InvalidAuthenticException
+       -> 2. 애초에 인증절차를 거치지 않은 경우 NPE -> InvalidAuthenticException
+    */
+    private void checkAuthenticNumber(final MemberCreate memberCreate) {
+        String authenticationNumber = redisMailRepository.getData(memberCreate.getEmail());
+        memberCreate.checkAuthenticated(authenticationNumber);
+
+        redisMailRepository.deleteData(memberCreate.getEmail());
     }
 
     private void checkDuplicatedEmail(String email) {
