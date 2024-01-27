@@ -1,14 +1,11 @@
 package com.example.reservation_purchase.auth.application.port;
 
-import java.util.Optional;
-
 public interface RefreshRepository {
 
-    String save(Long memberId, String refreshToken);
+    String save(final String refreshToken, final Long memberId, final long duration);
 
-    Optional<String> findByValue(String value);
+    String findByValue(String value);
 
     void delete(String value);
 
-    Optional<String> findByMemberId(Long id);
 }

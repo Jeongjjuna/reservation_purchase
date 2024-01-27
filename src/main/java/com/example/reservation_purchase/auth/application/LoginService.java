@@ -51,8 +51,8 @@ public class LoginService {
          * 만약 memberId값이 RefreshToken 테이블에 이미 존재하는데 추가한다면?
          * -> 여러 기기에서 로그인 하고 있는 것과 같다.
          */
-        // TODO : redis에 저장하도록 변경하자
-        refreshRepository.save(member.getId(), refreshToken);
+        long duration = jwtTokenProvider.getExpiredTime(refreshToken);
+        refreshRepository.save(refreshToken, member.getId(), duration);
 
         return LoginResponse.from(accessToken, refreshToken);
     }

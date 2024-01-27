@@ -28,8 +28,10 @@ public class RefreshTokenService {
         String refreshToken = refreshTokenInfo.getRefreshToken();
 
         // 1. refresh저장소에 해당 refresh토큰이 존재하는지 확인한다.
-        refreshRepository.findByValue(refreshTokenInfo.getRefreshToken()).orElseThrow(() ->
-                new GlobalException(HttpStatus.NOT_FOUND, "리프레쉬 토큰이 존재하지 않습니다."));
+        String memberId = refreshRepository.findByValue(refreshTokenInfo.getRefreshToken());
+        if (memberId == null) {
+            throw new GlobalException(HttpStatus.NOT_FOUND, "[ERROR] ] not found refresh token");
+        }
 
         // 2. refresh로부터 member정보를 꺼내 DB에서 가져온다.
         String email = jwtTokenProvider.getEmail(refreshToken);

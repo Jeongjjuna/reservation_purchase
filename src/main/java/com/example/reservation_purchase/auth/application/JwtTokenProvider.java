@@ -51,6 +51,12 @@ public class JwtTokenProvider {
         return expiredDate.before(new Date());
     }
 
+    public long getExpiredTime(String token) {
+        Date expiredDate = extractClaims(token).getExpiration();
+        Date currentDate = new Date();
+        return expiredDate.getTime() - currentDate.getTime();
+    }
+
     /**
      * 토큰 속 정보 name 추출
      */

@@ -4,6 +4,8 @@ import com.example.reservation_purchase.auth.application.port.RefreshRepository;
 import com.example.reservation_purchase.auth.domain.LogoutInfo;
 import com.example.reservation_purchase.auth.exception.AuthErrorCode;
 import com.example.reservation_purchase.auth.exception.AuthException.UnauthorizedException;
+import com.example.reservation_purchase.exception.GlobalException;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,7 +32,12 @@ public class LogoutService {
         checkAuthorized(email, principalEmail);
 
         // 존재하는 리프레쉬 토큰 확인 후 제거
-        refreshRepository.findByValue(refreshToken).ifPresent(refreshRepository::delete);
+        String memberId = refreshRepository.findByValue(refreshToken);
+        if (memberId == null) {
+            throw new GlobalException(HttpStatus.NOT_FOUND, "[ERROR] ] not found refresh token");
+        }
+
+        refreshRepository.delete(refreshToken);
     }
 
     private void checkAuthorized(String email, String principalEmail) {
