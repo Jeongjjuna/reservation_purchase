@@ -36,24 +36,24 @@ public class NewsfeedEntity {
     @Column(name = "sender_id", nullable = false)
     private Long senderId;
 
+    @Enumerated(EnumType.STRING)
+    private NewsfeedType newsfeedType;
+
+    @Column(name = "activity_id")
+    private Long activityId;
+
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
-
-    @Column(name = "viewed")
-    private boolean viewed;
-
-    @Enumerated(EnumType.STRING)
-    private NewsfeedType newsfeedType;
 
     public static NewsfeedEntity from(final Newsfeed newsfeed) {
         NewsfeedEntity newsfeedEntity = new NewsfeedEntity();
         newsfeedEntity.id = newsfeed.getId();
         newsfeedEntity.receiverId = newsfeed.getReceiverId();
         newsfeedEntity.senderId = newsfeed.getSenderId();
-        newsfeedEntity.createdAt = newsfeed.getCreatedAt();
-        newsfeedEntity.viewed = newsfeed.isViewed();
         newsfeedEntity.newsfeedType = newsfeed.getNewsfeedType();
+        newsfeedEntity.activityId = newsfeed.getActivityId();
+        newsfeedEntity.createdAt = newsfeed.getCreatedAt();
         return newsfeedEntity;
     }
 
@@ -62,9 +62,9 @@ public class NewsfeedEntity {
                 .id(id)
                 .receiverId(receiverId)
                 .senderId(senderId)
-                .createdAt(createdAt)
-                .viewed(viewed)
                 .newsfeedType(newsfeedType)
+                .activityId(activityId)
+                .createdAt(createdAt)
                 .build();
     }
 }

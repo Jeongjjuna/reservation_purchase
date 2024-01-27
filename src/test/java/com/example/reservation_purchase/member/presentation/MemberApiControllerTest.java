@@ -233,4 +233,30 @@ class MemberApiControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
+
+    @DisplayName("내가 팔로우한 회원들 조회 테스트 : 내가 팔로우한 사람들의 목록을 조회할 수 있다.")
+    @Test
+    void 내가_팔로우한_회원들_조회() throws Exception {
+        // given
+        Member saved = saveMember();
+        setPrincipal(saved.getEmail());
+
+        // when, then
+        mockMvc.perform(get("/api/members/my-followings")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
+    @DisplayName("나를 팔로우한 회원들 조회 테스트 : 나를 팔로우한 사람들의 목록을 조회할 수 있다.")
+    @Test
+    void 나를_팔로우한_회원들_조회() throws Exception {
+        // given
+        Member saved = saveMember();
+        setPrincipal(saved.getEmail());
+
+        // when, then
+        mockMvc.perform(get("/api/members/my-followers")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
 }

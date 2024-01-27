@@ -1,9 +1,10 @@
-package com.example.reservation_purchase.newsfeed.presentation;
+package com.example.reservation_purchase.article.presentation;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.example.reservation_purchase.article.application.port.ArticleRepository;
+import com.example.reservation_purchase.article.domain.Article;
 import com.example.reservation_purchase.member.application.port.MemberRepository;
 import com.example.reservation_purchase.member.domain.Member;
 import org.junit.jupiter.api.DisplayName;
@@ -22,14 +23,17 @@ import org.springframework.transaction.annotation.Transactional;
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
-@DisplayName("Newsfeed 도메인 API 테스트")
-class NewsfeedApiControllerTest {
+@DisplayName("ArticleLike 도메인 API 테스트")
+class ArticleLikeApiControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
     @Autowired
     private MemberRepository memberRepository;
+
+    @Autowired
+    private ArticleRepository articleRepository;
 
     @Autowired
     private UserDetailsService userDetailsService;
@@ -50,36 +54,23 @@ class NewsfeedApiControllerTest {
         SecurityContextHolder.getContext().setAuthentication(principal);
     }
 
-    @DisplayName("뉴스피드 생성 테스트 : 성공")
+    @DisplayName("게시글 좋아요 테스트 : 성공")
     @Test
-    void 뉴스피드_생성_요청() throws Exception {
-        // given
-        String json = """
-                {
-                  "receiverId" : %d,
-                  "senderId" : %d,
-                  "newsfeedType" : "follow",
-                  "activityId" : %d
-                }
-                """.formatted(1L, 2L, 3L);
-
-        // when, then
-        mockMvc.perform(post("/api/newsfeeds")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(json))
-                .andExpect(status().isCreated());
-    }
-
-    @DisplayName("내 뉴스피드 조회 테스트 : 성공")
-    @Test
-    void 나의_뉴스피드_조회_요청() throws Exception {
+    void 게시글_좋아요_요청() throws Exception {
         // given
         Member saved = saveMember();
         setPrincipal(saved.getEmail());
 
+        Article article = Article.builder()
+                .writerId(1L)
+                .content("content")
+                .build();
+        Article savedArticle = articleRepository.save(article);
+
         // when, then
-        mockMvc.perform(get("/api/newsfeeds/my")
+        mockMvc.perform(post("/api/articles/{articleId}/like", savedArticle.getId())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
+
 }

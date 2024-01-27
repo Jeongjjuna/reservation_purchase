@@ -11,6 +11,7 @@ import com.example.reservation_purchase.member.domain.MemberUpdate;
 import com.example.reservation_purchase.member.domain.PasswordUpdate;
 import com.example.reservation_purchase.member.presentation.response.MemberJoinResponse;
 import com.example.reservation_purchase.member.presentation.response.MemberResponse;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -103,5 +104,23 @@ public class MemberApiController {
     ) {
         Member member = memberReadService.read(id, userDetails.getId());
         return ResponseEntity.ok(MemberResponse.from(member));
+    }
+
+    /**
+     * 내가 팔로우한 회원들 조회
+     */
+    @GetMapping("/my-followings")
+    public ResponseEntity<Page<MemberResponse>> myFollowing(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        Page<MemberResponse> myFollows = memberReadService.readMyFollowing(userDetails.getId());
+        return ResponseEntity.ok(myFollows);
+    }
+
+    /**
+     * 나를 팔로우한 회원들 조회
+     */
+    @GetMapping("/my-followers")
+    public ResponseEntity<Page<MemberResponse>> myFollowers(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        Page<MemberResponse> myFollows = memberReadService.readMyFollowers(userDetails.getId());
+        return ResponseEntity.ok(myFollows);
     }
 }

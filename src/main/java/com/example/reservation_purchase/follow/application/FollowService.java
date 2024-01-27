@@ -20,7 +20,6 @@ public class FollowService {
 
     private final FollowRepository followRepository;
     private final MemberRepository memberRepository;
-
     private final NewsfeedService newsfeedService;
 
     public FollowService(final FollowRepository followRepository, final MemberRepository memberRepository, final NewsfeedService newsfeedService) {
@@ -38,12 +37,11 @@ public class FollowService {
         Member followerMember = findExistMember(followCreate.getFollowerMemberId());
         Member folloingMember = findExistMember(followCreate.getFollowingMemberId());
 
-        System.out.println("test");
         checkAuthorized(followCreate.getFollowerMemberId(), principalId);
         checkDuplicated(followCreate);
 
         Follow follow = Follow.create(followerMember, folloingMember);
-        followRepository.save(follow);
+        Follow saved = followRepository.save(follow);
 
         /**
          * 뉴스피드에 팔로우 기록 추가
@@ -53,6 +51,7 @@ public class FollowService {
                 .receiverId(followCreate.getFollowingMemberId())
                 .senderId(followCreate.getFollowerMemberId())
                 .newsfeedType("follow")
+                .activityId(saved.getId())
                 .build();
         newsfeedService.create(newsfeedCreate);
     }

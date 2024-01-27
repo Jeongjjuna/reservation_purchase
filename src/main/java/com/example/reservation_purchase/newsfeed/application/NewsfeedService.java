@@ -41,7 +41,7 @@ public class NewsfeedService {
     public Page<Newsfeed> my(final Long principalId) {
 
         // TODO : 진짜 만약 팔로우를 걸어놓은 사람이 엄청 많다면? 만명이상?
-        List<Long> followingIds = followRepository.findByFollowingMember(principalId).stream()
+        List<Long> followingIds = followRepository.findFollowing(principalId).stream()
                 .map(Follow::getFollowingMember)
                 .map(Member::getId)
                 .toList();
@@ -52,7 +52,6 @@ public class NewsfeedService {
                 20,
                 Sort.by(Sort.Direction.DESC, "createdAt")
         );
-        Page<Newsfeed> ness = newsfeedRepository.findAllByFollowingIds(followingIds, pageable);
-        return ness;
+        return newsfeedRepository.findAllByFollowingIds(followingIds, pageable);
     }
 }

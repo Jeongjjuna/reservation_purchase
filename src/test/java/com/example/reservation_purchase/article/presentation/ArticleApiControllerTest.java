@@ -1,4 +1,4 @@
-package com.example.reservation_purchase.newsfeed.presentation;
+package com.example.reservation_purchase.article.presentation;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -22,8 +22,8 @@ import org.springframework.transaction.annotation.Transactional;
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
-@DisplayName("Newsfeed 도메인 API 테스트")
-class NewsfeedApiControllerTest {
+@DisplayName("Article 도메인 API 테스트")
+class ArticleApiControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -50,35 +50,34 @@ class NewsfeedApiControllerTest {
         SecurityContextHolder.getContext().setAuthentication(principal);
     }
 
-    @DisplayName("뉴스피드 생성 테스트 : 성공")
+    @DisplayName("게시글 생성 테스트 : 성공")
     @Test
-    void 뉴스피드_생성_요청() throws Exception {
+    void 게시글_생성_요청() throws Exception {
         // given
+        Member saved = saveMember();
+        setPrincipal(saved.getEmail());
         String json = """
                 {
-                  "receiverId" : %d,
-                  "senderId" : %d,
-                  "newsfeedType" : "follow",
-                  "activityId" : %d
+                  "content" : "게시글 내용"
                 }
-                """.formatted(1L, 2L, 3L);
+                """;
 
         // when, then
-        mockMvc.perform(post("/api/newsfeeds")
+        mockMvc.perform(post("/api/articles")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isCreated());
     }
 
-    @DisplayName("내 뉴스피드 조회 테스트 : 성공")
+    @DisplayName("내가 팔로우한 사람들의 게시글 조회 : 성공")
     @Test
-    void 나의_뉴스피드_조회_요청() throws Exception {
+    void 나의_팔로우한_사람들의_게시글_조회_요청() throws Exception {
         // given
         Member saved = saveMember();
         setPrincipal(saved.getEmail());
 
         // when, then
-        mockMvc.perform(get("/api/newsfeeds/my")
+        mockMvc.perform(get("/api/articles/my-follows")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
