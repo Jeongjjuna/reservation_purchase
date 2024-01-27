@@ -1,5 +1,6 @@
 package com.example.reservation_purchase.article.presentation;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -66,5 +67,18 @@ class ArticleApiControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isCreated());
+    }
+
+    @DisplayName("내가 팔로우한 사람들의 게시글 조회 : 성공")
+    @Test
+    void 나의_팔로우한_사람들의_게시글_조회_요청() throws Exception {
+        // given
+        Member saved = saveMember();
+        setPrincipal(saved.getEmail());
+
+        // when, then
+        mockMvc.perform(get("/api/articles/my-follows")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
     }
 }
