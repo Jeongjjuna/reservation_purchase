@@ -20,7 +20,6 @@ public class FollowService {
 
     private final FollowRepository followRepository;
     private final MemberRepository memberRepository;
-
     private final NewsfeedService newsfeedService;
 
     public FollowService(final FollowRepository followRepository, final MemberRepository memberRepository, final NewsfeedService newsfeedService) {

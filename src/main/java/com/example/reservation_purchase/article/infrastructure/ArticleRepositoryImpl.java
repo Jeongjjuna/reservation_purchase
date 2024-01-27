@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class ArticleRepositoryImpl implements ArticleRepository {
@@ -25,5 +26,10 @@ public class ArticleRepositoryImpl implements ArticleRepository {
     @Override
     public Page<Article> findByWriterIdIn(final List<Long> followingIds, final Pageable pageable) {
         return articleJpaRepository.findByWriterIdIn(followingIds, pageable).map(ArticleEntity::toModel);
+    }
+
+    @Override
+    public Optional<Article> findById(final Long articleId) {
+        return articleJpaRepository.findById(articleId).map(ArticleEntity::toModel);
     }
 }
