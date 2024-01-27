@@ -3,7 +3,8 @@ package com.example.reservation_purchase.member.application;
 import com.example.reservation_purchase.member.application.port.MemberRepository;
 import com.example.reservation_purchase.member.domain.Member;
 import com.example.reservation_purchase.member.exception.MemberErrorCode;
-import com.example.reservation_purchase.member.exception.MemberException;
+import com.example.reservation_purchase.member.exception.MemberException.MemberNotFoundException;
+import com.example.reservation_purchase.member.exception.MemberException.MemberUnauthorizedException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -25,13 +26,13 @@ public class MemberReadService {
 
     private void checkAuthorized(Long targetId, Long principalId) {
         if (!targetId.equals(principalId)) {
-            throw new MemberException.MemberUnauthorizedException(MemberErrorCode.UNAUTHORIZED_ACCESS_ERROR);
+            throw new MemberUnauthorizedException(MemberErrorCode.UNAUTHORIZED_ACCESS_ERROR);
         }
     }
 
     private Member findExistMember(Long id) {
         return memberRepository.findById(id).orElseThrow(() ->
-                new MemberException.MemberNotFoundException(MemberErrorCode.MEMBER_NOT_FOUND));
+                new MemberNotFoundException(MemberErrorCode.MEMBER_NOT_FOUND));
     }
 
 }

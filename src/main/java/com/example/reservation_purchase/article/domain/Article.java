@@ -21,4 +21,11 @@ public class Article {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
+
+    public static Article create(final Long principalId, final ArticleCreate articleCreate) {
+        return Article.builder()
+                .writerId(principalId)
+                .content(articleCreate.getContent())
+                .build();
+    }
 }
