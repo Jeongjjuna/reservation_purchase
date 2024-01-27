@@ -2,6 +2,7 @@ package com.example.reservation_purchase.auth.presentation;
 
 import com.example.reservation_purchase.auth.application.LoginService;
 import com.example.reservation_purchase.auth.domain.LoginInfo;
+import com.example.reservation_purchase.auth.presentation.response.LoginResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,8 +20,8 @@ public class LoginApiController {
     }
 
     @PostMapping
-    public ResponseEntity<String> login(@RequestBody LoginInfo loginInfo) {
-        String token = loginService.login(loginInfo);
-        return ResponseEntity.ok(token);
+    public ResponseEntity<LoginResponse> login(@RequestBody LoginInfo loginInfo) {
+        LoginResponse loginResponse = loginService.login(loginInfo);
+        return ResponseEntity.ok(loginResponse);
     }
 }

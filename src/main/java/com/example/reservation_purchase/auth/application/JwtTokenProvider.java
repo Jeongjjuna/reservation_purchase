@@ -22,7 +22,7 @@ public class JwtTokenProvider {
     @Value("${jwt.expired-time.token.refresh}")
     private Long refreshTokenExpiredTimeMs;
 
-    public String generate(String email, String userName) {
+    public String generate(String email, String userName, Long expiredTime) {
         Claims claims = Jwts.claims();
         claims.put("userName", userName);
         claims.put("email", email);
@@ -30,9 +30,20 @@ public class JwtTokenProvider {
         return Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + accessTokenExpiredTimeMs))
+                .setExpiration(new Date(System.currentTimeMillis() + expiredTime))
                 .signWith(getKey(secretKey), SignatureAlgorithm.HS256)
                 .compact();
+    }
+
+    /**
+     * TODO : 나중에 람다 형식으로 리팩토링 해보자
+     */
+    public String generateAccess(String email, String userName) {
+        return generate(email, userName, accessTokenExpiredTimeMs);
+    }
+
+    public String generateRefresh(String email, String userName) {
+        return generate(email, userName, refreshTokenExpiredTimeMs);
     }
 
     public boolean isExpired(String token) {
