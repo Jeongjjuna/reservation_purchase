@@ -16,8 +16,11 @@ public class JwtTokenProvider {
     @Value("${jwt.secret-key}")
     private String secretKey;
 
-    @Value("${jwt.accessToken.expired-time-ms}")
+    @Value("${jwt.expired-time.token.access}")
     private Long accessTokenExpiredTimeMs;
+
+    @Value("${jwt.expired-time.token.refresh}")
+    private Long refreshTokenExpiredTimeMs;
 
     public String generate(String email, String userName) {
         Claims claims = Jwts.claims();
@@ -32,17 +35,23 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    public String getUserName(String token) {
-        return extractClaims(token).get("name", String.class);
-    }
-
-    public String getEmail(String token) {
-        return extractClaims(token).get("email", String.class);
-    }
-
     public boolean isExpired(String token) {
         Date expiredDate = extractClaims(token).getExpiration();
         return expiredDate.before(new Date());
+    }
+
+    /**
+     * 토큰 속 정보 name 추출
+     */
+    public String getName(String token) {
+        return extractClaims(token).get("name", String.class);
+    }
+
+    /**
+     * 토큰 속 정보 email 추출
+     */
+    public String getEmail(String token) {
+        return extractClaims(token).get("email", String.class);
     }
 
     private Claims extractClaims(String token) {
