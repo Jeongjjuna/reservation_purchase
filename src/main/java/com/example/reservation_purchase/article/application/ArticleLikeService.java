@@ -4,9 +4,12 @@ import com.example.reservation_purchase.article.application.port.ArticleLikeRepo
 import com.example.reservation_purchase.article.application.port.ArticleRepository;
 import com.example.reservation_purchase.article.domain.Article;
 import com.example.reservation_purchase.article.domain.ArticleLike;
+import com.example.reservation_purchase.exception.GlobalException;
 import com.example.reservation_purchase.newsfeed.application.NewsfeedService;
 import com.example.reservation_purchase.newsfeed.domain.NewsfeedCreate;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class ArticleLikeService {
@@ -24,10 +27,11 @@ public class ArticleLikeService {
         this.newsfeedService = newsfeedService;
     }
 
+    @Transactional
     public void like(final Long articleId, final Long principalId) {
 
         Article article = articleRepository.findById(articleId).orElseThrow(() ->
-                new IllegalArgumentException());
+                new GlobalException(HttpStatus.NOT_FOUND, "[ERROR] 게시글이 존재하지 않습니다."));
 
         ArticleLike articleLike = ArticleLike.builder()
                 .article(article)

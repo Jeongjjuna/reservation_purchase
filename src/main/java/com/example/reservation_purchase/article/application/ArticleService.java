@@ -8,6 +8,7 @@ import com.example.reservation_purchase.member.domain.Member;
 import com.example.reservation_purchase.member.exception.MemberErrorCode;
 import com.example.reservation_purchase.member.exception.MemberException.MemberNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class ArticleService {
@@ -20,6 +21,7 @@ public class ArticleService {
         this.memberRepository = memberRepository;
     }
 
+    @Transactional
     public Long create(Long principalId, ArticleCreate articleCreate) {
 
         Member member = findExistMember(principalId);

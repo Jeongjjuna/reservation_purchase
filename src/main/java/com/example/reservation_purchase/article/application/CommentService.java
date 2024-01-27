@@ -10,6 +10,7 @@ import com.example.reservation_purchase.newsfeed.application.NewsfeedService;
 import com.example.reservation_purchase.newsfeed.domain.NewsfeedCreate;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class CommentService {
@@ -28,6 +29,7 @@ public class CommentService {
         this.newsfeedService = newsfeedService;
     }
 
+    @Transactional
     public Long create(final Long principalId, final CommentCreate commentCreate) {
 
         Article article = articleRepository.findById(commentCreate.getArticleId()).orElseThrow(() ->
