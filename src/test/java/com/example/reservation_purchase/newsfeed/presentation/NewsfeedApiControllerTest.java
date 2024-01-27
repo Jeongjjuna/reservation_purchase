@@ -58,9 +58,10 @@ class NewsfeedApiControllerTest {
                 {
                   "receiverId" : %d,
                   "senderId" : %d,
-                  "newsfeedType" : "follow"
+                  "newsfeedType" : "follow",
+                  "activityId" : %d
                 }
-                """.formatted(1L, 2L);
+                """.formatted(1L, 2L, 3L);
 
         // when, then
         mockMvc.perform(post("/api/newsfeeds")
