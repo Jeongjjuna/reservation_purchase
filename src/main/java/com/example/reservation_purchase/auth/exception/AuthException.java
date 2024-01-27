@@ -19,4 +19,10 @@ public class AuthException extends GlobalException {
             super(errorCode);
         }
     }
+
+    public static class UnauthorizedException extends AuthException {
+        public UnauthorizedException(final AuthErrorCode errorCode) {
+            super(errorCode);
+        }
+    }
 }

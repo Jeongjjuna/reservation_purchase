@@ -16,10 +16,13 @@ public class JwtTokenProvider {
     @Value("${jwt.secret-key}")
     private String secretKey;
 
-    @Value("${jwt.accessToken.expired-time-ms}")
+    @Value("${jwt.expired-time.token.access}")
     private Long accessTokenExpiredTimeMs;
 
-    public String generate(String email, String userName) {
+    @Value("${jwt.expired-time.token.refresh}")
+    private Long refreshTokenExpiredTimeMs;
+
+    public String generate(String email, String userName, Long expiredTime) {
         Claims claims = Jwts.claims();
         claims.put("userName", userName);
         claims.put("email", email);
@@ -27,22 +30,45 @@ public class JwtTokenProvider {
         return Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + accessTokenExpiredTimeMs))
+                .setExpiration(new Date(System.currentTimeMillis() + expiredTime))
                 .signWith(getKey(secretKey), SignatureAlgorithm.HS256)
                 .compact();
     }
 
-    public String getUserName(String token) {
-        return extractClaims(token).get("name", String.class);
+    /**
+     * TODO : 나중에 람다 형식으로 리팩토링 해보자
+     */
+    public String generateAccess(String email, String userName) {
+        return generate(email, userName, accessTokenExpiredTimeMs);
     }
 
-    public String getEmail(String token) {
-        return extractClaims(token).get("email", String.class);
+    public String generateRefresh(String email, String userName) {
+        return generate(email, userName, refreshTokenExpiredTimeMs);
     }
 
     public boolean isExpired(String token) {
         Date expiredDate = extractClaims(token).getExpiration();
         return expiredDate.before(new Date());
+    }
+
+    public long getExpiredTime(String token) {
+        Date expiredDate = extractClaims(token).getExpiration();
+        Date currentDate = new Date();
+        return expiredDate.getTime() - currentDate.getTime();
+    }
+
+    /**
+     * 토큰 속 정보 name 추출
+     */
+    public String getName(String token) {
+        return extractClaims(token).get("name", String.class);
+    }
+
+    /**
+     * 토큰 속 정보 email 추출
+     */
+    public String getEmail(String token) {
+        return extractClaims(token).get("email", String.class);
     }
 
     private Claims extractClaims(String token) {

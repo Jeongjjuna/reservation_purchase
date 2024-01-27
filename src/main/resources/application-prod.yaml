@@ -19,9 +19,13 @@ spring:
         org:
             springframework:
                 web: INFO
+
 jwt:
     secret-key: ${JWT_SECRET_KEY}
-    accessToken.expired-time-ms: ${JWT_EXPIRED_TIME_MS}
+    expired-time:
+        token:
+            access: ${ACCESS_TOKEN_EXPIRED_TIME_MS}
+            refresh: ${REFRESH_TOKEN_EXPIRED_TIME_MS}
 
 file:
     local:
