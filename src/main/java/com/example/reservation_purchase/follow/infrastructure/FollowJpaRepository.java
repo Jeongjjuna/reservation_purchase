@@ -18,7 +18,7 @@ public interface FollowJpaRepository extends JpaRepository<FollowEntity, Long> {
      * and
      *      fe1_0.deleted_at is null
      */
-    @Query("SELECT f FROM FollowEntity f JOIN FETCH f.followerMember m WHERE m.id = :followerId AND f.deletedAt IS NULL")
+    @Query("SELECT f FROM FollowEntity f JOIN FETCH f.followingMember m WHERE f.followerMember.id = :followerId AND f.deletedAt IS NULL")
     List<FollowEntity> findByFollowingMember(@Param("followerId") Long followerId);
 
     /**

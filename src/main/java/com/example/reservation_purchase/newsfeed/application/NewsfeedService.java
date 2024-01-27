@@ -52,7 +52,6 @@ public class NewsfeedService {
                 20,
                 Sort.by(Sort.Direction.DESC, "createdAt")
         );
-        Page<Newsfeed> ness = newsfeedRepository.findAllByFollowingIds(followingIds, pageable);
-        return ness;
+        return newsfeedRepository.findAllByFollowingIds(followingIds, pageable);
     }
 }
