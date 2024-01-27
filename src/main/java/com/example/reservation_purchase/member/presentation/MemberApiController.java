@@ -109,9 +109,18 @@ public class MemberApiController {
     /**
      * 내가 팔로우한 회원들 조회
      */
-    @GetMapping("/my-follows")
-    public ResponseEntity<Page<MemberResponse>> myFollows(@AuthenticationPrincipal UserDetailsImpl userDetails) {
-        Page<MemberResponse> myFollows = memberReadService.readMyFollows(userDetails.getId());
+    @GetMapping("/my-followings")
+    public ResponseEntity<Page<MemberResponse>> myFollowing(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        Page<MemberResponse> myFollows = memberReadService.readMyFollowing(userDetails.getId());
+        return ResponseEntity.ok(myFollows);
+    }
+
+    /**
+     * 나를 팔로우한 회원들 조회
+     */
+    @GetMapping("/my-followers")
+    public ResponseEntity<Page<MemberResponse>> myFollowers(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        Page<MemberResponse> myFollows = memberReadService.readMyFollowers(userDetails.getId());
         return ResponseEntity.ok(myFollows);
     }
 }

@@ -23,8 +23,15 @@ public class FollowRepositoryImpl implements FollowRepository {
     }
 
     @Override
-    public List<Follow> findByFollowingMember(Long followerId) {
-        return followJpaRepository.findByFollowingMember(followerId).stream()
+    public List<Follow> findFollowing(Long myId) {
+        return followJpaRepository.findFollowing(myId).stream()
+                .map(FollowEntity::toModel)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Follow> findFollower(Long myId) {
+        return followJpaRepository.findFollower(myId).stream()
                 .map(FollowEntity::toModel)
                 .collect(Collectors.toList());
     }

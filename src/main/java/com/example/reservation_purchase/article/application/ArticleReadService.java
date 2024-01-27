@@ -33,7 +33,7 @@ public class ArticleReadService {
     public Page<ArticleResponse> readMyFollowsArticles(Long principalId) {
 
         // 내가 팔우한 사람들의 Ids
-        List<Long> followingIds = followRepository.findByFollowingMember(principalId).stream()
+        List<Long> followingIds = followRepository.findFollowing(principalId).stream()
                 .map(Follow::getFollowingMember)
                 .map(Member::getId)
                 .toList();

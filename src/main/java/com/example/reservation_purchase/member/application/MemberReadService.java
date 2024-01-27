@@ -44,16 +44,35 @@ public class MemberReadService {
                 new MemberNotFoundException(MemberErrorCode.MEMBER_NOT_FOUND));
     }
 
-    public Page<MemberResponse> readMyFollows(final Long principalId) {
+    /**
+     * 내가 팔로우한 회원들 조회
+     */
+    public Page<MemberResponse> readMyFollowing(final Long principalId) {
         // 내가 팔로우한 모든 Follow 정보를 가져온다. (여기서 2번의 select 발생)
-        List<Follow> fs = followRepository.findByFollowingMember(principalId);
+        List<Follow> followings = followRepository.findFollowing(principalId);
 
-        List<Long> followingIds = fs.stream()
+        List<Long> followingIds = followings.stream()
                 .map(Follow::getFollowingMember)
                 .map(Member::getId)
                 .toList();
 
         // 1번의 select 발생
+        Pageable pageable = PageRequest.of(0, 20);
+        return memberRepository.findAllByIdIn(followingIds, pageable).map(MemberResponse::from);
+    }
+
+    /**
+     * 나를 팔로우한 회원들 조회
+     */
+    public Page<MemberResponse> readMyFollowers(final Long principalId) {
+        // 나를 팔로우한 모든 Follow 정보를 가져온다. (여기서 2번의 select 발생)
+        List<Follow> followers = followRepository.findFollower(principalId);
+
+        List<Long> followingIds = followers.stream()
+                .map(Follow::getFollowerMember)
+                .map(Member::getId)
+                .toList();
+
         Pageable pageable = PageRequest.of(0, 20);
         return memberRepository.findAllByIdIn(followingIds, pageable).map(MemberResponse::from);
     }
