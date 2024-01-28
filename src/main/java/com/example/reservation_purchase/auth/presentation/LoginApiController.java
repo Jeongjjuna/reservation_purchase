@@ -6,6 +6,7 @@ import com.example.reservation_purchase.auth.presentation.response.LoginResponse
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,8 +21,11 @@ public class LoginApiController {
     }
 
     @PostMapping
-    public ResponseEntity<LoginResponse> login(@RequestBody LoginInfo loginInfo) {
-        LoginResponse loginResponse = loginService.login(loginInfo);
+    public ResponseEntity<LoginResponse> login(
+            @RequestBody LoginInfo loginInfo,
+            @RequestHeader("X-Device-UUID") String deviceUUID
+    ) {
+        LoginResponse loginResponse = loginService.login(loginInfo, deviceUUID);
         return ResponseEntity.ok(loginResponse);
     }
 }

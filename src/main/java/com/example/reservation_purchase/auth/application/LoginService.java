@@ -37,7 +37,7 @@ public class LoginService {
      * 로그인
      */
     @Transactional
-    public LoginResponse login(LoginInfo loginInfo) {
+    public LoginResponse login(LoginInfo loginInfo, final String deviceUUID) {
         String email = loginInfo.getEmail();
         String password = loginInfo.getPassword();
 
@@ -49,11 +49,24 @@ public class LoginService {
         String refreshToken = jwtTokenProvider.generate(member.getEmail(), member.getName(), TokenType.REFRESH);
 
         /**
-         * 만약 memberId값이 RefreshToken 테이블에 이미 존재하는데 추가한다면?
-         * -> 여러 기기에서 로그인 하고 있는 것과 같다.
+         * redis에저장
+         * device = {memberId1 + : +uuid1} - 자동만료가능
+         * deviceToken = {uuid1 : refreshToken1} - 자동만료가능
+         * memberLogins = {memberId : {uuid1, uuid2, . . .}} -> 위에가 자동만료되었을 때 어떻게 할 것인가?
          */
         long duration = jwtTokenProvider.getExpiredTime(refreshToken, TokenType.REFRESH);
-        refreshRepository.save(refreshToken, member.getId(), duration);
+
+        String memberId = String.valueOf(member.getId());
+        String device = refreshRepository.findByValue(memberId + deviceUUID);
+        // 이미 존재 하면 덮어쓰운다.
+        if (device != null) {
+            refreshRepository.save(memberId + "-" + deviceUUID, String.valueOf(member.getId()), duration);
+            refreshRepository.save(deviceUUID, refreshToken, duration);
+        } else {
+            refreshRepository.save(memberId + "-" + deviceUUID, String.valueOf(member.getId()), duration);
+            refreshRepository.save(deviceUUID, refreshToken, duration);
+            refreshRepository.addToHash(memberId, deviceUUID, "NULL");
+        }
 
         return LoginResponse.from(accessToken, refreshToken);
     }
