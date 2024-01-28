@@ -57,4 +57,9 @@ public class RedisRefreshRepositoryImpl implements RefreshRepository {
     public void removeFromHash(final String hashName, final String key) {
         hashOperations.delete(hashName, key);
     }
+
+    @Override
+    public void removeHashName(final String hashName) {
+        hashOperations.delete(hashName);
+    }
 }

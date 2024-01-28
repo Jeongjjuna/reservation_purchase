@@ -30,4 +30,17 @@ public class LogoutApiController {
         logoutService.logout(logoutInfo, userDetails.getEmail(), deviceUUID);
         return ResponseEntity.ok().build();
     }
+
+    /**
+     * 모든 기기에서 로그아웃 하도록 구현
+     */
+    @PostMapping("/all-device")
+    public ResponseEntity<Void> logoutAll(
+            @RequestBody LogoutInfo logoutInfo,
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @RequestHeader("X-Device-UUID") String deviceUUID
+    ) {
+        logoutService.logoutAll(logoutInfo, userDetails.getEmail(), deviceUUID);
+        return ResponseEntity.ok().build();
+    }
 }

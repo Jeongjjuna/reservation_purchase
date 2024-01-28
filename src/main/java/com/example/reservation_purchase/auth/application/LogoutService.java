@@ -11,6 +11,7 @@ import com.example.reservation_purchase.member.domain.Member;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.util.Map;
 
 @Service
 public class LogoutService {
@@ -26,7 +27,7 @@ public class LogoutService {
     }
 
     /**
-     * 로그아웃
+     * 현재 기기에서 로그아웃
      */
     @Transactional
     public void logout(final LogoutInfo logoutInfo, final String principalEmail, final String deviceUUID) {
@@ -48,20 +49,30 @@ public class LogoutService {
         refreshRepository.delete(memberId + "-" + deviceUUID);
         refreshRepository.delete(deviceUUID);
         refreshRepository.removeFromHash(memberId, deviceUUID);
+    }
 
-//        String memberId = refreshRepository.findByValue(refreshToken);
-//        if (memberId == null) {
-//            throw new GlobalException(HttpStatus.NOT_FOUND, "[ERROR] ] not found refresh token");
-//        }
-//
-//        refreshRepository.delete(refreshToken);
+    /**
+     * 모든 기기에서 로그아웃
+     */
+    public void logoutAll(final LogoutInfo logoutInfo, final String principalEmail, final String deviceUUID) {
+        String refreshToken = logoutInfo.getRefreshToken();
 
-        /**
-         * 1안 ->  {memberId : {uuid : refresh, . . .}}
-         * 2안 -> {memberId + uuid : refresh}
-         */
-        // 만약 uuid : refresh 가 존재한다면 uuid : refresh 삭제
+        String email = jwtTokenProvider.getEmail(refreshToken, TokenType.REFRESH);
 
+        checkAuthorized(email, principalEmail);
+
+        Member member = memberRepository.findByEmail(email).orElseThrow(() ->
+                new GlobalException(HttpStatus.NOT_FOUND, "[ERROR] User not found"));
+
+        // 존재하는 모든 리프레쉬 토큰 확인 후 제거
+        String memberId = String.valueOf(member.getId());
+        // 존재하는 모든 uuid - refreshToken 가져오기
+        Map<String, String> allDevice = refreshRepository.getAllFromHash(memberId);
+        for (String key : allDevice.keySet()) {
+            refreshRepository.delete(memberId + "-" + key);
+            refreshRepository.delete(key);
+            refreshRepository.removeFromHash(memberId, key);
+        }
     }
 
     private void checkAuthorized(String email, String principalEmail) {
@@ -69,4 +80,5 @@ public class LogoutService {
             throw new UnauthorizedException(AuthErrorCode.UNAUTHORIZED_ERROR);
         }
     }
+
 }

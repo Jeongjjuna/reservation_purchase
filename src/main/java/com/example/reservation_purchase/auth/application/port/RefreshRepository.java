@@ -17,4 +17,6 @@ public interface RefreshRepository {
     Map<String, String> getAllFromHash(String hashName);
 
     void removeFromHash(String hashName, String key);
+
+    void removeHashName(String hashName);
 }
