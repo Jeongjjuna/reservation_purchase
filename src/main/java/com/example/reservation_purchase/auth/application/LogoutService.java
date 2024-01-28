@@ -2,6 +2,7 @@ package com.example.reservation_purchase.auth.application;
 
 import com.example.reservation_purchase.auth.application.port.RefreshRepository;
 import com.example.reservation_purchase.auth.domain.LogoutInfo;
+import com.example.reservation_purchase.auth.domain.TokenType;
 import com.example.reservation_purchase.auth.exception.AuthErrorCode;
 import com.example.reservation_purchase.auth.exception.AuthException.UnauthorizedException;
 import com.example.reservation_purchase.exception.GlobalException;
@@ -27,7 +28,7 @@ public class LogoutService {
     public void logout(final LogoutInfo logoutInfo, final String principalEmail) {
         String refreshToken = logoutInfo.getRefreshToken();
 
-        String email = jwtTokenProvider.getEmail(refreshToken);
+        String email = jwtTokenProvider.getEmail(refreshToken, TokenType.REFRESH);
 
         checkAuthorized(email, principalEmail);
 

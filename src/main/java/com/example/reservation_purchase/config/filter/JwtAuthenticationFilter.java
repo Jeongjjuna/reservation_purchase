@@ -1,6 +1,7 @@
 package com.example.reservation_purchase.config.filter;
 
 import com.example.reservation_purchase.auth.application.JwtTokenProvider;
+import com.example.reservation_purchase.auth.domain.TokenType;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;
@@ -44,7 +45,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             final String token = parseBearerToken(authorizationHeader);
 
-            String email = jwtTokenProvider.getEmail(token);
+            String email = jwtTokenProvider.getEmail(token, TokenType.ACCESS);
             UserDetails userDetails = userDetailsService.loadUserByUsername(email);
 
             AbstractAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(

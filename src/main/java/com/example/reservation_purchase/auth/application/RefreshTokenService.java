@@ -2,6 +2,7 @@ package com.example.reservation_purchase.auth.application;
 
 import com.example.reservation_purchase.auth.application.port.RefreshRepository;
 import com.example.reservation_purchase.auth.domain.RefreshTokenInfo;
+import com.example.reservation_purchase.auth.domain.TokenType;
 import com.example.reservation_purchase.auth.presentation.response.RefreshResponse;
 import com.example.reservation_purchase.exception.GlobalException;
 import com.example.reservation_purchase.member.application.port.MemberRepository;
@@ -34,7 +35,7 @@ public class RefreshTokenService {
         }
 
         // 2. refresh로부터 member정보를 꺼내 DB에서 가져온다.
-        String email = jwtTokenProvider.getEmail(refreshToken);
+        String email = jwtTokenProvider.getEmail(refreshToken, TokenType.REFRESH);
         Member member = memberRepository.findByEmail(email).orElseThrow(() ->
                 new MemberNotFoundException(MemberErrorCode.MEMBER_NOT_FOUND));
 
@@ -45,7 +46,7 @@ public class RefreshTokenService {
 //        }
 
         // 3. AccessToken을 발급하여 기존 RefreshToken과 함께 응답한다.
-        String accessToken = jwtTokenProvider.generateAccess(email, member.getName());
+        String accessToken = jwtTokenProvider.generate(email, member.getName(), TokenType.ACCESS);
 
         // 리프레쉬 기간이 얼마 안남으면 그냥 리프레쉬도 새로 발급해준다.(보류)
         return RefreshResponse.from(accessToken, refreshToken);

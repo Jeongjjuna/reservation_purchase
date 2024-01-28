@@ -2,6 +2,7 @@ package com.example.reservation_purchase.auth.application;
 
 import com.example.reservation_purchase.auth.application.port.RefreshRepository;
 import com.example.reservation_purchase.auth.domain.LoginInfo;
+import com.example.reservation_purchase.auth.domain.TokenType;
 import com.example.reservation_purchase.auth.exception.AuthErrorCode;
 import com.example.reservation_purchase.auth.exception.AuthException.InvalidPasswordException;
 import com.example.reservation_purchase.auth.presentation.response.LoginResponse;
@@ -44,14 +45,14 @@ public class LoginService {
 
         checkPassword(password, member);
 
-        String accessToken = jwtTokenProvider.generateAccess(member.getEmail(), member.getName());
-        String refreshToken = jwtTokenProvider.generateRefresh(member.getEmail(), member.getName());
+        String accessToken = jwtTokenProvider.generate(member.getEmail(), member.getName(), TokenType.ACCESS);
+        String refreshToken = jwtTokenProvider.generate(member.getEmail(), member.getName(), TokenType.REFRESH);
 
         /**
          * 만약 memberId값이 RefreshToken 테이블에 이미 존재하는데 추가한다면?
          * -> 여러 기기에서 로그인 하고 있는 것과 같다.
          */
-        long duration = jwtTokenProvider.getExpiredTime(refreshToken);
+        long duration = jwtTokenProvider.getExpiredTime(refreshToken, TokenType.REFRESH);
         refreshRepository.save(refreshToken, member.getId(), duration);
 
         return LoginResponse.from(accessToken, refreshToken);
