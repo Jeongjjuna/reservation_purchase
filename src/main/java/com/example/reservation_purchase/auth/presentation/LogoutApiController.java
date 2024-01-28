@@ -40,7 +40,7 @@ public class LogoutApiController {
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @RequestHeader("X-Device-UUID") String deviceUUID
     ) {
-        logoutService.logoutAll(logoutInfo, userDetails.getEmail(), deviceUUID);
+        logoutService.logoutAll(logoutInfo, userDetails.getEmail());
         return ResponseEntity.ok().build();
     }
 }

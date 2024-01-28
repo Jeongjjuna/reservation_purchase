@@ -54,7 +54,7 @@ public class LogoutService {
     /**
      * 모든 기기에서 로그아웃
      */
-    public void logoutAll(final LogoutInfo logoutInfo, final String principalEmail, final String deviceUUID) {
+    public void logoutAll(final LogoutInfo logoutInfo, final String principalEmail) {
         String refreshToken = logoutInfo.getRefreshToken();
 
         String email = jwtTokenProvider.getEmail(refreshToken, TokenType.REFRESH);
@@ -68,10 +68,10 @@ public class LogoutService {
         String memberId = String.valueOf(member.getId());
         // 존재하는 모든 uuid - refreshToken 가져오기
         Map<String, String> allDevice = refreshRepository.getAllFromHash(memberId);
-        for (String key : allDevice.keySet()) {
-            refreshRepository.delete(memberId + "-" + key);
-            refreshRepository.delete(key);
-            refreshRepository.removeFromHash(memberId, key);
+        for (String uuid : allDevice.keySet()) {
+            refreshRepository.delete(memberId + "-" + uuid);
+            refreshRepository.delete(uuid);
+            refreshRepository.removeFromHash(memberId, uuid);
         }
     }
 
