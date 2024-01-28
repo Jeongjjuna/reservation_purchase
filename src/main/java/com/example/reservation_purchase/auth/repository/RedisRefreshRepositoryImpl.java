@@ -24,13 +24,13 @@ public class RedisRefreshRepositoryImpl implements RefreshRepository {
     }
 
     @Override
-    public String findByValue(final String value) {
+    public String findByValue(final String key) {
         ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
-        return valueOperations.get(value);
+        return valueOperations.get(key);
     }
 
     @Override
-    public void delete(final String value) {
-        redisTemplate.delete(value);
+    public void delete(final String key) {
+        redisTemplate.delete(key);
     }
 }

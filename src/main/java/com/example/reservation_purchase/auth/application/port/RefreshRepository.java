@@ -4,8 +4,8 @@ public interface RefreshRepository {
 
     String save(final String refreshToken, final Long memberId, final long duration);
 
-    String findByValue(String value);
+    String findByValue(String key);
 
-    void delete(String value);
+    void delete(String key);
 
 }
