@@ -21,7 +21,9 @@ spring:
                 web: INFO
 
 jwt:
-    secret-key: ${JWT_SECRET_KEY}
+    secret-key:
+        access: ${JWT_ACCESS_SECRET_KEY}
+        refresh: ${JWT_REFRESH_SECRET_KEY}
     expired-time:
         token:
             access: ${ACCESS_TOKEN_EXPIRED_TIME_MS}
