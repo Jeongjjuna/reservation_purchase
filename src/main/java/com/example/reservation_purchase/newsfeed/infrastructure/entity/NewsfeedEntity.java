@@ -37,9 +37,10 @@ public class NewsfeedEntity {
     private Long senderId;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "type", nullable = false)
     private NewsfeedType newsfeedType;
 
-    @Column(name = "activity_id")
+    @Column(name = "activity_id", nullable = false)
     private Long activityId;
 
     @CreatedDate

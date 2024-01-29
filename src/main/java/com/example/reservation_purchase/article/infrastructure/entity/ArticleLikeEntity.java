@@ -31,10 +31,10 @@ public class ArticleLikeEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "article_id")
+    @JoinColumn(name = "article_id", nullable = false)
     private ArticleEntity articleEntity;
 
-    @Column(name = "member_id", nullable = false)
+    @Column(name = "writer_id", nullable = false)
     private Long memberId;
 
     @CreatedDate

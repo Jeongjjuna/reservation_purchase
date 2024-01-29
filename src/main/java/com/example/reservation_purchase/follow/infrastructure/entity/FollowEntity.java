@@ -31,11 +31,11 @@ public class FollowEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "follower_member_id", columnDefinition = "팔로우를 한 사람")
+    @JoinColumn(name = "follower_member_id", nullable = false, columnDefinition = "팔로우를 한 사람")
     private MemberEntity followerMember;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "following_member_id", columnDefinition = "팔로우를 당한사람")
+    @JoinColumn(name = "following_member_id", nullable = false, columnDefinition = "팔로우를 당한사람")
     private MemberEntity followingMember;
 
     @Column(name = "deleted_at")

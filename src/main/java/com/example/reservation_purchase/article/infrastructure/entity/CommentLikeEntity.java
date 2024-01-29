@@ -31,10 +31,10 @@ public class CommentLikeEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "comment_id")
+    @JoinColumn(name = "comment_id", nullable = false)
     private CommentEntity commentEntity;
 
-    @Column(name = "member_id", nullable = false)
+    @Column(name = "writer_id", nullable = false)
     private Long memberId;
 
     @CreatedDate
