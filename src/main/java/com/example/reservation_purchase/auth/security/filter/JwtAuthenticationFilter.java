@@ -1,7 +1,7 @@
 package com.example.reservation_purchase.auth.security.filter;
 
-import com.example.reservation_purchase.auth.security.JwtTokenProvider;
-import com.example.reservation_purchase.auth.domain.TokenType;
+import com.example.reservation_purchase.auth.security.jwt.JwtTokenProvider;
+import com.example.reservation_purchase.auth.security.jwt.TokenType;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;

@@ -2,11 +2,11 @@ package com.example.reservation_purchase.auth.application;
 
 import com.example.reservation_purchase.auth.application.port.RedisRefreshRepository;
 import com.example.reservation_purchase.auth.domain.LoginInfo;
-import com.example.reservation_purchase.auth.domain.TokenType;
+import com.example.reservation_purchase.auth.security.jwt.TokenType;
 import com.example.reservation_purchase.auth.exception.AuthErrorCode;
 import com.example.reservation_purchase.auth.exception.AuthException.InvalidPasswordException;
 import com.example.reservation_purchase.auth.presentation.response.LoginResponse;
-import com.example.reservation_purchase.auth.security.JwtTokenProvider;
+import com.example.reservation_purchase.auth.security.jwt.JwtTokenProvider;
 import com.example.reservation_purchase.member.application.port.MemberRepository;
 import com.example.reservation_purchase.member.domain.Member;
 import com.example.reservation_purchase.member.exception.MemberErrorCode;

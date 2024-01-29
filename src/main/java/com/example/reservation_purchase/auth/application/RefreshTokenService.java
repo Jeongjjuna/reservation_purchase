@@ -2,9 +2,9 @@ package com.example.reservation_purchase.auth.application;
 
 import com.example.reservation_purchase.auth.application.port.RedisRefreshRepository;
 import com.example.reservation_purchase.auth.domain.RefreshTokenInfo;
-import com.example.reservation_purchase.auth.domain.TokenType;
+import com.example.reservation_purchase.auth.security.jwt.TokenType;
 import com.example.reservation_purchase.auth.presentation.response.RefreshResponse;
-import com.example.reservation_purchase.auth.security.JwtTokenProvider;
+import com.example.reservation_purchase.auth.security.jwt.JwtTokenProvider;
 import com.example.reservation_purchase.exception.GlobalException;
 import com.example.reservation_purchase.member.application.port.MemberRepository;
 import com.example.reservation_purchase.member.domain.Member;
