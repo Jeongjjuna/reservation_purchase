@@ -43,6 +43,10 @@ public class MemberEntity {
     @Column(name = "profile_url")
     private String profileUrl;
 
+    // TODO : 뉴스피드 마지막 확인 시간 추가 예정
+//    @Column(name = "last_newsfeed_access_time")
+//    private LocalDateTime lastNewsfeedAccessTime;
+
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)
     protected LocalDateTime createdAt;
