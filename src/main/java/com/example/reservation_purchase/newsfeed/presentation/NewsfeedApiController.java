@@ -29,15 +29,24 @@ public class NewsfeedApiController {
         this.newsfeedService = newsfeedService;
     }
 
+    /**
+     * 뉴스피드를 생성합니다.
+     */
     @PostMapping
-    public ResponseEntity<Void> create(@RequestBody final NewsfeedCreate newsfeedCreate) {
+    public ResponseEntity<Void> create(
+            @RequestBody final NewsfeedCreate newsfeedCreate
+    ) {
         newsfeedService.create(newsfeedCreate);
         return ResponseEntity.created(URI.create("api/newsfeeds/my")).build();
     }
 
-    // 내가 팔로우한 모든 사용자의 뉴스피드를 보여준다.
+    /**
+     * 내가 팔로우한 사용자들의 뉴스피드를 보여준다.
+     */
     @GetMapping("/my")
-    public ResponseEntity<Page<NewsfeedResponse>> create(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<Page<NewsfeedResponse>> create(
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
         Page<NewsfeedResponse> myNewsfeeds = newsfeedService.my(userDetails.getId()).map(NewsfeedResponse::from);
         return ResponseEntity.ok(myNewsfeeds);
     }

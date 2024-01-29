@@ -34,19 +34,25 @@ class NewsfeedApiControllerTest {
     @Autowired
     private UserDetailsService userDetailsService;
 
-    private Member saveMember() {
-        Member member = Member.builder()
-                .email("user1@naver.com")
-                .password("12345678")
-                .name("홍길동")
-                .greetings("hi")
-                .build();
-        return memberRepository.save(member);
-    }
+    private Member anyRegisteredMember;
 
-    private void setPrincipal(String email) {
+    /**
+     * @param email email 로 회원가입하고, 인증정보를 세팅해준다.
+     */
+    private void givenAuthenticatedMember(String email) {
+        // 임의로 회원을 한명 저장한다.
+        Member member = Member.builder()
+                .email(email)
+                .password("11111111")
+                .name("name")
+                .greetings("hello")
+                .build();
+        anyRegisteredMember = memberRepository.save(member);
+
+        // 저장된 회원으로 인증했다고 가정한다.
         UserDetails userDetails = userDetailsService.loadUserByUsername(email);
-        UsernamePasswordAuthenticationToken principal = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+        UsernamePasswordAuthenticationToken principal = new UsernamePasswordAuthenticationToken(
+                userDetails, null, userDetails.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(principal);
     }
 
@@ -74,8 +80,7 @@ class NewsfeedApiControllerTest {
     @Test
     void 나의_뉴스피드_조회_요청() throws Exception {
         // given
-        Member saved = saveMember();
-        setPrincipal(saved.getEmail());
+        givenAuthenticatedMember("email@naver.com");
 
         // when, then
         mockMvc.perform(get("/api/newsfeeds/my")
