@@ -1,4 +1,4 @@
-package com.example.reservation_purchase.auth.application;
+package com.example.reservation_purchase.auth.security;
 
 import com.example.reservation_purchase.auth.domain.TokenType;
 import io.jsonwebtoken.Claims;

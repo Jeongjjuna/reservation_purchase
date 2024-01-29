@@ -1,6 +1,6 @@
 package com.example.reservation_purchase.member.presentation;
 
-import com.example.reservation_purchase.auth.domain.UserDetailsImpl;
+import com.example.reservation_purchase.auth.security.UserDetailsImpl;
 import com.example.reservation_purchase.member.application.MemberJoinService;
 import com.example.reservation_purchase.member.application.MemberReadService;
 import com.example.reservation_purchase.member.application.MemberUpdateService;

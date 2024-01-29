@@ -1,6 +1,6 @@
 package com.example.reservation_purchase.newsfeed.presentation;
 
-import com.example.reservation_purchase.auth.domain.UserDetailsImpl;
+import com.example.reservation_purchase.auth.security.UserDetailsImpl;
 import com.example.reservation_purchase.newsfeed.application.NewsfeedService;
 import com.example.reservation_purchase.newsfeed.domain.NewsfeedCreate;
 import com.example.reservation_purchase.newsfeed.presentation.response.NewsfeedResponse;

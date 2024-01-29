@@ -4,7 +4,7 @@ import com.example.reservation_purchase.article.application.ArticleReadService;
 import com.example.reservation_purchase.article.application.ArticleService;
 import com.example.reservation_purchase.article.domain.ArticleCreate;
 import com.example.reservation_purchase.article.presentation.response.ArticleResponse;
-import com.example.reservation_purchase.auth.domain.UserDetailsImpl;
+import com.example.reservation_purchase.auth.security.UserDetailsImpl;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

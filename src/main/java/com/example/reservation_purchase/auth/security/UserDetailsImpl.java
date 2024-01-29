@@ -1,4 +1,4 @@
-package com.example.reservation_purchase.auth.domain;
+package com.example.reservation_purchase.auth.security;
 
 import com.example.reservation_purchase.member.domain.Member;
 import lombok.Builder;

@@ -1,6 +1,6 @@
 package com.example.reservation_purchase.follow.presentation;
 
-import com.example.reservation_purchase.auth.domain.UserDetailsImpl;
+import com.example.reservation_purchase.auth.security.UserDetailsImpl;
 import com.example.reservation_purchase.follow.application.FollowService;
 import com.example.reservation_purchase.follow.domain.FollowCreate;
 import org.springframework.http.ResponseEntity;

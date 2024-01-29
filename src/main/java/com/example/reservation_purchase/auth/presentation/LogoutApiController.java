@@ -2,7 +2,7 @@ package com.example.reservation_purchase.auth.presentation;
 
 import com.example.reservation_purchase.auth.application.LogoutService;
 import com.example.reservation_purchase.auth.domain.LogoutInfo;
-import com.example.reservation_purchase.auth.domain.UserDetailsImpl;
+import com.example.reservation_purchase.auth.security.UserDetailsImpl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;

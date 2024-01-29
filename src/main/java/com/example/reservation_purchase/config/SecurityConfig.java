@@ -1,7 +1,7 @@
 package com.example.reservation_purchase.config;
 
-import com.example.reservation_purchase.auth.exception.CustomAuthenticationEntryPoint;
-import com.example.reservation_purchase.config.filter.JwtAuthenticationFilter;
+import com.example.reservation_purchase.auth.security.CustomAuthenticationEntryPoint;
+import com.example.reservation_purchase.auth.security.filter.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;

@@ -1,4 +1,4 @@
-package com.example.reservation_purchase.auth.exception;
+package com.example.reservation_purchase.auth.security;
 
 import com.example.reservation_purchase.exception.ErrorResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
