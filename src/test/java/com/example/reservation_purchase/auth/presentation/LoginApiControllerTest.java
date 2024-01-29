@@ -1,8 +1,11 @@
 package com.example.reservation_purchase.auth.presentation;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.example.reservation_purchase.auth.application.port.RefreshRepository;
 import com.example.reservation_purchase.member.application.port.MemberRepository;
 import com.example.reservation_purchase.member.domain.Member;
 import org.junit.jupiter.api.DisplayName;
@@ -10,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
@@ -30,6 +34,9 @@ class LoginApiControllerTest {
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
 
+    @MockBean
+    private RefreshRepository refreshRepository;
+
     private Member setMember() {
         Member member = Member.builder()
                 .email("user1@naver.com")
@@ -40,7 +47,7 @@ class LoginApiControllerTest {
         return memberRepository.save(member);
     }
 
-    @DisplayName("로그인 테스트 : 성공")
+    @DisplayName("로그인 테스트 : 이 기기에서 이미 로그인 한 경우 성공")
     @Test
     void 로그인_요청() throws Exception {
         // given
@@ -52,9 +59,12 @@ class LoginApiControllerTest {
                 }
                 """;
 
+        when(refreshRepository.findByValue(any())).thenReturn("1111");
+
         // when, then
         mockMvc.perform(post("/api/login")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("X-Device-UUID", "1111")
                         .content(json))
                 .andExpect(status().isOk());
     }
@@ -73,6 +83,7 @@ class LoginApiControllerTest {
         // when, then
         mockMvc.perform(post("/api/login")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .header("X-Device-UUID", "1111")
                         .content(json))
                 .andExpect(status().isNotFound());
     }
