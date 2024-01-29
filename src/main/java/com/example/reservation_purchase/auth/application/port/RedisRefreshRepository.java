@@ -2,7 +2,7 @@ package com.example.reservation_purchase.auth.application.port;
 
 import java.util.Map;
 
-public interface RefreshRepository {
+public interface RedisRefreshRepository {
 
     String save(final String key, final String value, final long duration);
 

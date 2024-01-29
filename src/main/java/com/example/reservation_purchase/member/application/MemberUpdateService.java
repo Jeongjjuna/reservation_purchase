@@ -1,6 +1,6 @@
 package com.example.reservation_purchase.member.application;
 
-import com.example.reservation_purchase.auth.application.port.RefreshRepository;
+import com.example.reservation_purchase.auth.application.port.RedisRefreshRepository;
 import com.example.reservation_purchase.member.application.port.MemberRepository;
 import com.example.reservation_purchase.member.domain.Member;
 import com.example.reservation_purchase.member.domain.MemberUpdate;
@@ -18,12 +18,12 @@ public class MemberUpdateService {
 
     private final MemberRepository memberRepository;
     private final BCryptPasswordEncoder passwordEncoder;
-    private final RefreshRepository refreshRepository;
+    private final RedisRefreshRepository redisRefreshRepository;
 
-    public MemberUpdateService(final MemberRepository memberRepository, final BCryptPasswordEncoder passwordEncoder, final RefreshRepository refreshRepository) {
+    public MemberUpdateService(final MemberRepository memberRepository, final BCryptPasswordEncoder passwordEncoder, final RedisRefreshRepository redisRefreshRepository) {
         this.memberRepository = memberRepository;
         this.passwordEncoder = passwordEncoder;
-        this.refreshRepository = refreshRepository;
+        this.redisRefreshRepository = redisRefreshRepository;
     }
 
     /**
@@ -66,11 +66,11 @@ public class MemberUpdateService {
         // 존재하는 모든 리프레쉬 토큰 확인 후 제거
         String memberId = String.valueOf(member.getId());
         // 존재하는 모든 uuid - refreshToken 가져오기
-        Map<String, String> allDevice = refreshRepository.getAllFromHash(memberId);
+        Map<String, String> allDevice = redisRefreshRepository.getAllFromHash(memberId);
         for (String uuid : allDevice.keySet()) {
-            refreshRepository.delete(memberId + "-" + uuid);
-            refreshRepository.delete(uuid);
-            refreshRepository.removeFromHash(memberId, uuid);
+            redisRefreshRepository.delete(memberId + "-" + uuid);
+            redisRefreshRepository.delete(uuid);
+            redisRefreshRepository.removeFromHash(memberId, uuid);
         }
 
 

@@ -5,7 +5,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.example.reservation_purchase.auth.application.port.RefreshRepository;
+import com.example.reservation_purchase.auth.application.port.RedisRefreshRepository;
 import com.example.reservation_purchase.member.application.port.MemberRepository;
 import com.example.reservation_purchase.member.domain.Member;
 import org.junit.jupiter.api.DisplayName;
@@ -35,7 +35,7 @@ class LoginApiControllerTest {
     private BCryptPasswordEncoder passwordEncoder;
 
     @MockBean
-    private RefreshRepository refreshRepository;
+    private RedisRefreshRepository redisRefreshRepository;
 
     private Member setMember() {
         Member member = Member.builder()
@@ -59,7 +59,7 @@ class LoginApiControllerTest {
                 }
                 """;
 
-        when(refreshRepository.findByValue(any())).thenReturn("1111");
+        when(redisRefreshRepository.findByValue(any())).thenReturn("1111");
 
         // when, then
         mockMvc.perform(post("/api/login")
