@@ -6,6 +6,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
+@DisplayName("단위테스트 [PasswordUpdate]")
 class PasswordUpdateTest {
     @DisplayName("비밀번호 8자리 미만이라면 예외발생")
     @ParameterizedTest(name = "비밀번호가 \"{0}\" 일 때")

@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-@DisplayName("MemberCreate 단위테스트")
+@DisplayName("단위테스트 [MemberCreate]")
 class MemberCreateTest {
 
     private MemberCreate givenMemberCreate;

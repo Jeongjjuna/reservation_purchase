@@ -22,7 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
-@DisplayName("Auth 도메인 API 테스트")
+@DisplayName("통합테스트 [Auth]")
 class LoginApiControllerTest {
 
     @Autowired
@@ -88,7 +88,7 @@ class LoginApiControllerTest {
                 .andExpect(status().isNotFound());
     }
 
-    @DisplayName("로그인 테스트 : 가입되지 않은 이메일로 로그인시 예외발생")
+    @DisplayName("로그경인 테스트 : 비밀번호가 일치하지 않으면 예외발생")
     @Test
     void 비밀번호가_일치하지_않으면_예외발생() throws Exception {
         // given

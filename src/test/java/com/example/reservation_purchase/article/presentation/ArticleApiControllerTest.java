@@ -22,7 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
-@DisplayName("Article 도메인 API 테스트")
+@DisplayName("통합테스트 [Article]")
 class ArticleApiControllerTest {
 
     @Autowired

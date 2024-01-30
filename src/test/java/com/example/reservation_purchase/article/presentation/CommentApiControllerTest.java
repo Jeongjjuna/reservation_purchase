@@ -23,7 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
-@DisplayName("Comment 도메인 API 테스트")
+@DisplayName("통합테스트 [Comment]")
 class CommentApiControllerTest {
 
     @Autowired

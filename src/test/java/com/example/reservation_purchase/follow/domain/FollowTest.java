@@ -8,7 +8,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import java.time.LocalDateTime;
 
-@DisplayName("Follow 단위테스트")
+@DisplayName("단위테스트 [Follow]")
 class FollowTest {
 
     private Member givenFollowerMember;

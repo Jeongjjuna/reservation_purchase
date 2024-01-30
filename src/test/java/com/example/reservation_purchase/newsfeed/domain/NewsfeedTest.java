@@ -8,6 +8,7 @@ import com.example.reservation_purchase.member.domain.MemberCreate;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+@DisplayName("단위테스트 [Newsfeed]")
 class NewsfeedTest {
 
     @DisplayName("생성 테스트")

@@ -25,7 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
-@DisplayName("ArticleLike 도메인 API 테스트")
+@DisplayName("통합테스트 [ArticleLike]")
 class CommentLikeApiControllerTest {
 
     @Autowired
