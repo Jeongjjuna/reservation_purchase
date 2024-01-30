@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatCode;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-@DisplayName("Article 단위테스트")
+@DisplayName("단위테스트 [Article]")
 class ArticleTest {
 
     @DisplayName("생성 테스트")

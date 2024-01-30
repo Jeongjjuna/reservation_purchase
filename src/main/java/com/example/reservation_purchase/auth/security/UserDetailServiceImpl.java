@@ -1,6 +1,5 @@
-package com.example.reservation_purchase.auth.application;
+package com.example.reservation_purchase.auth.security;
 
-import com.example.reservation_purchase.auth.domain.UserDetailsImpl;
 import com.example.reservation_purchase.member.application.port.MemberRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

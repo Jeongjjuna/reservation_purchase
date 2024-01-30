@@ -1,6 +1,5 @@
-package com.example.reservation_purchase.auth.application;
+package com.example.reservation_purchase.auth.security.jwt;
 
-import com.example.reservation_purchase.auth.domain.TokenType;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;

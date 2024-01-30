@@ -21,7 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
-@DisplayName("Follow 도메인 API 테스트")
+@DisplayName("통합테스트 [Follow]")
 class FollowApiControllerTest {
 
     @Autowired
@@ -72,7 +72,7 @@ class FollowApiControllerTest {
                 """.formatted(saved.getId(), followingMember.getId());
 
         // when, then
-        mockMvc.perform(post("/api/follow")
+        mockMvc.perform(post("/v1/follow")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isOk());
@@ -101,7 +101,7 @@ class FollowApiControllerTest {
                 """.formatted(saved.getId(), 9999999L);
 
         // when, then
-        mockMvc.perform(post("/api/follow")
+        mockMvc.perform(post("/v1/follow")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isNotFound());

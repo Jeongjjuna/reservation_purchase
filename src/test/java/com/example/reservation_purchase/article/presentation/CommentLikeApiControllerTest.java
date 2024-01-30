@@ -25,7 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
-@DisplayName("ArticleLike 도메인 API 테스트")
+@DisplayName("통합테스트 [ArticleLike]")
 class CommentLikeApiControllerTest {
 
     @Autowired
@@ -80,7 +80,7 @@ class CommentLikeApiControllerTest {
         Comment savedComment = commentRepository.save(comment);
 
         // when, then
-        mockMvc.perform(post("/api/comments/{commentId}/like", savedComment.getId())
+        mockMvc.perform(post("/v1/comments/{commentId}/like", savedComment.getId())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }

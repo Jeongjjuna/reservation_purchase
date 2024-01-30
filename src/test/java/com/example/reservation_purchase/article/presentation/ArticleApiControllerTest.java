@@ -22,7 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
-@DisplayName("Article 도메인 API 테스트")
+@DisplayName("통합테스트 [Article]")
 class ArticleApiControllerTest {
 
     @Autowired
@@ -63,7 +63,7 @@ class ArticleApiControllerTest {
                 """;
 
         // when, then
-        mockMvc.perform(post("/api/articles")
+        mockMvc.perform(post("/v1/articles")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isCreated());
@@ -77,7 +77,7 @@ class ArticleApiControllerTest {
         setPrincipal(saved.getEmail());
 
         // when, then
-        mockMvc.perform(get("/api/articles/my-follows")
+        mockMvc.perform(get("/v1/articles/my-follows")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }

@@ -1,9 +1,10 @@
 package com.example.reservation_purchase.auth.application;
 
-import com.example.reservation_purchase.auth.application.port.RefreshRepository;
+import com.example.reservation_purchase.auth.application.port.RedisRefreshRepository;
 import com.example.reservation_purchase.auth.domain.RefreshTokenInfo;
-import com.example.reservation_purchase.auth.domain.TokenType;
+import com.example.reservation_purchase.auth.security.jwt.TokenType;
 import com.example.reservation_purchase.auth.presentation.response.RefreshResponse;
+import com.example.reservation_purchase.auth.security.jwt.JwtTokenProvider;
 import com.example.reservation_purchase.exception.GlobalException;
 import com.example.reservation_purchase.member.application.port.MemberRepository;
 import com.example.reservation_purchase.member.domain.Member;
@@ -17,19 +18,19 @@ public class RefreshTokenService {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final MemberRepository memberRepository;
-    private final RefreshRepository refreshRepository;
+    private final RedisRefreshRepository redisRefreshRepository;
 
-    public RefreshTokenService(final JwtTokenProvider jwtTokenProvider, final MemberRepository memberRepository, final RefreshRepository refreshRepository) {
+    public RefreshTokenService(final JwtTokenProvider jwtTokenProvider, final MemberRepository memberRepository, final RedisRefreshRepository redisRefreshRepository) {
         this.jwtTokenProvider = jwtTokenProvider;
         this.memberRepository = memberRepository;
-        this.refreshRepository = refreshRepository;
+        this.redisRefreshRepository = redisRefreshRepository;
     }
 
     public RefreshResponse refresh(final RefreshTokenInfo refreshTokenInfo, final String deviceUUID) {
         String refreshToken = refreshTokenInfo.getRefreshToken();
 
         // 1. redis 저장소에 해당 기기에 refresh 토큰이 존재하는지 확인한다.
-        String findRefresh = refreshRepository.findByValue(deviceUUID);
+        String findRefresh = redisRefreshRepository.findByValue(deviceUUID);
         if (findRefresh == null) {
             throw new GlobalException(HttpStatus.NOT_FOUND, "[ERROR] ] not found refresh token");
         }

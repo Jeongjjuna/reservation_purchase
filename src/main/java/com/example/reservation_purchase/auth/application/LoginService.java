@@ -1,11 +1,12 @@
 package com.example.reservation_purchase.auth.application;
 
-import com.example.reservation_purchase.auth.application.port.RefreshRepository;
+import com.example.reservation_purchase.auth.application.port.RedisRefreshRepository;
 import com.example.reservation_purchase.auth.domain.LoginInfo;
-import com.example.reservation_purchase.auth.domain.TokenType;
+import com.example.reservation_purchase.auth.security.jwt.TokenType;
 import com.example.reservation_purchase.auth.exception.AuthErrorCode;
 import com.example.reservation_purchase.auth.exception.AuthException.InvalidPasswordException;
 import com.example.reservation_purchase.auth.presentation.response.LoginResponse;
+import com.example.reservation_purchase.auth.security.jwt.JwtTokenProvider;
 import com.example.reservation_purchase.member.application.port.MemberRepository;
 import com.example.reservation_purchase.member.domain.Member;
 import com.example.reservation_purchase.member.exception.MemberErrorCode;
@@ -20,17 +21,17 @@ public class LoginService {
     private final MemberRepository memberRepository;
     private final JwtTokenProvider jwtTokenProvider;
     private final BCryptPasswordEncoder passwordEncoder;
-    private final RefreshRepository refreshRepository;
+    private final RedisRefreshRepository redisRefreshRepository;
 
     public LoginService(
             final MemberRepository memberRepository,
             final JwtTokenProvider jwtTokenProvider,
             final BCryptPasswordEncoder passwordEncoder,
-            final RefreshRepository refreshRepository) {
+            final RedisRefreshRepository redisRefreshRepository) {
         this.memberRepository = memberRepository;
         this.jwtTokenProvider = jwtTokenProvider;
         this.passwordEncoder = passwordEncoder;
-        this.refreshRepository = refreshRepository;
+        this.redisRefreshRepository = redisRefreshRepository;
     }
 
     /**
@@ -57,15 +58,15 @@ public class LoginService {
         long duration = jwtTokenProvider.getExpiredTime(refreshToken, TokenType.REFRESH);
 
         String memberId = String.valueOf(member.getId());
-        String device = refreshRepository.findByValue(memberId + deviceUUID);
+        String device = redisRefreshRepository.findByValue(memberId + deviceUUID);
         // 이미 존재 하면 덮어쓰운다.
         if (device != null) {
-            refreshRepository.save(memberId + "-" + deviceUUID, String.valueOf(member.getId()), duration);
-            refreshRepository.save(deviceUUID, refreshToken, duration);
+            redisRefreshRepository.save(memberId + "-" + deviceUUID, String.valueOf(member.getId()), duration);
+            redisRefreshRepository.save(deviceUUID, refreshToken, duration);
         } else {
-            refreshRepository.save(memberId + "-" + deviceUUID, String.valueOf(member.getId()), duration);
-            refreshRepository.save(deviceUUID, refreshToken, duration);
-            refreshRepository.addToHash(memberId, deviceUUID, "NULL");
+            redisRefreshRepository.save(memberId + "-" + deviceUUID, String.valueOf(member.getId()), duration);
+            redisRefreshRepository.save(deviceUUID, refreshToken, duration);
+            redisRefreshRepository.addToHash(memberId, deviceUUID, "NULL");
         }
 
         return LoginResponse.from(accessToken, refreshToken);

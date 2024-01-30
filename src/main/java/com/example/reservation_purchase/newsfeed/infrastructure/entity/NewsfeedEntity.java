@@ -27,7 +27,7 @@ public class NewsfeedEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", updatable = false)
+    @Column(name = "newsfeed_id", updatable = false)
     private Long id;
 
     @Column(name = "receiver_id", nullable = false)
@@ -36,11 +36,12 @@ public class NewsfeedEntity {
     @Column(name = "sender_id", nullable = false)
     private Long senderId;
 
-    @Enumerated(EnumType.STRING)
-    private NewsfeedType newsfeedType;
-
-    @Column(name = "activity_id")
+    @Column(name = "activity_id", nullable = false)
     private Long activityId;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "newsfeed_type", nullable = false)
+    private NewsfeedType newsfeedType;
 
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)
@@ -51,8 +52,8 @@ public class NewsfeedEntity {
         newsfeedEntity.id = newsfeed.getId();
         newsfeedEntity.receiverId = newsfeed.getReceiverId();
         newsfeedEntity.senderId = newsfeed.getSenderId();
-        newsfeedEntity.newsfeedType = newsfeed.getNewsfeedType();
         newsfeedEntity.activityId = newsfeed.getActivityId();
+        newsfeedEntity.newsfeedType = newsfeed.getNewsfeedType();
         newsfeedEntity.createdAt = newsfeed.getCreatedAt();
         return newsfeedEntity;
     }
@@ -62,8 +63,8 @@ public class NewsfeedEntity {
                 .id(id)
                 .receiverId(receiverId)
                 .senderId(senderId)
-                .newsfeedType(newsfeedType)
                 .activityId(activityId)
+                .newsfeedType(newsfeedType)
                 .createdAt(createdAt)
                 .build();
     }

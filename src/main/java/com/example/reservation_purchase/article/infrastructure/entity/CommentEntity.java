@@ -28,14 +28,14 @@ public class CommentEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", updatable = false)
+    @Column(name = "comment_id", updatable = false)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "article_id", nullable = false)
     private ArticleEntity articleEntity;
 
-    @Column(name = "writer_id", nullable = false)
+    @Column(name = "member_id", nullable = false)
     private Long writerId;
 
     @Column(name = "content", nullable = false)
@@ -49,6 +49,9 @@ public class CommentEntity {
     @Column(name = "updated_at")
     protected LocalDateTime updatedAt;
 
+    @Column(name = "deleted_at")
+    protected LocalDateTime deletedAt;
+
     public static CommentEntity from(final Comment comment) {
         CommentEntity commentEntity = new CommentEntity();
         commentEntity.id = comment.getId();
@@ -57,6 +60,7 @@ public class CommentEntity {
         commentEntity.content = comment.getContent();
         commentEntity.createdAt = comment.getCreatedAt();
         commentEntity.updatedAt = comment.getUpdatedAt();
+        commentEntity.deletedAt = comment.getDeletedAt();
         return commentEntity;
     }
 
@@ -68,6 +72,7 @@ public class CommentEntity {
                 .content(content)
                 .createdAt(createdAt)
                 .updatedAt(updatedAt)
+                .deletedAt(deletedAt)
                 .build();
     }
 }

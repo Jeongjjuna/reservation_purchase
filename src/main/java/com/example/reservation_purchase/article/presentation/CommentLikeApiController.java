@@ -1,7 +1,7 @@
 package com.example.reservation_purchase.article.presentation;
 
 import com.example.reservation_purchase.article.application.CommentLikeService;
-import com.example.reservation_purchase.auth.domain.UserDetailsImpl;
+import com.example.reservation_purchase.auth.security.UserDetailsImpl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/v1")
 public class CommentLikeApiController {
 
     private final CommentLikeService commentLikeService;

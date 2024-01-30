@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/mail")
+@RequestMapping("/v1/mail")
 public class MailApiController {
 
     private final MailService mailService;

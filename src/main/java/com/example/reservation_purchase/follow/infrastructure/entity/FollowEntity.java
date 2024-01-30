@@ -15,6 +15,7 @@ import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.time.LocalDateTime;
 
@@ -27,26 +28,31 @@ public class FollowEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", updatable = false)
+    @Column(name = "follow_id", updatable = false)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "follower_member_id", columnDefinition = "팔로우를 한 사람")
+    @JoinColumn(name = "follower_member_id", nullable = false, columnDefinition = "팔로우를 한 사람")
     private MemberEntity followerMember;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "following_member_id", columnDefinition = "팔로우를 당한사람")
+    @JoinColumn(name = "following_member_id", nullable = false, columnDefinition = "팔로우를 당한사람")
     private MemberEntity followingMember;
 
-    @Column(name = "deleted_at")
-    private LocalDateTime deletedAt;
+    @Column(name = "follow_check")
+    private boolean followCheck;
+
+    @LastModifiedDate
+    @Column(name = "updated_at")
+    protected LocalDateTime updatedAt;
 
     public static FollowEntity from(Follow follow) {
         FollowEntity followEntity = new FollowEntity();
         followEntity.id = follow.getId();
         followEntity.followerMember = MemberEntity.from(follow.getFollowerMember());
         followEntity.followingMember = MemberEntity.from(follow.getFollowingMember());
-        followEntity.deletedAt = follow.getDeletedAt();
+        followEntity.followCheck = follow.isFollowCheck();
+        followEntity.updatedAt = follow.getUpdatedAt();
         return followEntity;
     }
 
@@ -55,7 +61,8 @@ public class FollowEntity {
                 .id(id)
                 .followerMember(followerMember.toModel())
                 .followingMember(followingMember.toModel())
-                .deletedAt(deletedAt)
+                .followCheck(followCheck)
+                .updatedAt(updatedAt)
                 .build();
     }
 }

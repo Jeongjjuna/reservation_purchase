@@ -15,6 +15,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.time.LocalDateTime;
 
@@ -27,11 +28,11 @@ public class ArticleLikeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", updatable = false)
+    @Column(name = "article_like_id", updatable = false)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "article_id")
+    @JoinColumn(name = "article_id", nullable = false)
     private ArticleEntity articleEntity;
 
     @Column(name = "member_id", nullable = false)
@@ -41,16 +42,21 @@ public class ArticleLikeEntity {
     @Column(name = "created_at", nullable = false, updatable = false)
     protected LocalDateTime createdAt;
 
-    @Column(name = "deleted_at")
-    private LocalDateTime deletedAt;
+    @LastModifiedDate
+    @Column(name = "updated_at")
+    protected LocalDateTime updatedAt;
+
+    @Column(name = "like_check")
+    private boolean likeCheck;
 
     public static ArticleLikeEntity from(final ArticleLike articleLike) {
         ArticleLikeEntity articleLikeEntity = new ArticleLikeEntity();
         articleLikeEntity.id = articleLike.getId();
         articleLikeEntity.articleEntity = ArticleEntity.from(articleLike.getArticle());
         articleLikeEntity.memberId = articleLike.getMemberId();
+        articleLikeEntity.likeCheck = articleLike.isLikeCheck();
         articleLikeEntity.createdAt = articleLike.getCreatedAt();
-        articleLikeEntity.deletedAt = articleLike.getDeletedAt();
+        articleLikeEntity.updatedAt = articleLike.getUpdatedAt();
         return articleLikeEntity;
     }
 
@@ -59,8 +65,9 @@ public class ArticleLikeEntity {
                 .id(id)
                 .article(articleEntity.toModel())
                 .memberId(memberId)
+                .likeCheck(likeCheck)
                 .createdAt(createdAt)
-                .deletedAt(deletedAt)
+                .deletedAt(updatedAt)
                 .build();
     }
 }

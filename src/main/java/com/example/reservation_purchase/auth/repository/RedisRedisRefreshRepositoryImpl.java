@@ -1,6 +1,6 @@
 package com.example.reservation_purchase.auth.repository;
 
-import com.example.reservation_purchase.auth.application.port.RefreshRepository;
+import com.example.reservation_purchase.auth.application.port.RedisRefreshRepository;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
@@ -9,13 +9,13 @@ import java.time.Duration;
 import java.util.Map;
 
 @Repository
-public class RedisRefreshRepositoryImpl implements RefreshRepository {
+public class RedisRedisRefreshRepositoryImpl implements RedisRefreshRepository {
 
     private final RedisTemplate<String, String> redisTemplate;
     private final HashOperations<String, String, String> hashOperations;
     private final ValueOperations<String, String> valueOperations;
 
-    public RedisRefreshRepositoryImpl(final RedisTemplate<String, String> redisTemplate) {
+    public RedisRedisRefreshRepositoryImpl(final RedisTemplate<String, String> redisTemplate) {
         this.redisTemplate = redisTemplate;
         this.valueOperations = redisTemplate.opsForValue();
         this.hashOperations = redisTemplate.opsForHash();

@@ -23,7 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
-@DisplayName("Comment 도메인 API 테스트")
+@DisplayName("통합테스트 [Comment]")
 class CommentApiControllerTest {
 
     @Autowired
@@ -75,7 +75,7 @@ class CommentApiControllerTest {
                 """.formatted(savedArticle.getId());
 
         // when, then
-        mockMvc.perform(post("/api/comments")
+        mockMvc.perform(post("/v1/comments")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isCreated());

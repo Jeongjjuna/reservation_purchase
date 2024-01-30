@@ -9,22 +9,25 @@ public class CommentLike {
 
     private Long id;
     private Comment comment;
-    private Long memberId;
+    private Long writerId;
+    private boolean likeCheck;
     protected LocalDateTime createdAt;
-    private LocalDateTime deletedAt;
+    private LocalDateTime updatedAt;
 
     @Builder
     public CommentLike(
             final Long id,
             final Comment comment,
-            final Long memberId,
+            final Long writerId,
+            final boolean likeCheck,
             final LocalDateTime createdAt,
-            final LocalDateTime deletedAt
+            final LocalDateTime updatedAt
     ) {
         this.id = id;
         this.comment = comment;
-        this.memberId = memberId;
+        this.writerId = writerId;
+        this.likeCheck = likeCheck;
         this.createdAt = createdAt;
-        this.deletedAt = deletedAt;
+        this.updatedAt = updatedAt;
     }
 }

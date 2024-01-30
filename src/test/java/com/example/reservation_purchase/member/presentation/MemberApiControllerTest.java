@@ -27,7 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
-@DisplayName("Member 도메인 API 테스트")
+@DisplayName("통합테스트 [Member]")
 class MemberApiControllerTest {
 
     @Autowired
@@ -75,7 +75,7 @@ class MemberApiControllerTest {
         when(redisMailRepository.getData(any())).thenReturn("123456");
 
         // when, then
-        mockMvc.perform(post("/api/members")
+        mockMvc.perform(post("/v1/members")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isCreated());
@@ -96,7 +96,7 @@ class MemberApiControllerTest {
                 """;
 
         // when, then
-        mockMvc.perform(post("/api/members")
+        mockMvc.perform(post("/v1/members")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isBadRequest());
@@ -124,7 +124,7 @@ class MemberApiControllerTest {
                 """;
 
         // when, then
-        mockMvc.perform(post("/api/members")
+        mockMvc.perform(post("/v1/members")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isConflict());
@@ -144,7 +144,7 @@ class MemberApiControllerTest {
                 """;
 
         // when, then
-        mockMvc.perform(patch("/api/members/{memberId}", saved.getId())
+        mockMvc.perform(patch("/v1/members/{memberId}", saved.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isOk());
@@ -164,7 +164,7 @@ class MemberApiControllerTest {
                 """;
 
         // when, then
-        mockMvc.perform(patch("/api/members/{memberId}", 9999L)
+        mockMvc.perform(patch("/v1/members/{memberId}", 9999L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isUnauthorized());
@@ -183,7 +183,7 @@ class MemberApiControllerTest {
                 """;
 
         // when, then
-        mockMvc.perform(patch("/api/members/{memberId}/password", saved.getId())
+        mockMvc.perform(patch("/v1/members/{memberId}/password", saved.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isOk());
@@ -202,7 +202,7 @@ class MemberApiControllerTest {
                 """;
 
         // when, then
-        mockMvc.perform(patch("/api/members/{memberId}/password", 9999L)
+        mockMvc.perform(patch("/v1/members/{memberId}/password", 9999L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isUnauthorized());
@@ -216,7 +216,7 @@ class MemberApiControllerTest {
         setPrincipal(saved.getEmail());
 
         // when, then
-        mockMvc.perform(get("/api/members/{memberId}", 9999L)
+        mockMvc.perform(get("/v1/members/{memberId}", 9999L)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnauthorized());
     }
@@ -229,7 +229,7 @@ class MemberApiControllerTest {
         setPrincipal(saved.getEmail());
 
         // when, then
-        mockMvc.perform(get("/api/members/{memberId}", saved.getId())
+        mockMvc.perform(get("/v1/members/{memberId}", saved.getId())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
@@ -242,7 +242,7 @@ class MemberApiControllerTest {
         setPrincipal(saved.getEmail());
 
         // when, then
-        mockMvc.perform(get("/api/members/my-followings")
+        mockMvc.perform(get("/v1/members/my-followings")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
@@ -255,7 +255,7 @@ class MemberApiControllerTest {
         setPrincipal(saved.getEmail());
 
         // when, then
-        mockMvc.perform(get("/api/members/my-followers")
+        mockMvc.perform(get("/v1/members/my-followers")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }

@@ -1,7 +1,7 @@
 package com.example.reservation_purchase.config;
 
-import com.example.reservation_purchase.auth.exception.CustomAuthenticationEntryPoint;
-import com.example.reservation_purchase.config.filter.JwtAuthenticationFilter;
+import com.example.reservation_purchase.auth.security.CustomAuthenticationEntryPoint;
+import com.example.reservation_purchase.auth.security.filter.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -29,11 +29,13 @@ public class SecurityConfig {
                 .sessionManagement(sessionManagement -> sessionManagement
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.POST, "/api/members").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/login").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/newsfeeds").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/mail").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/refreshToken").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/swagger-ui/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/v3/api-docs/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/v1/members").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/v1/login").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/v1/newsfeeds").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/v1/mail").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/v1/refreshToken").permitAll()
                         .anyRequest().authenticated())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(handle -> handle.authenticationEntryPoint(customAuthenticationEntryPoint))

@@ -25,7 +25,7 @@ public class MemberEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", updatable = false)
+    @Column(name = "member_id", updatable = false)
     private Long id;
 
     @Column(name = "email", nullable = false, unique = true)
@@ -43,6 +43,9 @@ public class MemberEntity {
     @Column(name = "profile_url")
     private String profileUrl;
 
+    @Column(name = "last_newsfeed_access_time")
+    private LocalDateTime lastNewsfeedAccessTime;
+
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)
     protected LocalDateTime createdAt;
@@ -50,6 +53,9 @@ public class MemberEntity {
     @LastModifiedDate
     @Column(name = "updated_at")
     protected LocalDateTime updatedAt;
+
+    @Column(name = "deleted_at")
+    protected LocalDateTime deletedAt;
 
     public static MemberEntity from(final Member member) {
         MemberEntity memberEntity = new MemberEntity();
@@ -59,8 +65,10 @@ public class MemberEntity {
         memberEntity.name = member.getName();
         memberEntity.greetings = member.getGreetings();
         memberEntity.profileUrl = member.getProfileUrl();
+        memberEntity.lastNewsfeedAccessTime = member.getLastNewsfeedAccessTime();
         memberEntity.createdAt = member.getCreatedAt();
         memberEntity.updatedAt = member.getUpdatedAt();
+        memberEntity.deletedAt = member.getDeletedAt();
         return memberEntity;
     }
 
@@ -72,8 +80,10 @@ public class MemberEntity {
                 .name(name)
                 .greetings(greetings)
                 .profileUrl(profileUrl)
+                .lastNewsfeedAccessTime(lastNewsfeedAccessTime)
                 .createdAt(createdAt)
                 .updatedAt(updatedAt)
+                .deletedAt(deletedAt)
                 .build();
     }
 }

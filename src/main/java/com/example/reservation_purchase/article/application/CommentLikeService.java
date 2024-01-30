@@ -28,7 +28,7 @@ public class CommentLikeService {
 
         CommentLike commentLike = CommentLike.builder()
                 .comment(comment)
-                .memberId(principalId)
+                .writerId(principalId)
                 .build();
 
         commentLikeRepository.save(commentLike);

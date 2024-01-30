@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-@DisplayName("Member 단위테스트")
+@DisplayName("단위테스트 [Member]")
 class MemberTest {
 
     @DisplayName("생성 테스트")

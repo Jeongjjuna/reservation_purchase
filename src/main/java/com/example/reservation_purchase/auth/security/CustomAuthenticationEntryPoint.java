@@ -1,4 +1,4 @@
-package com.example.reservation_purchase.auth.exception;
+package com.example.reservation_purchase.auth.security;
 
 import com.example.reservation_purchase.exception.ErrorResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -29,7 +29,13 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
             AuthenticationException authException
     ) throws IOException {
         log.error("[ERROR] occurs CustomAuthenticationEntryPoint -> commence()");
-        ErrorResponse body = new ErrorResponse(LocalDateTime.now(), HttpStatus.UNAUTHORIZED.getReasonPhrase());
+
+        Exception e = (Exception) request.getAttribute("JwtAuthenticationFilterException");
+        createResponse(response, e);
+    }
+
+    private void createResponse(HttpServletResponse response, final Exception e) throws IOException {
+        ErrorResponse body = new ErrorResponse(LocalDateTime.now(), "[ERROR] valid authentication token is required");
         response.setContentType("application/json");
         response.setStatus(401);
         response.getWriter().write(objectMapper.writeValueAsString(body));
