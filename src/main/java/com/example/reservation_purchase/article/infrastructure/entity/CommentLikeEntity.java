@@ -15,6 +15,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.time.LocalDateTime;
 
@@ -34,23 +35,28 @@ public class CommentLikeEntity {
     @JoinColumn(name = "comment_id", nullable = false)
     private CommentEntity commentEntity;
 
-    @Column(name = "writer_id", nullable = false)
-    private Long memberId;
+    @Column(name = "member_id", nullable = false)
+    private Long writerId;
+
+    @Column(name = "like_check")
+    private boolean likeCheck;
 
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)
     protected LocalDateTime createdAt;
 
-    @Column(name = "deleted_at")
-    private LocalDateTime deletedAt;
+    @LastModifiedDate
+    @Column(name = "updated_at")
+    protected LocalDateTime updatedAt;
 
     public static CommentLikeEntity from(final CommentLike commentLike) {
         CommentLikeEntity commentLikeEntity = new CommentLikeEntity();
         commentLikeEntity.id = commentLike.getId();
         commentLikeEntity.commentEntity = CommentEntity.from(commentLike.getComment());
-        commentLikeEntity.memberId = commentLike.getMemberId();
+        commentLikeEntity.writerId = commentLike.getWriterId();
+        commentLikeEntity.likeCheck = commentLike.isLikeCheck();
         commentLikeEntity.createdAt = commentLike.getCreatedAt();
-        commentLikeEntity.deletedAt = commentLike.getDeletedAt();
+        commentLikeEntity.updatedAt = commentLike.getUpdatedAt();
         return commentLikeEntity;
     }
 
@@ -58,9 +64,10 @@ public class CommentLikeEntity {
         return CommentLike.builder()
                 .id(id)
                 .comment(commentEntity.toModel())
-                .memberId(memberId)
+                .writerId(writerId)
+                .likeCheck(likeCheck)
                 .createdAt(createdAt)
-                .deletedAt(deletedAt)
+                .updatedAt(updatedAt)
                 .build();
     }
 }

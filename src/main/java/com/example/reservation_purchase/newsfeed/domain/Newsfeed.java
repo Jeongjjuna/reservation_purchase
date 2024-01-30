@@ -19,15 +19,15 @@ public class Newsfeed {
             final Long id,
             final Long receiverId,
             final Long senderId,
-            final NewsfeedType newsfeedType,
             final Long activityId,
+            final NewsfeedType newsfeedType,
             final LocalDateTime createdAt
     ) {
         this.id = id;
         this.receiverId = receiverId;
         this.senderId = senderId;
-        this.newsfeedType = newsfeedType;
         this.activityId = activityId;
+        this.newsfeedType = newsfeedType;
         this.createdAt = createdAt;
     }
 
@@ -41,5 +41,17 @@ public class Newsfeed {
                 .newsfeedType(type)
                 .activityId(newsfeedCreate.getActivityId())
                 .build();
+    }
+
+    @Override
+    public String toString() {
+        return "Newsfeed{" +
+                "id=" + id +
+                ", receiverId=" + receiverId +
+                ", senderId=" + senderId +
+                ", newsfeedType=" + newsfeedType +
+                ", activityId=" + activityId +
+                ", createdAt=" + createdAt +
+                '}';
     }
 }

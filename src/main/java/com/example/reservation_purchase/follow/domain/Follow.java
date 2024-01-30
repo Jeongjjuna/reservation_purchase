@@ -11,19 +11,22 @@ public class Follow {
     private Long id;
     private Member followerMember;
     private Member followingMember;
-    private LocalDateTime deletedAt;
+    private boolean followCheck;
+    private LocalDateTime updatedAt;
 
     @Builder
     public Follow(
             final Long id,
-             final Member followerMember,
-             final Member followingMember,
-             final LocalDateTime deletedAt
+            final Member followerMember,
+            final Member followingMember,
+            final boolean followCheck,
+            final LocalDateTime updatedAt
     ) {
         this.id = id;
         this.followerMember = followerMember;
         this.followingMember = followingMember;
-        this.deletedAt = deletedAt;
+        this.followCheck = followCheck;
+        this.updatedAt = updatedAt;
     }
 
     public static Follow create(final Member followerMember, final Member folloingMember) {

@@ -13,6 +13,7 @@ public class Comment {
     private String content;
     protected LocalDateTime createdAt;
     protected LocalDateTime updatedAt;
+    protected LocalDateTime deletedAt;
 
     @Builder
     public Comment(
@@ -21,7 +22,8 @@ public class Comment {
             final Long writerId,
             final String content,
             final LocalDateTime createdAt,
-            final LocalDateTime updatedAt
+            final LocalDateTime updatedAt,
+            final LocalDateTime deletedAt
     ) {
         this.id = id;
         this.article = article;
@@ -29,6 +31,7 @@ public class Comment {
         this.content = content;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+        this.deletedAt = deletedAt;
     }
 
     public static Comment create(

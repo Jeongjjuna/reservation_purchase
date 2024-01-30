@@ -13,8 +13,10 @@ public class Member {
     private String name;
     private String greetings;
     private String profileUrl;
+    private LocalDateTime lastNewsfeedAccessTime;
     protected LocalDateTime createdAt;
     protected LocalDateTime updatedAt;
+    protected LocalDateTime deletedAt;
 
     @Builder
     public Member(final Long id,
@@ -23,8 +25,10 @@ public class Member {
                   final String name,
                   final String greetings,
                   final String profileUrl,
+                  final LocalDateTime lastNewsfeedAccessTime,
                   final LocalDateTime createdAt,
-                  final LocalDateTime updatedAt
+                  final LocalDateTime updatedAt,
+                  final LocalDateTime deletedAt
     ) {
         this.id = id;
         this.email = email;
@@ -32,8 +36,10 @@ public class Member {
         this.name = name;
         this.greetings = greetings;
         this.profileUrl = profileUrl;
+        this.lastNewsfeedAccessTime = lastNewsfeedAccessTime;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+        this.deletedAt = deletedAt;
     }
 
     public static Member create(final MemberCreate memberCreate) {
