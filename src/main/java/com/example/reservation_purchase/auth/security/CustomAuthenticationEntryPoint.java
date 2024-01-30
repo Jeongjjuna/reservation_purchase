@@ -35,7 +35,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
     }
 
     private void createResponse(HttpServletResponse response, final Exception e) throws IOException {
-        ErrorResponse body = new ErrorResponse(LocalDateTime.now(), e.getMessage());
+        ErrorResponse body = new ErrorResponse(LocalDateTime.now(), "[ERROR] valid authentication token is required");
         response.setContentType("application/json");
         response.setStatus(401);
         response.getWriter().write(objectMapper.writeValueAsString(body));
