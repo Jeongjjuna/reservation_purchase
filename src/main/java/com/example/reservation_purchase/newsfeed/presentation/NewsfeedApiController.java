@@ -20,7 +20,7 @@ import java.net.URI;
       게시글/좋아요서비스 -> 뉴스피드 api 호출
  */
 @RestController
-@RequestMapping("/api/newsfeeds")
+@RequestMapping("/v1/newsfeeds")
 public class NewsfeedApiController {
 
     private final NewsfeedService newsfeedService;
@@ -37,7 +37,7 @@ public class NewsfeedApiController {
             @RequestBody final NewsfeedCreate newsfeedCreate
     ) {
         newsfeedService.create(newsfeedCreate);
-        return ResponseEntity.created(URI.create("api/newsfeeds/my")).build();
+        return ResponseEntity.created(URI.create("v1/newsfeeds/my")).build();
     }
 
     /**

@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/refreshToken")
+@RequestMapping("/v1/refreshToken")
 public class RefreshTokenApiController {
 
     private final RefreshTokenService refreshTokenService;

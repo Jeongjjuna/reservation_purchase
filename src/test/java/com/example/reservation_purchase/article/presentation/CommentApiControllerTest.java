@@ -75,7 +75,7 @@ class CommentApiControllerTest {
                 """.formatted(savedArticle.getId());
 
         // when, then
-        mockMvc.perform(post("/api/comments")
+        mockMvc.perform(post("/v1/comments")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isCreated());

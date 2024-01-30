@@ -26,7 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.net.URI;
 
 @RestController
-@RequestMapping("/api/members")
+@RequestMapping("/v1/members")
 public class MemberApiController {
 
     private final MemberReadService memberReadService;
@@ -54,7 +54,7 @@ public class MemberApiController {
             @RequestBody final MemberCreate memberCreate
     ) {
         MemberJoinResponse response = memberJoinService.signup(memberCreate);
-        return ResponseEntity.created(URI.create("/api/members/" + response.getId())).body(response);
+        return ResponseEntity.created(URI.create("/v1/members/" + response.getId())).body(response);
     }
 
     /**
@@ -66,7 +66,7 @@ public class MemberApiController {
                                                 @RequestParam("file") MultipartFile multipartFile,
                                                 @AuthenticationPrincipal UserDetailsImpl userDetails) {
         String url = profileService.upload(memberId, userDetails.getId(), multipartFile);
-        return ResponseEntity.created(URI.create("/api/members/" + memberId)).body(url);
+        return ResponseEntity.created(URI.create("/v1/members/" + memberId)).body(url);
     }
 
     /**

@@ -29,11 +29,11 @@ public class SecurityConfig {
                 .sessionManagement(sessionManagement -> sessionManagement
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.POST, "/api/members").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/login").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/newsfeeds").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/mail").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/refreshToken").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/v1/members").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/v1/login").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/v1/newsfeeds").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/v1/mail").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/v1/refreshToken").permitAll()
                         .anyRequest().authenticated())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(handle -> handle.authenticationEntryPoint(customAuthenticationEntryPoint))

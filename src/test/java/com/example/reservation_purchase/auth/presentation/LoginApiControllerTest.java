@@ -62,7 +62,7 @@ class LoginApiControllerTest {
         when(redisRefreshRepository.findByValue(any())).thenReturn("1111");
 
         // when, then
-        mockMvc.perform(post("/api/login")
+        mockMvc.perform(post("/v1/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("X-Device-UUID", "1111")
                         .content(json))
@@ -81,7 +81,7 @@ class LoginApiControllerTest {
                 """;
 
         // when, then
-        mockMvc.perform(post("/api/login")
+        mockMvc.perform(post("/v1/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("X-Device-UUID", "1111")
                         .content(json))
@@ -101,7 +101,7 @@ class LoginApiControllerTest {
                 """;
 
         // when, then
-        mockMvc.perform(post("/api/login")
+        mockMvc.perform(post("/v1/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isBadRequest());

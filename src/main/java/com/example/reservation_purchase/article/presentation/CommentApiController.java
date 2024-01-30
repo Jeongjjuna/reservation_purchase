@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.net.URI;
 
 @RestController
-@RequestMapping("/api/comments")
+@RequestMapping("/v1/comments")
 public class CommentApiController {
 
     private final CommentService commentService;
@@ -30,6 +30,6 @@ public class CommentApiController {
             @AuthenticationPrincipal final UserDetailsImpl userDetails
     ) {
         Long createdId = commentService.create(userDetails.getId(), commentCreate);
-        return ResponseEntity.created(URI.create("/api/comments/" + createdId)).build();
+        return ResponseEntity.created(URI.create("/v1/comments/" + createdId)).build();
     }
 }

@@ -68,7 +68,7 @@ class ArticleLikeApiControllerTest {
         Article savedArticle = articleRepository.save(article);
 
         // when, then
-        mockMvc.perform(post("/api/articles/{articleId}/like", savedArticle.getId())
+        mockMvc.perform(post("/v1/articles/{articleId}/like", savedArticle.getId())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }

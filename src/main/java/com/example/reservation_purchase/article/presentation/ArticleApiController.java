@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.net.URI;
 
 @RestController
-@RequestMapping("/api/articles")
+@RequestMapping("/v1/articles")
 public class ArticleApiController {
 
     private final ArticleService articleService;
@@ -39,7 +39,7 @@ public class ArticleApiController {
             @AuthenticationPrincipal final UserDetailsImpl userDetails
     ) {
         Long createdId = articleService.create(userDetails.getId(), articleCreate);
-        return ResponseEntity.created(URI.create("/api/articles/" + createdId)).build();
+        return ResponseEntity.created(URI.create("/v1/articles/" + createdId)).build();
     }
 
     /**

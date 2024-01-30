@@ -70,7 +70,7 @@ class NewsfeedApiControllerTest {
                 """.formatted(1L, 2L, 3L);
 
         // when, then
-        mockMvc.perform(post("/api/newsfeeds")
+        mockMvc.perform(post("/v1/newsfeeds")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isCreated());
@@ -83,7 +83,7 @@ class NewsfeedApiControllerTest {
         givenAuthenticatedMember("email@naver.com");
 
         // when, then
-        mockMvc.perform(get("/api/newsfeeds/my")
+        mockMvc.perform(get("/v1/newsfeeds/my")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }

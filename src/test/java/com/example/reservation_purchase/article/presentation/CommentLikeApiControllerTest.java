@@ -80,7 +80,7 @@ class CommentLikeApiControllerTest {
         Comment savedComment = commentRepository.save(comment);
 
         // when, then
-        mockMvc.perform(post("/api/comments/{commentId}/like", savedComment.getId())
+        mockMvc.perform(post("/v1/comments/{commentId}/like", savedComment.getId())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }

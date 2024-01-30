@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/follow")
+@RequestMapping("/v1/follow")
 public class FollowApiController {
 
     private final FollowService followService;
