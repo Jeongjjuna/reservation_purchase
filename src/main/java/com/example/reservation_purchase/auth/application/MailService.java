@@ -23,7 +23,10 @@ public class MailService {
     private static final String TITLE = "회원 가입 인증 이메일 입니다.";
     private static final String CONTENT = "인증번호는 %s 입니다.";
 
-    public MailService(final JavaMailSender emailSender, final RedisMailRepository redisMailRepository) {
+    public MailService(
+            final JavaMailSender emailSender,
+            final RedisMailRepository redisMailRepository
+    ) {
         this.emailSender = emailSender;
         this.redisMailRepository = redisMailRepository;
     }

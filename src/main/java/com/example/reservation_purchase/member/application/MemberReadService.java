@@ -20,7 +20,10 @@ public class MemberReadService {
     private final MemberRepository memberRepository;
     private final FollowRepository followRepository;
 
-    public MemberReadService(final MemberRepository memberRepository, final FollowRepository followRepository) {
+    public MemberReadService(
+            final MemberRepository memberRepository,
+            final FollowRepository followRepository
+    ) {
         this.memberRepository = memberRepository;
         this.followRepository = followRepository;
     }

@@ -16,7 +16,10 @@ public class ArticleService {
     private final ArticleRepository articleRepository;
     private final MemberRepository memberRepository;
 
-    public ArticleService(final ArticleRepository articleRepository, final MemberRepository memberRepository) {
+    public ArticleService(
+            final ArticleRepository articleRepository,
+            final MemberRepository memberRepository
+    ) {
         this.articleRepository = articleRepository;
         this.memberRepository = memberRepository;
     }

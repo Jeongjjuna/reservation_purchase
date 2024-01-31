@@ -15,7 +15,10 @@ public class CommentLikeService {
     private final CommentRepository commentRepository;
     private final CommentLikeRepository commentLikeRepository;
 
-    public CommentLikeService(final CommentRepository commentRepository, final CommentLikeRepository commentLikeRepository) {
+    public CommentLikeService(
+            final CommentRepository commentRepository,
+            final CommentLikeRepository commentLikeRepository
+    ) {
         this.commentRepository = commentRepository;
         this.commentLikeRepository = commentLikeRepository;
     }
