@@ -2,6 +2,10 @@ dependencies {
     // core-module이 필요로 하는 의존성 정의
 }
 
+tasks.named('test') {
+    useJUnitPlatform()
+}
+
 //plugins {
 //    id 'java'
 //    id 'org.springframework.boot' version '3.2.2'
