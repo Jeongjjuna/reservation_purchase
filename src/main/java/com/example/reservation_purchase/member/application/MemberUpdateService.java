@@ -20,7 +20,11 @@ public class MemberUpdateService {
     private final BCryptPasswordEncoder passwordEncoder;
     private final RedisRefreshRepository redisRefreshRepository;
 
-    public MemberUpdateService(final MemberRepository memberRepository, final BCryptPasswordEncoder passwordEncoder, final RedisRefreshRepository redisRefreshRepository) {
+    public MemberUpdateService(
+            final MemberRepository memberRepository,
+            final BCryptPasswordEncoder passwordEncoder,
+            final RedisRefreshRepository redisRefreshRepository
+    ) {
         this.memberRepository = memberRepository;
         this.passwordEncoder = passwordEncoder;
         this.redisRefreshRepository = redisRefreshRepository;

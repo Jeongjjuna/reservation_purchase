@@ -64,7 +64,8 @@ public class MemberApiController {
     @PostMapping("/{id}/profile")
     public ResponseEntity<String> uploadProfile(@PathVariable("id") final Long memberId,
                                                 @RequestParam("file") MultipartFile multipartFile,
-                                                @AuthenticationPrincipal UserDetailsImpl userDetails) {
+                                                @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
         String url = profileService.upload(memberId, userDetails.getId(), multipartFile);
         return ResponseEntity.created(URI.create("/v1/members/" + memberId)).body(url);
     }
@@ -76,7 +77,8 @@ public class MemberApiController {
     public ResponseEntity<Void> update(
             @RequestBody final MemberUpdate memberUpdate,
             @PathVariable("id") final Long id,
-            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
         memberUpdateService.update(memberUpdate, id, userDetails.getId());
         return ResponseEntity.ok().build();
     }
@@ -110,7 +112,9 @@ public class MemberApiController {
      * 내가 팔로우한 회원들 조회
      */
     @GetMapping("/my-followings")
-    public ResponseEntity<Page<MemberResponse>> myFollowing(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<Page<MemberResponse>> myFollowing(
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
         Page<MemberResponse> myFollows = memberReadService.readMyFollowing(userDetails.getId());
         return ResponseEntity.ok(myFollows);
     }
@@ -119,7 +123,9 @@ public class MemberApiController {
      * 나를 팔로우한 회원들 조회
      */
     @GetMapping("/my-followers")
-    public ResponseEntity<Page<MemberResponse>> myFollowers(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<Page<MemberResponse>> myFollowers(
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
         Page<MemberResponse> myFollows = memberReadService.readMyFollowers(userDetails.getId());
         return ResponseEntity.ok(myFollows);
     }

@@ -21,7 +21,8 @@ public class ArticleLikeService {
     public ArticleLikeService(
             final ArticleRepository articleRepository,
             final ArticleLikeRepository articleLikeRepository,
-            final NewsfeedService newsfeedService) {
+            final NewsfeedService newsfeedService
+    ) {
         this.articleRepository = articleRepository;
         this.articleLikeRepository = articleLikeRepository;
         this.newsfeedService = newsfeedService;

@@ -21,7 +21,11 @@ public class LogoutService {
     private final RedisRefreshRepository redisRefreshRepository;
     private final MemberRepository memberRepository;
 
-    public LogoutService(final JwtTokenProvider jwtTokenProvider, final RedisRefreshRepository redisRefreshRepository, final MemberRepository memberRepository) {
+    public LogoutService(
+            final JwtTokenProvider jwtTokenProvider,
+            final RedisRefreshRepository redisRefreshRepository,
+            final MemberRepository memberRepository
+    ) {
         this.jwtTokenProvider = jwtTokenProvider;
         this.redisRefreshRepository = redisRefreshRepository;
         this.memberRepository = memberRepository;

@@ -20,7 +20,11 @@ public class RefreshTokenService {
     private final MemberRepository memberRepository;
     private final RedisRefreshRepository redisRefreshRepository;
 
-    public RefreshTokenService(final JwtTokenProvider jwtTokenProvider, final MemberRepository memberRepository, final RedisRefreshRepository redisRefreshRepository) {
+    public RefreshTokenService(
+            final JwtTokenProvider jwtTokenProvider,
+            final MemberRepository memberRepository,
+            final RedisRefreshRepository redisRefreshRepository
+    ) {
         this.jwtTokenProvider = jwtTokenProvider;
         this.memberRepository = memberRepository;
         this.redisRefreshRepository = redisRefreshRepository;

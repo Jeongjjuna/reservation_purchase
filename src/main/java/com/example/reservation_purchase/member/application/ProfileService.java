@@ -21,7 +21,10 @@ public class ProfileService {
     private final MemberRepository memberRepository;
     private final ProfileRepository profileRepository;
 
-    public ProfileService(final MemberRepository memberRepository, final ProfileRepository profileRepository) {
+    public ProfileService(
+            final MemberRepository memberRepository,
+            final ProfileRepository profileRepository
+    ) {
         this.memberRepository = memberRepository;
         this.profileRepository = profileRepository;
     }

@@ -18,7 +18,11 @@ public class MemberJoinService {
     private final BCryptPasswordEncoder passwordEncoder;
     private final RedisMailRepository redisMailRepository;
 
-    public MemberJoinService(final MemberRepository memberRepository, final BCryptPasswordEncoder passwordEncoder, final RedisMailRepository redisMailRepository) {
+    public MemberJoinService(
+            final MemberRepository memberRepository,
+            final BCryptPasswordEncoder passwordEncoder,
+            final RedisMailRepository redisMailRepository
+    ) {
         this.memberRepository = memberRepository;
         this.passwordEncoder = passwordEncoder;
         this.redisMailRepository = redisMailRepository;

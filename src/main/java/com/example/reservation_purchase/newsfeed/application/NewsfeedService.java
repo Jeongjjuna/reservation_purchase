@@ -20,7 +20,10 @@ public class NewsfeedService {
     private final NewsfeedRepository newsfeedRepository;
     private final FollowRepository followRepository;
 
-    public NewsfeedService(final NewsfeedRepository newsfeedRepository, final FollowRepository followRepository) {
+    public NewsfeedService(
+            final NewsfeedRepository newsfeedRepository,
+            final FollowRepository followRepository
+    ) {
         this.newsfeedRepository = newsfeedRepository;
         this.followRepository = followRepository;
     }
