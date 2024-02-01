@@ -2,12 +2,11 @@ package com.example.activity_service.article.presentation;
 
 import com.example.activity_service.article.application.CommentService;
 import com.example.activity_service.article.domain.CommentCreate;
-import com.example.activity_service.auth.security.UserDetailsImpl;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import java.net.URI;
 
@@ -27,9 +26,9 @@ public class CommentApiController {
     @PostMapping
     public ResponseEntity<Void> create(
             @RequestBody final CommentCreate commentCreate,
-            @AuthenticationPrincipal final UserDetailsImpl userDetails
+            @RequestParam(name = "member", required = false) Long principalId
     ) {
-        Long createdId = commentService.create(userDetails.getId(), commentCreate);
+        Long createdId = commentService.create(principalId, commentCreate);
         return ResponseEntity.created(URI.create("/v1/comments/" + createdId)).build();
     }
 }

@@ -1,7 +1,5 @@
 package com.example.user_service.member.application;
 
-import com.example.user_service.follow.application.port.FollowRepository;
-import com.example.user_service.follow.domain.Follow;
 import com.example.user_service.member.application.port.MemberRepository;
 import com.example.user_service.member.domain.Member;
 import com.example.user_service.member.exception.MemberErrorCode;
@@ -18,14 +16,9 @@ import java.util.List;
 public class MemberReadService {
 
     private final MemberRepository memberRepository;
-    private final FollowRepository followRepository;
 
-    public MemberReadService(
-            final MemberRepository memberRepository,
-            final FollowRepository followRepository
-    ) {
+    public MemberReadService(final MemberRepository memberRepository) {
         this.memberRepository = memberRepository;
-        this.followRepository = followRepository;
     }
 
     /**
@@ -52,12 +45,14 @@ public class MemberReadService {
      */
     public Page<MemberResponse> readMyFollowing(final Long principalId) {
         // 내가 팔로우한 모든 Follow 정보를 가져온다. (여기서 2번의 select 발생)
-        List<Follow> followings = followRepository.findFollowing(principalId);
-
-        List<Long> followingIds = followings.stream()
-                .map(Follow::getFollowingMember)
-                .map(Member::getId)
-                .toList();
+        // List<Follow> followings = followRepository.findFollowing(principalId);
+//
+//        List<Long> followingIds = followings.stream()
+//                .map(Follow::getFollowingMember)
+//                .map(Member::getId)
+//                .toList();
+        // TODO : activity service에서 principalId에 대항하는 모든 following ids를 가져온다.
+        List<Long> followingIds = List.of();
 
         // 1번의 select 발생
         Pageable pageable = PageRequest.of(0, 20);
@@ -69,14 +64,17 @@ public class MemberReadService {
      */
     public Page<MemberResponse> readMyFollowers(final Long principalId) {
         // 나를 팔로우한 모든 Follow 정보를 가져온다. (여기서 2번의 select 발생)
-        List<Follow> followers = followRepository.findFollower(principalId);
+        // List<Follow> followers = followRepository.findFollower(principalId);
 
-        List<Long> followingIds = followers.stream()
-                .map(Follow::getFollowerMember)
-                .map(Member::getId)
-                .toList();
+        //        List<Long> followingIds = followers.stream()
+        //                .map(Follow::getFollowerMember)
+        //                .map(Member::getId)
+        //                .toList();
+
+        // TODO : activity service에서 principalId에 해당하는 모든 follower ids를 가져온다.
+        List<Long> followerIds = List.of();
 
         Pageable pageable = PageRequest.of(0, 20);
-        return memberRepository.findAllByIdIn(followingIds, pageable).map(MemberResponse::from);
+        return memberRepository.findAllByIdIn(followerIds, pageable).map(MemberResponse::from);
     }
 }

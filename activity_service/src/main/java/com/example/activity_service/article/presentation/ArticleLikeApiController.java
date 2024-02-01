@@ -1,12 +1,11 @@
 package com.example.activity_service.article.presentation;
 
 import com.example.activity_service.article.application.ArticleLikeService;
-import com.example.activity_service.auth.security.UserDetailsImpl;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -25,9 +24,9 @@ public class ArticleLikeApiController {
     @PostMapping("/articles/{id}/like")
     public ResponseEntity<Void> create(
             @PathVariable("id") final Long articleId,
-            @AuthenticationPrincipal final UserDetailsImpl userDetails
+            @RequestParam(name = "member", required = false) Long principalId
     ) {
-        articleLikeService.like(articleId, userDetails.getId());
+        articleLikeService.like(articleId, principalId);
         return ResponseEntity.ok().build();
     }
 }

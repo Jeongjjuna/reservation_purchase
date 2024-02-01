@@ -1,9 +1,6 @@
 package com.example.newsfeed_service.newsfeed.application;
 
-import com.example.newsfeed_service.follow.application.port.FollowRepository;
 import com.example.newsfeed_service.newsfeed.application.port.NewsfeedRepository;
-import com.example.newsfeed_service.follow.domain.Follow;
-import com.example.newsfeed_service.member.domain.Member;
 import com.example.newsfeed_service.newsfeed.domain.Newsfeed;
 import com.example.newsfeed_service.newsfeed.domain.NewsfeedCreate;
 import org.springframework.data.domain.Page;
@@ -18,14 +15,9 @@ import java.util.List;
 public class NewsfeedService {
 
     private final NewsfeedRepository newsfeedRepository;
-    private final FollowRepository followRepository;
 
-    public NewsfeedService(
-            final NewsfeedRepository newsfeedRepository,
-            final FollowRepository followRepository
-    ) {
+    public NewsfeedService(final NewsfeedRepository newsfeedRepository) {
         this.newsfeedRepository = newsfeedRepository;
-        this.followRepository = followRepository;
     }
 
     /**
@@ -43,11 +35,15 @@ public class NewsfeedService {
      */
     public Page<Newsfeed> my(final Long principalId) {
 
+//        List<Long> followingIds = followRepository.findFollowing(principalId).stream()
+//                .map(Follow::getFollowingMember)
+//                .map(Member::getId)
+//                .toList();
+
         // TODO : 진짜 만약 팔로우를 걸어놓은 사람이 엄청 많다면? 만명이상?
-        List<Long> followingIds = followRepository.findFollowing(principalId).stream()
-                .map(Follow::getFollowingMember)
-                .map(Member::getId)
-                .toList();
+        // TODO : activity service에서 principalId에 해당하는 모든 following ids(내가 팔로우한 사람들 = 팔로우를 받은 사람들)를 가져온다.
+        List<Long> followingIds = List.of();
+
 
         // TODO : 마지막으로 확인한 시점 이후로 최신 데이터를 가져온다.
         Pageable pageable = PageRequest.of(

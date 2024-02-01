@@ -1,17 +1,11 @@
 package com.example.activity_service.follow.application;
 
+import com.example.activity_service.follow.application.port.FollowRepository;
 import com.example.activity_service.follow.domain.Follow;
+import com.example.activity_service.follow.domain.FollowCreate;
 import com.example.activity_service.follow.exception.FollowErrorCode;
 import com.example.activity_service.follow.exception.FollowException.FollowDuplicatedException;
 import com.example.activity_service.follow.exception.FollowException.FollowUnauthorizedException;
-import com.example.activity_service.member.application.port.MemberRepository;
-import com.example.activity_service.member.exception.MemberErrorCode;
-import com.example.activity_service.member.exception.MemberException.MemberNotFoundException;
-import com.example.activity_service.newsfeed.domain.NewsfeedCreate;
-import com.example.activity_service.follow.application.port.FollowRepository;
-import com.example.activity_service.follow.domain.FollowCreate;
-import com.example.activity_service.member.domain.Member;
-import com.example.activity_service.newsfeed.application.NewsfeedService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,17 +13,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class FollowService {
 
     private final FollowRepository followRepository;
-    private final MemberRepository memberRepository;
-    private final NewsfeedService newsfeedService;
 
-    public FollowService(
-            final FollowRepository followRepository,
-            final MemberRepository memberRepository,
-            final NewsfeedService newsfeedService
-    ) {
+    public FollowService(final FollowRepository followRepository) {
         this.followRepository = followRepository;
-        this.memberRepository = memberRepository;
-        this.newsfeedService = newsfeedService;
     }
 
     /**
@@ -38,26 +24,23 @@ public class FollowService {
     @Transactional
     public void follow(final Long principalId, final FollowCreate followCreate) {
 
-        Member followerMember = findExistMember(followCreate.getFollowerMemberId());
-        Member folloingMember = findExistMember(followCreate.getFollowingMemberId());
+        // TODO : member 존재여부를 미리 인증 GATEWAY에서 받아야 하는가?
+        // 만약 user_serivce에게 해당 유저가 존재하는지 확인 요청을 보내야 한다면
+        // 아래에 user_service에 존재 하는지 요청하는 로직을 추가한다.(여러가지 근거들로 장/단점 따져봐야함)
+        Long followerMemberId = followCreate.getFollowerMemberId();
+        Long followingMemberId = followCreate.getFollowingMemberId();
 
         checkAuthorized(followCreate.getFollowerMemberId(), principalId);
         checkDuplicated(followCreate);
 
-        Follow follow = Follow.create(followerMember, folloingMember);
+        Follow follow = Follow.create(followerMemberId, followingMemberId);
         Follow saved = followRepository.save(follow);
 
         /**
-         * 뉴스피드에 팔로우 기록 추가
-         * 추후에 서비스로 분리 후 RestTemplate 으로 호출한다.
+         * 뉴스피드에 좋아요 기록 추가
+         * TODO : 뉴스피드에 좋아요 이벤트를 기록한다.
+         * followerMemberId, followingMemberId, "follow", saved.getId()
          */
-        NewsfeedCreate newsfeedCreate = NewsfeedCreate.builder()
-                .receiverId(followCreate.getFollowingMemberId())
-                .senderId(followCreate.getFollowerMemberId())
-                .newsfeedType("follow")
-                .activityId(saved.getId())
-                .build();
-        newsfeedService.create(newsfeedCreate);
     }
 
     private void checkDuplicated(final FollowCreate followCreate) {
@@ -75,8 +58,4 @@ public class FollowService {
         }
     }
 
-    private Member findExistMember(Long id) {
-        return memberRepository.findById(id).orElseThrow(() ->
-                new MemberNotFoundException(MemberErrorCode.MEMBER_NOT_FOUND));
-    }
 }
