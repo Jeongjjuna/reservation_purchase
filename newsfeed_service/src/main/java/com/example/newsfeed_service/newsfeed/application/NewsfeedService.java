@@ -42,7 +42,7 @@ public class NewsfeedService {
 
         // TODO : 진짜 만약 팔로우를 걸어놓은 사람이 엄청 많다면? 만명이상?
         // TODO : activity service에서 principalId에 해당하는 모든 following ids(내가 팔로우한 사람들 = 팔로우를 받은 사람들)를 가져온다.
-        List<Long> followingIds = List.of();
+        List<Long> followingIds = List.of(124L);
 
 
         // TODO : 마지막으로 확인한 시점 이후로 최신 데이터를 가져온다.

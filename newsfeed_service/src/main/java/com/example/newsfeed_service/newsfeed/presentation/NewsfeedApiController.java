@@ -44,8 +44,8 @@ public class NewsfeedApiController {
      * API GATEWAY 에서 호출할 예정이고, 쿼리파라미터로 인증정보를 넘겨받는다.
      */
     // TODO : url을 어떻게 수정할 지 고민해보자. 다양한 사례들 찾아보기.
-    @GetMapping()
-    public ResponseEntity<Page<NewsfeedResponse>> create(
+    @GetMapping
+    public ResponseEntity<Page<NewsfeedResponse>> read(
             @RequestParam(name = "member", required = false) Long principalId
     ) {
         Page<NewsfeedResponse> myNewsfeeds = newsfeedService.my(principalId).map(NewsfeedResponse::from);

@@ -1,5 +1,5 @@
 dependencies {
-    // core-module이 필요로 하는 의존성 정의
+    implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
 }
 
 tasks.named('test') {
