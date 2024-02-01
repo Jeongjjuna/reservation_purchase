@@ -21,14 +21,8 @@ subprojects {
 		// 여기에 나중에 공통적인 의존성들을 묶으면 좋을 것 같다. (user_service, newsfeed_service, activity_service)
 		implementation 'org.springframework.boot:spring-boot-starter-web'
 		implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-		implementation 'org.springframework.boot:spring-boot-starter-security'
-		implementation 'org.springframework.boot:spring-boot-starter-mail'
 		implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 		implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
-
-		implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
-		runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
-		runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
 
 		compileOnly 'org.projectlombok:lombok'
 
@@ -37,7 +31,6 @@ subprojects {
 		annotationProcessor 'org.projectlombok:lombok'
 
 		testImplementation 'org.springframework.boot:spring-boot-starter-test'
-		testImplementation 'org.springframework.security:spring-security-test'
 	}
 
 	group = 'com.example'

@@ -1,16 +1,15 @@
 package com.example.newsfeed_service.newsfeed.presentation;
 
-import com.example.newsfeed_service.auth.security.UserDetailsImpl;
 import com.example.newsfeed_service.newsfeed.application.NewsfeedService;
 import com.example.newsfeed_service.newsfeed.domain.NewsfeedCreate;
 import com.example.newsfeed_service.newsfeed.presentation.response.NewsfeedResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import java.net.URI;
 
@@ -41,13 +40,15 @@ public class NewsfeedApiController {
     }
 
     /**
-     * 내가 팔로우한 사용자들의 뉴스피드를 보여준다.
+     * 특정 회원의 뉴스피드를 보여준다.
+     * API GATEWAY 에서 호출할 예정이고, 쿼리파라미터로 인증정보를 넘겨받는다.
      */
-    @GetMapping("/my")
+    // TODO : url을 어떻게 수정할 지 고민해보자. 다양한 사례들 찾아보기.
+    @GetMapping()
     public ResponseEntity<Page<NewsfeedResponse>> create(
-            @AuthenticationPrincipal UserDetailsImpl userDetails
+            @RequestParam(name = "member", required = false) Long principalId
     ) {
-        Page<NewsfeedResponse> myNewsfeeds = newsfeedService.my(userDetails.getId()).map(NewsfeedResponse::from);
+        Page<NewsfeedResponse> myNewsfeeds = newsfeedService.my(principalId).map(NewsfeedResponse::from);
         return ResponseEntity.ok(myNewsfeeds);
     }
 }
