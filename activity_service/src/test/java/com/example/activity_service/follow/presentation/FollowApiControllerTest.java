@@ -3,18 +3,13 @@ package com.example.activity_service.follow.presentation;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.example.activity_service.member.application.port.MemberRepository;
-import com.example.activity_service.member.domain.Member;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,81 +22,39 @@ class FollowApiControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @Autowired
-    private MemberRepository memberRepository;
-
-    @Autowired
-    private UserDetailsService userDetailsService;
-
-    private Member saveMember() {
-        Member member = Member.builder()
-                .email("user1@naver.com")
-                .password("12345678")
-                .name("홍길동")
-                .greetings("hi")
-                .build();
-        return memberRepository.save(member);
-    }
-
-    private void setPrincipal(String email) {
-        UserDetails userDetails = userDetailsService.loadUserByUsername(email);
-        UsernamePasswordAuthenticationToken principal = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-        SecurityContextHolder.getContext().setAuthentication(principal);
-    }
-
     @DisplayName("팔로우 테스트 : 성공")
     @Test
     void 팔로우_요청() throws Exception {
         // given
-        Member saved = saveMember();
-        setPrincipal(saved.getEmail());
-
-        Member member = Member.builder()
-                .email("user2@naver.com")
-                .password("12345678")
-                .name("홍길동")
-                .greetings("hi")
-                .build();
-        Member followingMember = memberRepository.save(member);
-
         String json = """
                 {
-                  "followerMemberId" : %d,
-                  "followingMemberId" : %d
+                  "followerMemberId" : 1,
+                  "followingMemberId" : 2
                 }
-                """.formatted(saved.getId(), followingMember.getId());
+                """;
 
         // when, then
-        mockMvc.perform(post("/v1/follow")
+        mockMvc.perform(post("/v1/follows")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(json))
+                        .content(json)
+                        .param("member", "1"))
                 .andExpect(status().isOk());
     }
 
     @DisplayName("팔로우 테스트 : 팔로우 하려는 사람이 존재하지 않는 경우")
     @Test
+    @Disabled("follow service에서 검증을 수행할지, 아니면 검증된 값 자체를 요청받을지 결정이 필요함")
     void 팔로우_하려는_사람이_존재하지_않는경우_예외발생() throws Exception {
         // given
-        Member saved = saveMember();
-        setPrincipal(saved.getEmail());
-
-        Member member = Member.builder()
-                .email("user2@naver.com")
-                .password("12345678")
-                .name("홍길동")
-                .greetings("hi")
-                .build();
-        Member followingMember = memberRepository.save(member);
-
         String json = """
                 {
                   "followerMemberId" : %d,
                   "followingMemberId" : %d
                 }
-                """.formatted(saved.getId(), 9999999L);
+                """.formatted(1L,  9999999L);
 
         // when, then
-        mockMvc.perform(post("/v1/follow")
+        mockMvc.perform(post("/v1/follows")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isNotFound());

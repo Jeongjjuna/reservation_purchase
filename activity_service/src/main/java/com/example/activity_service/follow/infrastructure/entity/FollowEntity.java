@@ -1,16 +1,12 @@
 package com.example.activity_service.follow.infrastructure.entity;
 
 import com.example.activity_service.follow.domain.Follow;
-import com.example.activity_service.member.infrastructure.entity.MemberEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -31,13 +27,11 @@ public class FollowEntity {
     @Column(name = "follow_id", updatable = false)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "follower_member_id", nullable = false, columnDefinition = "팔로우를 한 사람")
-    private MemberEntity followerMember;
+    @Column(name = "follower_member_id", nullable = false, columnDefinition = "팔로우를 한 사람")
+    private Long followerId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "following_member_id", nullable = false, columnDefinition = "팔로우를 당한사람")
-    private MemberEntity followingMember;
+    @Column(name = "following_member_id", nullable = false, columnDefinition = "팔로우를 당한사람")
+    private Long followingId;
 
     @Column(name = "follow_check")
     private boolean followCheck;
@@ -49,8 +43,8 @@ public class FollowEntity {
     public static FollowEntity from(Follow follow) {
         FollowEntity followEntity = new FollowEntity();
         followEntity.id = follow.getId();
-        followEntity.followerMember = MemberEntity.from(follow.getFollowerMember());
-        followEntity.followingMember = MemberEntity.from(follow.getFollowingMember());
+        followEntity.followerId = follow.getFollowerMemberId();
+        followEntity.followingId = follow.getFollowingMemberId();
         followEntity.followCheck = follow.isFollowCheck();
         followEntity.updatedAt = follow.getUpdatedAt();
         return followEntity;
@@ -59,8 +53,8 @@ public class FollowEntity {
     public Follow toModel() {
         return Follow.builder()
                 .id(id)
-                .followerMember(followerMember.toModel())
-                .followingMember(followingMember.toModel())
+                .followerMemberId(followerId)
+                .followingMemberId(followingId)
                 .followCheck(followCheck)
                 .updatedAt(updatedAt)
                 .build();

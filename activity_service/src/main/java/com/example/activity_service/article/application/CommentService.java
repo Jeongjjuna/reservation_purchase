@@ -1,13 +1,11 @@
 package com.example.activity_service.article.application;
 
-import com.example.activity_service.article.application.port.CommentRepository;
-import com.example.activity_service.article.domain.Comment;
-import com.example.activity_service.exception.GlobalException;
-import com.example.activity_service.newsfeed.domain.NewsfeedCreate;
 import com.example.activity_service.article.application.port.ArticleRepository;
+import com.example.activity_service.article.application.port.CommentRepository;
 import com.example.activity_service.article.domain.Article;
+import com.example.activity_service.article.domain.Comment;
 import com.example.activity_service.article.domain.CommentCreate;
-import com.example.activity_service.newsfeed.application.NewsfeedService;
+import com.example.activity_service.exception.GlobalException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,16 +15,13 @@ public class CommentService {
 
     private final CommentRepository commentRepository;
     private final ArticleRepository articleRepository;
-    private final NewsfeedService newsfeedService;
 
     public CommentService(
             final CommentRepository commentRepository,
-            final ArticleRepository articleRepository,
-            final NewsfeedService newsfeedService
+            final ArticleRepository articleRepository
     ) {
         this.commentRepository = commentRepository;
         this.articleRepository = articleRepository;
-        this.newsfeedService = newsfeedService;
     }
 
     @Transactional
@@ -39,18 +34,12 @@ public class CommentService {
 
         Comment saved = commentRepository.save(comment);
 
+
         /**
          * 뉴스피드에 댓글 기록 추가
-         * principalId -> article.getWriterId()
-         * 추후에 서비스로 분리 후 RestTemplate 으로 호출한다.
+         * TODO : 뉴스피드에 좋아요 이벤트를 기록한다.
+         * article.getWriterId(), principalId, "comment", saved.getId()
          */
-        NewsfeedCreate newsfeedCreate = NewsfeedCreate.builder()
-                .receiverId(article.getWriterId())
-                .senderId(principalId)
-                .newsfeedType("comment")
-                .activityId(saved.getId())
-                .build();
-        newsfeedService.create(newsfeedCreate);
 
         return saved.getId();
     }
