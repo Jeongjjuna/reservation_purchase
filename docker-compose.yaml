@@ -23,5 +23,19 @@ services:
     networks:
       - reservation_purchase
 
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb_service
+    volumes:
+      - ./db/mongodb/data:/data/db
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: local_user
+      MONGO_INITDB_ROOT_PASSWORD: local_password
+      MONGO_INITDB_DATABASE: newsfeed
+    networks:
+      - reservation_purchase
+
 networks:
   reservation_purchase:

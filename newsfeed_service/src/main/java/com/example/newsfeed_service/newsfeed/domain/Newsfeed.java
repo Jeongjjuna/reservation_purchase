@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 @Getter
 public class Newsfeed {
 
-    private Long id;
+    private String id;
     private Long receiverId;
     private Long senderId;
     private NewsfeedType newsfeedType;
@@ -16,7 +16,7 @@ public class Newsfeed {
 
     @Builder
     public Newsfeed(
-            final Long id,
+            final String id,
             final Long receiverId,
             final Long senderId,
             final Long activityId,
@@ -40,18 +40,7 @@ public class Newsfeed {
                 .senderId(newsfeedCreate.getSenderId())
                 .newsfeedType(type)
                 .activityId(newsfeedCreate.getActivityId())
+                .createdAt(LocalDateTime.now())
                 .build();
-    }
-
-    @Override
-    public String toString() {
-        return "Newsfeed{" +
-                "id=" + id +
-                ", receiverId=" + receiverId +
-                ", senderId=" + senderId +
-                ", newsfeedType=" + newsfeedType +
-                ", activityId=" + activityId +
-                ", createdAt=" + createdAt +
-                '}';
     }
 }

@@ -9,14 +9,14 @@ import java.time.LocalDateTime;
 @Getter
 public class NewsfeedResponse {
 
-    private Long id;
+    private String id;
     private Long receiverId;
     private Long senderId;
     protected LocalDateTime createdAt;
     private NewsfeedType newsfeedType;
 
     @Builder
-    public NewsfeedResponse(final Long id, final Long receiverId, final Long senderId, final LocalDateTime createdAt, final NewsfeedType newsfeedType) {
+    public NewsfeedResponse(final String id, final Long receiverId, final Long senderId, final LocalDateTime createdAt, final NewsfeedType newsfeedType) {
         this.id = id;
         this.receiverId = receiverId;
         this.senderId = senderId;
