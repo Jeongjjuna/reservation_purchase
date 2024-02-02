@@ -1,4 +1,4 @@
-package com.example.activity_service.follow.domain;
+package com.example.activity_service.client;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -6,14 +6,14 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class FollowNewsfeed {
+public class CreateNewsfeed {
     private Long receiverId;
     private Long senderId;
     private String newsfeedType;
     private Long activityId;
 
     @Builder
-    public FollowNewsfeed(
+    public CreateNewsfeed(
             final Long receiverId,
             final Long senderId,
             final String newsfeedType,

@@ -1,4 +1,4 @@
-package com.example.activity_service.follow.presentation;
+package com.example.activity_service.follow.presentation.external;
 
 import com.example.activity_service.follow.application.FollowService;
 import com.example.activity_service.follow.domain.FollowCreate;

@@ -1,5 +1,6 @@
-package com.example.activity_service.article.domain;
+package com.example.activity_service.comment.domain;
 
+import com.example.activity_service.article.domain.Article;
 import lombok.Builder;
 import lombok.Getter;
 import java.time.LocalDateTime;

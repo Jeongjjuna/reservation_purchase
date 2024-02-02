@@ -1,6 +1,6 @@
-package com.example.activity_service.article.application.port;
+package com.example.activity_service.comment.application.port;
 
-import com.example.activity_service.article.domain.Comment;
+import com.example.activity_service.comment.domain.Comment;
 import java.util.Optional;
 
 public interface CommentRepository {

@@ -1,7 +1,7 @@
-package com.example.activity_service.article.presentation;
+package com.example.activity_service.comment.presentation;
 
-import com.example.activity_service.article.application.CommentService;
-import com.example.activity_service.article.domain.CommentCreate;
+import com.example.activity_service.comment.application.CommentService;
+import com.example.activity_service.comment.domain.CommentCreate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

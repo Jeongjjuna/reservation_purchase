@@ -1,11 +1,11 @@
-package com.example.activity_service.article.presentation;
+package com.example.activity_service.comment.presentation;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.example.activity_service.article.application.port.ArticleRepository;
 import com.example.activity_service.article.domain.Article;
-import com.example.activity_service.client.NewsfeedClient;
+import com.example.activity_service.client.NewsfeedFeignClient;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +13,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,7 +26,7 @@ class CommentApiControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private NewsfeedClient newsfeedClient;
+    private NewsfeedFeignClient newsfeedFeignClient;
 
     @Autowired
     private ArticleRepository articleRepository;

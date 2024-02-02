@@ -1,4 +1,4 @@
-package com.example.activity_service.article.domain;
+package com.example.activity_service.comment.domain;
 
 import lombok.Builder;
 import lombok.Getter;

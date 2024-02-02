@@ -1,6 +1,7 @@
-package com.example.activity_service.article.infrastructure.entity;
+package com.example.activity_service.comment.infrastructure.entity;
 
-import com.example.activity_service.article.domain.CommentLike;
+import com.example.activity_service.article.infrastructure.entity.ArticleEntity;
+import com.example.activity_service.comment.domain.Comment;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -23,23 +24,23 @@ import java.time.LocalDateTime;
 @EntityListeners(value = {AuditingEntityListener.class})
 @Getter
 @Entity
-@Table(name = "comment_like")
-public class CommentLikeEntity {
+@Table(name = "comment")
+public class CommentEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", updatable = false)
+    @Column(name = "comment_id", updatable = false)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "comment_id", nullable = false)
-    private CommentEntity commentEntity;
+    @JoinColumn(name = "article_id", nullable = false)
+    private ArticleEntity articleEntity;
 
     @Column(name = "member_id", nullable = false)
     private Long writerId;
 
-    @Column(name = "like_check")
-    private boolean likeCheck;
+    @Column(name = "content", nullable = false)
+    private String content;
 
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)
@@ -49,25 +50,30 @@ public class CommentLikeEntity {
     @Column(name = "updated_at")
     protected LocalDateTime updatedAt;
 
-    public static CommentLikeEntity from(final CommentLike commentLike) {
-        CommentLikeEntity commentLikeEntity = new CommentLikeEntity();
-        commentLikeEntity.id = commentLike.getId();
-        commentLikeEntity.commentEntity = CommentEntity.from(commentLike.getComment());
-        commentLikeEntity.writerId = commentLike.getWriterId();
-        commentLikeEntity.likeCheck = commentLike.isLikeCheck();
-        commentLikeEntity.createdAt = commentLike.getCreatedAt();
-        commentLikeEntity.updatedAt = commentLike.getUpdatedAt();
-        return commentLikeEntity;
+    @Column(name = "deleted_at")
+    protected LocalDateTime deletedAt;
+
+    public static CommentEntity from(final Comment comment) {
+        CommentEntity commentEntity = new CommentEntity();
+        commentEntity.id = comment.getId();
+        commentEntity.articleEntity = ArticleEntity.from(comment.getArticle());
+        commentEntity.writerId = comment.getWriterId();
+        commentEntity.content = comment.getContent();
+        commentEntity.createdAt = comment.getCreatedAt();
+        commentEntity.updatedAt = comment.getUpdatedAt();
+        commentEntity.deletedAt = comment.getDeletedAt();
+        return commentEntity;
     }
 
-    public CommentLike toModel() {
-        return CommentLike.builder()
+    public Comment toModel() {
+        return Comment.builder()
                 .id(id)
-                .comment(commentEntity.toModel())
+                .article(articleEntity.toModel())
                 .writerId(writerId)
-                .likeCheck(likeCheck)
+                .content(content)
                 .createdAt(createdAt)
                 .updatedAt(updatedAt)
+                .deletedAt(deletedAt)
                 .build();
     }
 }

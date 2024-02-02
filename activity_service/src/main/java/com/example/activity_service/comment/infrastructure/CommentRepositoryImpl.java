@@ -1,8 +1,8 @@
-package com.example.activity_service.article.infrastructure;
+package com.example.activity_service.comment.infrastructure;
 
-import com.example.activity_service.article.application.port.CommentRepository;
-import com.example.activity_service.article.domain.Comment;
-import com.example.activity_service.article.infrastructure.entity.CommentEntity;
+import com.example.activity_service.comment.application.port.CommentRepository;
+import com.example.activity_service.comment.domain.Comment;
+import com.example.activity_service.comment.infrastructure.entity.CommentEntity;
 import org.springframework.stereotype.Repository;
 import java.util.Optional;
 

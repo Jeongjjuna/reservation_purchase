@@ -20,6 +20,9 @@ public class InternalFollowApiController {
         this.followService = followService;
     }
 
+    /**
+     * 내가 팔로우한 사용자들의 리스트 반환
+     */
     @GetMapping("/follows")
     public ResponseEntity<List<Long>> findFollowing(
             @RequestParam(name = "member") Long principalId
@@ -27,6 +30,9 @@ public class InternalFollowApiController {
         return ResponseEntity.ok(followService.findByFollowingId(principalId));
     }
 
+    /**
+     * 나를 팔로우한 사용자들의 리스트 반환
+     */
     @GetMapping("/followers")
     public ResponseEntity<List<Long>> findFollowers(
             @RequestParam(name = "member") Long principalId

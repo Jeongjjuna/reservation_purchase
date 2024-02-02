@@ -1,10 +1,10 @@
-package com.example.activity_service.article.domain;
+package com.example.activity_service.comment.domain;
 
 import static org.assertj.core.api.Assertions.assertThatCode;
 
 import com.example.activity_service.article.domain.Article;
-import com.example.activity_service.article.domain.Comment;
-import com.example.activity_service.article.domain.CommentCreate;
+import com.example.activity_service.comment.domain.Comment;
+import com.example.activity_service.comment.domain.CommentCreate;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

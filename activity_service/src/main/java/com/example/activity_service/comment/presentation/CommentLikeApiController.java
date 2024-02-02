@@ -1,6 +1,6 @@
-package com.example.activity_service.article.presentation;
+package com.example.activity_service.comment.presentation;
 
-import com.example.activity_service.article.application.CommentLikeService;
+import com.example.activity_service.comment.application.CommentLikeService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
