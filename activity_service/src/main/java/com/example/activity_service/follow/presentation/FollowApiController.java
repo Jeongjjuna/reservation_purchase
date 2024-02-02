@@ -30,7 +30,6 @@ public class FollowApiController {
             @RequestBody final FollowCreate followCreate,
             @RequestParam(name = "member", required = false) Long principalId
     ) {
-        System.out.println("test");
         followService.follow(principalId, followCreate);
         return ResponseEntity.ok().build();
     }

@@ -3,6 +3,7 @@ package com.example.newsfeed_service.newsfeed.presentation;
 import com.example.newsfeed_service.newsfeed.application.NewsfeedService;
 import com.example.newsfeed_service.newsfeed.domain.NewsfeedCreate;
 import com.example.newsfeed_service.newsfeed.presentation.response.NewsfeedResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,6 +19,7 @@ import java.net.URI;
   ex) 유저서비스 -> 뉴스피드 api 호출
       게시글/좋아요서비스 -> 뉴스피드 api 호출
  */
+@Slf4j
 @RestController
 @RequestMapping("/v1/newsfeeds")
 public class NewsfeedApiController {
@@ -48,6 +50,7 @@ public class NewsfeedApiController {
     public ResponseEntity<Page<NewsfeedResponse>> read(
             @RequestParam(name = "member", required = false) Long principalId
     ) {
+        log.info("NewsfeedApiController read()호출 : 특정 회원의 뉴스피드 요청");
         Page<NewsfeedResponse> myNewsfeeds = newsfeedService.my(principalId).map(NewsfeedResponse::from);
         return ResponseEntity.ok(myNewsfeeds);
     }

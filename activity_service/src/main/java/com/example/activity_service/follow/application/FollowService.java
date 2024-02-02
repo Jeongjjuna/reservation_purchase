@@ -1,5 +1,6 @@
 package com.example.activity_service.follow.application;
 
+import com.example.activity_service.client.NewsfeedClient;
 import com.example.activity_service.follow.application.port.FollowRepository;
 import com.example.activity_service.follow.domain.Follow;
 import com.example.activity_service.follow.domain.FollowCreate;
@@ -7,10 +8,12 @@ import com.example.activity_service.follow.domain.FollowNewsfeed;
 import com.example.activity_service.follow.exception.FollowErrorCode;
 import com.example.activity_service.follow.exception.FollowException.FollowDuplicatedException;
 import com.example.activity_service.follow.exception.FollowException.FollowUnauthorizedException;
-import com.example.activity_service.client.NewsfeedClient;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.util.List;
 
+@Slf4j
 @Service
 public class FollowService {
 
@@ -56,6 +59,14 @@ public class FollowService {
         newsfeedClient.create(followNewsfeed);
     }
 
+
+    public List<Long> findByFollowerId(final Long principalId) {
+        log.info("[내부 internal 요청] FollowService findByFollowerId() : 특정 회원이 팔로우한 모든 회원ID조회");
+        return followRepository.findFollowing(principalId).stream()
+                .map(Follow::getFollowingMemberId)
+                .toList();
+    }
+
     private void checkDuplicated(final FollowCreate followCreate) {
         Long followerMemberId = followCreate.getFollowerMemberId();
         Long followingMemberId = followCreate.getFollowingMemberId();
@@ -70,5 +81,4 @@ public class FollowService {
             throw new FollowUnauthorizedException(FollowErrorCode.UNAUTHORIZED_ACCESS_ERROR);
         }
     }
-
 }
