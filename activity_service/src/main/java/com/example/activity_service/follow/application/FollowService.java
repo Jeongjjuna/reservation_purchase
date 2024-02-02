@@ -1,21 +1,31 @@
 package com.example.activity_service.follow.application;
 
+import com.example.activity_service.client.NewsfeedClient;
 import com.example.activity_service.follow.application.port.FollowRepository;
 import com.example.activity_service.follow.domain.Follow;
 import com.example.activity_service.follow.domain.FollowCreate;
+import com.example.activity_service.follow.domain.FollowNewsfeed;
 import com.example.activity_service.follow.exception.FollowErrorCode;
 import com.example.activity_service.follow.exception.FollowException.FollowDuplicatedException;
 import com.example.activity_service.follow.exception.FollowException.FollowUnauthorizedException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.util.List;
 
+@Slf4j
 @Service
 public class FollowService {
 
     private final FollowRepository followRepository;
+    private final NewsfeedClient newsfeedClient;
 
-    public FollowService(final FollowRepository followRepository) {
+    public FollowService(
+            final FollowRepository followRepository,
+            final NewsfeedClient newsfeedClient
+    ) {
         this.followRepository = followRepository;
+        this.newsfeedClient = newsfeedClient;
     }
 
     /**
@@ -38,9 +48,28 @@ public class FollowService {
 
         /**
          * 뉴스피드에 좋아요 기록 추가
-         * TODO : 뉴스피드에 좋아요 이벤트를 기록한다.
-         * followerMemberId, followingMemberId, "follow", saved.getId()
+         * TODO : 1. 분산 트랜잭션 체크 2. 테스트할때 mongodb 트랜잭션 체크
          */
+        FollowNewsfeed followNewsfeed = FollowNewsfeed.builder()
+                .receiverId(followerMemberId)
+                .senderId(followingMemberId)
+                .newsfeedType("follow")
+                .activityId(saved.getId())
+                .build();
+        newsfeedClient.create(followNewsfeed);
+    }
+
+
+    public List<Long> findByFollowingId(final Long principalId) {
+        return followRepository.findFollowing(principalId).stream()
+                .map(Follow::getFollowingMemberId)
+                .toList();
+    }
+
+    public List<Long> findByFollowerId(final Long principalId) {
+        return followRepository.findFollower(principalId).stream()
+                .map(Follow::getFollowerMemberId)
+                .toList();
     }
 
     private void checkDuplicated(final FollowCreate followCreate) {
@@ -57,5 +86,4 @@ public class FollowService {
             throw new FollowUnauthorizedException(FollowErrorCode.UNAUTHORIZED_ACCESS_ERROR);
         }
     }
-
 }

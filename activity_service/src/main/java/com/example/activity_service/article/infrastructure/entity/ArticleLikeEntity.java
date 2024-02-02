@@ -53,7 +53,7 @@ public class ArticleLikeEntity {
         ArticleLikeEntity articleLikeEntity = new ArticleLikeEntity();
         articleLikeEntity.id = articleLike.getId();
         articleLikeEntity.articleEntity = ArticleEntity.from(articleLike.getArticle());
-        articleLikeEntity.memberId = articleLike.getMemberId();
+        articleLikeEntity.memberId = articleLike.getWriter();
         articleLikeEntity.likeCheck = articleLike.isLikeCheck();
         articleLikeEntity.createdAt = articleLike.getCreatedAt();
         articleLikeEntity.updatedAt = articleLike.getUpdatedAt();
@@ -64,7 +64,7 @@ public class ArticleLikeEntity {
         return ArticleLike.builder()
                 .id(id)
                 .article(articleEntity.toModel())
-                .memberId(memberId)
+                .writer(memberId)
                 .likeCheck(likeCheck)
                 .createdAt(createdAt)
                 .deletedAt(updatedAt)
