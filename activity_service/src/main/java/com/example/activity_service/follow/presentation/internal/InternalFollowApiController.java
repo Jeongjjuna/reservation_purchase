@@ -11,7 +11,7 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("/v1/internal/follows")
+@RequestMapping("/v1/internal")
 public class InternalFollowApiController {
 
     private final FollowService followService;
@@ -20,11 +20,17 @@ public class InternalFollowApiController {
         this.followService = followService;
     }
 
-    @GetMapping
+    @GetMapping("/follows")
     public ResponseEntity<List<Long>> findFollowing(
             @RequestParam(name = "member") Long principalId
     ) {
-        log.info("[내부 internal 요청] InternalFollowApiController findFollowing() : 특정 회원이 팔로우한 모든 회원ID조회");
+        return ResponseEntity.ok(followService.findByFollowingId(principalId));
+    }
+
+    @GetMapping("/followers")
+    public ResponseEntity<List<Long>> findFollowers(
+            @RequestParam(name = "member") Long principalId
+    ) {
         return ResponseEntity.ok(followService.findByFollowerId(principalId));
     }
 

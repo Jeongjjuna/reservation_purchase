@@ -113,9 +113,9 @@ public class MemberApiController {
      */
     @GetMapping("/my-followings")
     public ResponseEntity<Page<MemberResponse>> myFollowing(
-            @AuthenticationPrincipal UserDetailsImpl userDetails
+            @RequestParam(name = "member") Long principalId
     ) {
-        Page<MemberResponse> myFollows = memberReadService.readMyFollowing(userDetails.getId());
+        Page<MemberResponse> myFollows = memberReadService.readMyFollowing(principalId);
         return ResponseEntity.ok(myFollows);
     }
 
@@ -124,9 +124,9 @@ public class MemberApiController {
      */
     @GetMapping("/my-followers")
     public ResponseEntity<Page<MemberResponse>> myFollowers(
-            @AuthenticationPrincipal UserDetailsImpl userDetails
+            @RequestParam(name = "member") Long principalId
     ) {
-        Page<MemberResponse> myFollows = memberReadService.readMyFollowers(userDetails.getId());
+        Page<MemberResponse> myFollows = memberReadService.readMyFollowers(principalId);
         return ResponseEntity.ok(myFollows);
     }
 }

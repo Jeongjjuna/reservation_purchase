@@ -60,10 +60,15 @@ public class FollowService {
     }
 
 
-    public List<Long> findByFollowerId(final Long principalId) {
-        log.info("[내부 internal 요청] FollowService findByFollowerId() : 특정 회원이 팔로우한 모든 회원ID조회");
+    public List<Long> findByFollowingId(final Long principalId) {
         return followRepository.findFollowing(principalId).stream()
                 .map(Follow::getFollowingMemberId)
+                .toList();
+    }
+
+    public List<Long> findByFollowerId(final Long principalId) {
+        return followRepository.findFollower(principalId).stream()
+                .map(Follow::getFollowerMemberId)
                 .toList();
     }
 
