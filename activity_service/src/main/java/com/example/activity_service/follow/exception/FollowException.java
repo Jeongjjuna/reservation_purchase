@@ -1,6 +1,6 @@
 package com.example.activity_service.follow.exception;
 
-import com.example.activity_service.exception.GlobalException;
+import com.example.activity_service.common.exception.GlobalException;
 
 public class FollowException extends GlobalException {
 

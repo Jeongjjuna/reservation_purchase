@@ -6,14 +6,14 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class CreateNewsfeed {
+public class NewsfeedCreate {
     private Long receiverId;
     private Long senderId;
     private String newsfeedType;
     private Long activityId;
 
     @Builder
-    public CreateNewsfeed(
+    public NewsfeedCreate(
             final Long receiverId,
             final Long senderId,
             final String newsfeedType,

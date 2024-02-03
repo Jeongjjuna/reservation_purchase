@@ -1,8 +1,8 @@
 package com.example.activity_service.follow.presentation.external;
 
+import com.example.activity_service.common.response.Response;
 import com.example.activity_service.follow.application.FollowService;
 import com.example.activity_service.follow.domain.FollowCreate;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,11 +26,11 @@ public class FollowApiController {
      * user_service는 인증만을 위한 서버? 아니면 비즈니스 로직을 섞어도 되는가?
      */
     @PostMapping
-    public ResponseEntity<Void> follow(
+    public Response<Void> follow(
             @RequestBody final FollowCreate followCreate,
             @RequestParam(name = "member", required = false) Long principalId
     ) {
         followService.follow(principalId, followCreate);
-        return ResponseEntity.ok().build();
+        return Response.success();
     }
 }

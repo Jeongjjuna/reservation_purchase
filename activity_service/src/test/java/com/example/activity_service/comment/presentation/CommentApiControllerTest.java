@@ -53,6 +53,6 @@ class CommentApiControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json)
                         .param("member", "1"))
-                .andExpect(status().isCreated());
+                .andExpect(status().isOk());
     }
 }

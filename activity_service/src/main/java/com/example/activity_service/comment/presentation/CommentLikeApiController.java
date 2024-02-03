@@ -1,7 +1,7 @@
 package com.example.activity_service.comment.presentation;
 
 import com.example.activity_service.comment.application.CommentLikeService;
-import org.springframework.http.ResponseEntity;
+import com.example.activity_service.common.response.Response;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,11 +19,11 @@ public class CommentLikeApiController {
     }
 
     @PostMapping("/comments/{id}/like")
-    public ResponseEntity<Void> create(
+    public Response<Void> create(
             @PathVariable("id") final Long commentId,
             @RequestParam(name = "member", required = false) Long principalId
     ) {
         commentLikeService.like(commentId, principalId);
-        return ResponseEntity.ok().build();
+        return Response.success();
     }
 }

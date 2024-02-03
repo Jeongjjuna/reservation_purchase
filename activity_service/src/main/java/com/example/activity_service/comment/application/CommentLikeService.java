@@ -3,7 +3,7 @@ package com.example.activity_service.comment.application;
 import com.example.activity_service.comment.application.port.CommentLikeRepository;
 import com.example.activity_service.comment.application.port.CommentRepository;
 import com.example.activity_service.comment.domain.Comment;
-import com.example.activity_service.exception.GlobalException;
+import com.example.activity_service.common.exception.GlobalException;
 import com.example.activity_service.comment.domain.CommentLike;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;

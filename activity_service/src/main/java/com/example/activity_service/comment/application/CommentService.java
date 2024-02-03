@@ -2,12 +2,12 @@ package com.example.activity_service.comment.application;
 
 import com.example.activity_service.article.application.port.ArticleRepository;
 import com.example.activity_service.article.domain.Article;
-import com.example.activity_service.client.CreateNewsfeed;
+import com.example.activity_service.client.NewsfeedCreate;
 import com.example.activity_service.client.NewsfeedFeignClient;
 import com.example.activity_service.comment.application.port.CommentRepository;
 import com.example.activity_service.comment.domain.Comment;
 import com.example.activity_service.comment.domain.CommentCreate;
-import com.example.activity_service.exception.GlobalException;
+import com.example.activity_service.common.exception.GlobalException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,13 +45,13 @@ public class CommentService {
          * TODO : 1. 분산 트랜잭션 체크 2. 테스트할때 mongodb 트랜잭션 체크
          * article.getWriterId(), principalId, "comment", saved.getId()
          */
-        CreateNewsfeed createNewsfeed = CreateNewsfeed.builder()
+        NewsfeedCreate newsfeedCreate = NewsfeedCreate.builder()
                 .receiverId(comment.getWriterId())
                 .senderId(principalId)
                 .newsfeedType("comment")
                 .activityId(saved.getId())
                 .build();
-        newsfeedFeignClient.create(createNewsfeed);
+        newsfeedFeignClient.create(newsfeedCreate);
 
         return saved.getId();
     }

@@ -10,6 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.example.user_service.auth.application.port.RedisMailRepository;
 import com.example.user_service.member.application.port.MemberRepository;
 import com.example.user_service.member.client.ActivityClient;
+import com.example.user_service.member.client.MemberList;
 import com.example.user_service.member.domain.Member;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,7 +19,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -243,7 +243,7 @@ class MemberApiControllerTest {
     @DisplayName("내가 팔로우한 회원들 조회 테스트 : 내가 팔로우한 사람들의 목록을 조회할 수 있다.")
     @Test
     void 내가_팔로우한_회원들_조회() throws Exception {
-        when(activityClient.findFollowing(any())).thenReturn(ResponseEntity.ok(Arrays.asList(1L, 2L, 3L)));
+        when(activityClient.findFollowing(any())).thenReturn(new MemberList("", "", Arrays.asList(1L, 2L, 3L)));
 
         // when, then
         mockMvc.perform(get("/v1/members/my-followings")
@@ -255,7 +255,7 @@ class MemberApiControllerTest {
     @DisplayName("나를 팔로우한 회원들 조회 테스트 : 나를 팔로우한 사람들의 목록을 조회할 수 있다.")
     @Test
     void 나를_팔로우한_회원들_조회() throws Exception {
-        when(activityClient.findFollowers(any())).thenReturn(ResponseEntity.ok(Arrays.asList(1L, 2L, 3L)));
+        when(activityClient.findFollowers(any())).thenReturn(new MemberList("", "", Arrays.asList(1L, 2L, 3L)));
 
         // when, then
         mockMvc.perform(get("/v1/members/my-followers")

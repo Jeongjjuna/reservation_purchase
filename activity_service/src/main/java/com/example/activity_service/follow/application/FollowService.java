@@ -1,6 +1,6 @@
 package com.example.activity_service.follow.application;
 
-import com.example.activity_service.client.CreateNewsfeed;
+import com.example.activity_service.client.NewsfeedCreate;
 import com.example.activity_service.client.NewsfeedFeignClient;
 import com.example.activity_service.follow.application.port.FollowRepository;
 import com.example.activity_service.follow.domain.Follow;
@@ -50,13 +50,13 @@ public class FollowService {
          * 뉴스피드에 좋아요 기록 추가
          * TODO : 1. 분산 트랜잭션 체크 2. 테스트할때 mongodb 트랜잭션 체크
          */
-        CreateNewsfeed createNewsfeed = CreateNewsfeed.builder()
+        NewsfeedCreate newsfeedCreate = NewsfeedCreate.builder()
                 .receiverId(followerMemberId)
                 .senderId(followingMemberId)
                 .newsfeedType("follow")
                 .activityId(saved.getId())
                 .build();
-        newsfeedFeignClient.create(createNewsfeed);
+        newsfeedFeignClient.create(newsfeedCreate);
     }
 
     public List<Long> findByFollowingId(final Long principalId) {

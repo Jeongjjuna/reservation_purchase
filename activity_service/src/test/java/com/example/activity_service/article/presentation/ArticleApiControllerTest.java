@@ -42,7 +42,7 @@ class ArticleApiControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .param("member", "1")
                         .content(json))
-                .andExpect(status().isCreated());
+                .andExpect(status().isOk());
     }
 
     @DisplayName("내가 팔로우한 사람들의 게시글 조회 : 성공")

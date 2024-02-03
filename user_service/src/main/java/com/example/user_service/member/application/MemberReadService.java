@@ -48,7 +48,7 @@ public class MemberReadService {
      */
     public Page<MemberResponse> readMyFollowing(final Long principalId) {
         // 내가 팔로우한 모든 id를 가져온다.
-        List<Long> followingIds = activityClient.findFollowing(principalId).getBody();
+        List<Long> followingIds = activityClient.findFollowing(principalId).getData();
 
         // 1번의 select 발생
         Pageable pageable = PageRequest.of(0, 20);
@@ -60,7 +60,7 @@ public class MemberReadService {
      */
     public Page<MemberResponse> readMyFollowers(final Long principalId) {
         // 나를 팔로워한 모든 사람을 가져온다.
-        List<Long> followerIds = activityClient.findFollowers(principalId).getBody();
+        List<Long> followerIds = activityClient.findFollowers(principalId).getData();
 
         Pageable pageable = PageRequest.of(0, 20);
         return memberRepository.findAllByIdIn(followerIds, pageable).map(MemberResponse::from);
