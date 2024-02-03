@@ -1,6 +1,6 @@
-package com.example.activity_service.common.exception;
+package com.example.newsfeed_service.common.exception;
 
-import com.example.activity_service.common.response.Response;
+import com.example.newsfeed_service.common.response.Response;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -24,7 +24,7 @@ public class GlobalControllerAdvice {
 
     @ExceptionHandler(RuntimeException.class)
     public Response<ErrorResponse> handleGlobalException(final RuntimeException e) {
-        log.error("Error occurs {}", e.getMessage());
+        log.error("Error occurs {}", e.toString());
         return Response.error(ErrorResponse.builder()
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .message("[ERROR] check server error log")
