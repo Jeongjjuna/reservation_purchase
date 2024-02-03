@@ -5,6 +5,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.example.user_service.auth.application.port.RedisMailRepository;
@@ -84,7 +85,7 @@ class MemberApiControllerTest {
         mockMvc.perform(post("/v1/members")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
-                .andExpect(status().isCreated());
+                .andExpect(status().isOk());
     }
 
     @DisplayName("회원가입 테스트 : 비밀번호 8자리 미만일 경우 예외발생")
@@ -105,7 +106,9 @@ class MemberApiControllerTest {
         mockMvc.perform(post("/v1/members")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.desc").value("failure"))
+                .andExpect(jsonPath("$.data.status").value("BAD_REQUEST"));
     }
 
     @DisplayName("회원가입 테스트 : 이미 가입된 email이 있을 경우 예외발생")
@@ -133,7 +136,9 @@ class MemberApiControllerTest {
         mockMvc.perform(post("/v1/members")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
-                .andExpect(status().isConflict());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.desc").value("failure"))
+                .andExpect(jsonPath("$.data.status").value("CONFLICT"));
     }
 
     @DisplayName("회원정보 수정 테스트 : 이름, 인사말을 수정할 수 있다.")
@@ -173,7 +178,9 @@ class MemberApiControllerTest {
         mockMvc.perform(patch("/v1/members/{memberId}", 9999L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
-                .andExpect(status().isUnauthorized());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.desc").value("failure"))
+                .andExpect(jsonPath("$.data.status").value("UNAUTHORIZED"));
     }
 
     @DisplayName("비밀번호 수정 테스트 : 비밀번호를 수정할 수 있다.")
@@ -211,7 +218,9 @@ class MemberApiControllerTest {
         mockMvc.perform(patch("/v1/members/{memberId}/password", 9999L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
-                .andExpect(status().isUnauthorized());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.desc").value("failure"))
+                .andExpect(jsonPath("$.data.status").value("UNAUTHORIZED"));
     }
 
     @DisplayName("회원 단건 조회 테스트 : 권한이 없으면 예외발생")
@@ -224,7 +233,9 @@ class MemberApiControllerTest {
         // when, then
         mockMvc.perform(get("/v1/members/{memberId}", 9999L)
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isUnauthorized());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.desc").value("failure"))
+                .andExpect(jsonPath("$.data.status").value("UNAUTHORIZED"));
     }
 
     @DisplayName("회원 단건 조회 테스트 : 회원 정보를 조회 할 수 있다.")

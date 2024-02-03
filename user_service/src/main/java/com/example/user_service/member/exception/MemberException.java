@@ -1,6 +1,6 @@
 package com.example.user_service.member.exception;
 
-import com.example.user_service.exception.GlobalException;
+import com.example.user_service.common.exception.GlobalException;
 
 public class MemberException extends GlobalException {
 

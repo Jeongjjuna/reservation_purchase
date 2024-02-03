@@ -3,6 +3,7 @@ package com.example.user_service.auth.presentation;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.example.user_service.auth.application.port.RedisRefreshRepository;
@@ -85,7 +86,9 @@ class LoginApiControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("X-Device-UUID", "1111")
                         .content(json))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.desc").value("failure"))
+                .andExpect(jsonPath("$.data.status").value("NOT_FOUND"));
     }
 
     @DisplayName("로그경인 테스트 : 비밀번호가 일치하지 않으면 예외발생")
