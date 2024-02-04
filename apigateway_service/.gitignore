@@ -35,3 +35,6 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### 애플리케이션 yaml
+application-dev.yaml
