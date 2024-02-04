@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/v1")
+@RequestMapping("/v1/comments")
 public class CommentLikeApiController {
 
     private final CommentLikeService commentLikeService;
@@ -18,7 +18,7 @@ public class CommentLikeApiController {
         this.commentLikeService = commentLikeService;
     }
 
-    @PostMapping("/comments/{id}/like")
+    @PostMapping("/{id}/like")
     public Response<Void> create(
             @PathVariable("id") final Long commentId,
             @RequestParam(name = "member", required = false) Long principalId

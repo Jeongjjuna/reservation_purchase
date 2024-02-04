@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/v1/logout")
+@RequestMapping("/v1/auth")
 public class LogoutApiController {
 
     private final LogoutService logoutService;
@@ -21,7 +21,7 @@ public class LogoutApiController {
         this.logoutService = logoutService;
     }
 
-    @PostMapping
+    @PostMapping("logout")
     public Response<Void> logout(
             @RequestBody LogoutInfo logoutInfo,
             @AuthenticationPrincipal UserDetailsImpl userDetails,

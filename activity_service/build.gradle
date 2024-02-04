@@ -1,33 +1,19 @@
 dependencies {
-    // core-module이 필요로 하는 의존성 정의
+    implementation 'org.springframework.cloud:spring-cloud-starter-openfeign:4.1.0'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
+
+    compileOnly 'org.projectlombok:lombok'
+
+    runtimeOnly 'com.mysql:mysql-connector-j'
+
+    annotationProcessor 'org.projectlombok:lombok'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
 tasks.named('test') {
     useJUnitPlatform()
 }
-
-//plugins {
-//    id 'java'
-//    id 'org.springframework.boot' version '3.2.2'
-//    id 'io.spring.dependency-management' version '1.1.4'
-//}
-//
-//group = 'com.example'
-//version = '0.0.1-SNAPSHOT'
-//
-//java {
-//    sourceCompatibility = '21'
-//}
-//
-//repositories {
-//    mavenCentral()
-//}
-//
-//dependencies {
-//    implementation 'org.springframework.boot:spring-boot-starter'
-//    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-//}
-//
-//tasks.named('test') {
-//    useJUnitPlatform()
-//}

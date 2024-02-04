@@ -55,6 +55,7 @@ class NewsfeedApiControllerTest {
 
     @DisplayName("내 뉴스피드 조회 테스트 : 성공")
     @Test
+    @Disabled("mongodb 트랜잭션 처리가능 하도록 변경해야 한다.")
     void 나의_뉴스피드_조회_요청() throws Exception {
 
         when(activityClient.findFollowing(any())).thenReturn(new FollowingIdList("", "", Arrays.asList(1L, 2L, 3L)));

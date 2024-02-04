@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/v1")
+@RequestMapping("/v1/articles")
 public class ArticleLikeApiController {
 
     private final ArticleLikeService articleLikeService;
@@ -21,7 +21,7 @@ public class ArticleLikeApiController {
     /**
      * 게시글 좋아요 기능
      */
-    @PostMapping("/articles/{id}/like")
+    @PostMapping("/{id}/like")
     public Response<Void> create(
             @PathVariable("id") final Long articleId,
             @RequestParam(name = "member", required = false) Long principalId

@@ -6,6 +6,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 @FeignClient(name = "newsfeedFeignClient", url = "${feign.newsfeedClient.url}")
 public interface NewsfeedFeignClient {
-    @RequestMapping(method = RequestMethod.POST, value = "/v1/newsfeeds", consumes = "application/json")
+    @RequestMapping(method = RequestMethod.POST, value = "/v1/internal/newsfeeds", consumes = "application/json")
     void create(final NewsfeedCreate newsfeedCreate);
 }
