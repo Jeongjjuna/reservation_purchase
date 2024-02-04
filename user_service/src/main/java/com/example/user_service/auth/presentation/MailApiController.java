@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/v1/mail")
+@RequestMapping("/v1/auth")
 public class MailApiController {
 
     private final MailService mailService;
@@ -18,7 +18,7 @@ public class MailApiController {
         this.mailService = mailService;
     }
 
-    @PostMapping
+    @PostMapping("mail")
     public Response<Void> sendAuthenticationMail(@RequestBody MailForm mailForm) {
         mailService.sendAuthenticationEmail(mailForm.getEmail());
         return Response.success();

@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/v1/refreshToken")
+@RequestMapping("/v1/auth")
 public class RefreshTokenApiController {
 
     private final RefreshTokenService refreshTokenService;
@@ -24,7 +24,7 @@ public class RefreshTokenApiController {
      * access 토큰을 재발급한다.
      * body : 리프레쉬 토큰을 받는다.
      */
-    @PostMapping
+    @PostMapping("refreshToken")
     public Response<RefreshResponse> refresh(
             @RequestBody RefreshTokenInfo refreshTokenInfo,
             @RequestHeader("X-Device-UUID") String deviceUUID

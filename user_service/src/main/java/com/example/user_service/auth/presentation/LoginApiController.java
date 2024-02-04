@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/v1/login")
+@RequestMapping("/v1/auth")
 public class LoginApiController {
 
     private final LoginService loginService;
@@ -20,7 +20,7 @@ public class LoginApiController {
         this.loginService = loginService;
     }
 
-    @PostMapping
+    @PostMapping("/login")
     public Response<LoginResponse> login(
             @RequestBody LoginInfo loginInfo,
             @RequestHeader("X-Device-UUID") String deviceUUID
