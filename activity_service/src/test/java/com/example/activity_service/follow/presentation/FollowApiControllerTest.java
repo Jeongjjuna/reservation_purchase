@@ -3,7 +3,7 @@ package com.example.activity_service.follow.presentation;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.example.activity_service.client.NewsfeedClient;
+import com.example.activity_service.client.NewsfeedFeignClient;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -25,7 +25,7 @@ class FollowApiControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private NewsfeedClient newsfeedClient;
+    private NewsfeedFeignClient newsfeedFeignClient;
 
     @DisplayName("팔로우 테스트 : 성공")
     @Test

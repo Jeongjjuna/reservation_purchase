@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.example.newsfeed_service.newsfeed.client.ActivityClient;
+import com.example.newsfeed_service.newsfeed.client.FollowingIdList;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,7 +16,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.Arrays;
@@ -57,7 +57,7 @@ class NewsfeedApiControllerTest {
     @Test
     void 나의_뉴스피드_조회_요청() throws Exception {
 
-        when(activityClient.findFollowing(any())).thenReturn(ResponseEntity.ok(Arrays.asList(1L, 2L, 3L)));
+        when(activityClient.findFollowing(any())).thenReturn(new FollowingIdList("", "", Arrays.asList(1L, 2L, 3L)));
 
         // when, then
         mockMvc.perform(get("/v1/newsfeeds")

@@ -1,6 +1,6 @@
 package com.example.user_service.member.application;
 
-import com.example.user_service.exception.GlobalException;
+import com.example.user_service.common.exception.GlobalException;
 import com.example.user_service.member.application.port.MemberRepository;
 import com.example.user_service.member.application.port.ProfileRepository;
 import com.example.user_service.member.domain.Member;

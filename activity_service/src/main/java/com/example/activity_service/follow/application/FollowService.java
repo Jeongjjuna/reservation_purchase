@@ -1,10 +1,10 @@
 package com.example.activity_service.follow.application;
 
-import com.example.activity_service.client.NewsfeedClient;
+import com.example.activity_service.client.NewsfeedCreate;
+import com.example.activity_service.client.NewsfeedFeignClient;
 import com.example.activity_service.follow.application.port.FollowRepository;
 import com.example.activity_service.follow.domain.Follow;
 import com.example.activity_service.follow.domain.FollowCreate;
-import com.example.activity_service.follow.domain.FollowNewsfeed;
 import com.example.activity_service.follow.exception.FollowErrorCode;
 import com.example.activity_service.follow.exception.FollowException.FollowDuplicatedException;
 import com.example.activity_service.follow.exception.FollowException.FollowUnauthorizedException;
@@ -18,14 +18,14 @@ import java.util.List;
 public class FollowService {
 
     private final FollowRepository followRepository;
-    private final NewsfeedClient newsfeedClient;
+    private final NewsfeedFeignClient newsfeedFeignClient;
 
     public FollowService(
             final FollowRepository followRepository,
-            final NewsfeedClient newsfeedClient
+            final NewsfeedFeignClient newsfeedFeignClient
     ) {
         this.followRepository = followRepository;
-        this.newsfeedClient = newsfeedClient;
+        this.newsfeedFeignClient = newsfeedFeignClient;
     }
 
     /**
@@ -50,15 +50,14 @@ public class FollowService {
          * 뉴스피드에 좋아요 기록 추가
          * TODO : 1. 분산 트랜잭션 체크 2. 테스트할때 mongodb 트랜잭션 체크
          */
-        FollowNewsfeed followNewsfeed = FollowNewsfeed.builder()
+        NewsfeedCreate newsfeedCreate = NewsfeedCreate.builder()
                 .receiverId(followerMemberId)
                 .senderId(followingMemberId)
                 .newsfeedType("follow")
                 .activityId(saved.getId())
                 .build();
-        newsfeedClient.create(followNewsfeed);
+        newsfeedFeignClient.create(newsfeedCreate);
     }
-
 
     public List<Long> findByFollowingId(final Long principalId) {
         return followRepository.findFollowing(principalId).stream()

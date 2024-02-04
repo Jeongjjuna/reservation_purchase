@@ -5,7 +5,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.example.activity_service.article.application.port.ArticleRepository;
 import com.example.activity_service.article.domain.Article;
-import com.example.activity_service.client.NewsfeedClient;
+import com.example.activity_service.client.NewsfeedFeignClient;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +26,7 @@ class ArticleLikeApiControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private NewsfeedClient newsfeedClient;
+    private NewsfeedFeignClient newsfeedFeignClient;
 
     @Autowired
     private ArticleRepository articleRepository;

@@ -1,6 +1,7 @@
 package com.example.user_service.member.presentation;
 
 import com.example.user_service.auth.security.UserDetailsImpl;
+import com.example.user_service.common.response.Response;
 import com.example.user_service.member.application.MemberJoinService;
 import com.example.user_service.member.application.MemberReadService;
 import com.example.user_service.member.application.MemberUpdateService;
@@ -12,7 +13,6 @@ import com.example.user_service.member.domain.PasswordUpdate;
 import com.example.user_service.member.presentation.response.MemberJoinResponse;
 import com.example.user_service.member.presentation.response.MemberResponse;
 import org.springframework.data.domain.Page;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import java.net.URI;
 
 @RestController
 @RequestMapping("/v1/members")
@@ -50,11 +49,11 @@ public class MemberApiController {
      * 회원가입
      */
     @PostMapping
-    public ResponseEntity<MemberJoinResponse> signup(
+    public Response<MemberJoinResponse> signup(
             @RequestBody final MemberCreate memberCreate
     ) {
         MemberJoinResponse response = memberJoinService.signup(memberCreate);
-        return ResponseEntity.created(URI.create("/v1/members/" + response.getId())).body(response);
+        return Response.success(response);
     }
 
     /**
@@ -62,71 +61,71 @@ public class MemberApiController {
      * (기존 이미지 있을 시 대체)
      */
     @PostMapping("/{id}/profile")
-    public ResponseEntity<String> uploadProfile(@PathVariable("id") final Long memberId,
+    public Response<String> uploadProfile(@PathVariable("id") final Long memberId,
                                                 @RequestParam("file") MultipartFile multipartFile,
                                                 @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
         String url = profileService.upload(memberId, userDetails.getId(), multipartFile);
-        return ResponseEntity.created(URI.create("/v1/members/" + memberId)).body(url);
+        return Response.success(url);
     }
 
     /**
      * 이름, 인사말 업데이트
      */
     @PatchMapping("/{id}")
-    public ResponseEntity<Void> update(
+    public Response<Void> update(
             @RequestBody final MemberUpdate memberUpdate,
             @PathVariable("id") final Long id,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
         memberUpdateService.update(memberUpdate, id, userDetails.getId());
-        return ResponseEntity.ok().build();
+        return Response.success();
     }
 
     /**
      * 비밀번호 업데이트
      */
     @PatchMapping("/{id}/password")
-    public ResponseEntity<Void> updatePassword(
+    public Response<Void> updatePassword(
             @RequestBody final PasswordUpdate passwordUpdate,
             @PathVariable("id") final Long id,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
         memberUpdateService.updatePassword(passwordUpdate, id, userDetails.getId());
-        return ResponseEntity.ok().build();
+        return Response.success();
     }
 
     /**
      * 회원 정보 단건 조회
      */
     @GetMapping("/{id}")
-    public ResponseEntity<MemberResponse> read(
+    public Response<MemberResponse> read(
             @PathVariable("id") final Long id,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
         Member member = memberReadService.read(id, userDetails.getId());
-        return ResponseEntity.ok(MemberResponse.from(member));
+        return Response.success(MemberResponse.from(member));
     }
 
     /**
      * 내가 팔로우한 회원들 조회
      */
     @GetMapping("/my-followings")
-    public ResponseEntity<Page<MemberResponse>> myFollowing(
+    public Response<Page<MemberResponse>> myFollowing(
             @RequestParam(name = "member") Long principalId
     ) {
         Page<MemberResponse> myFollows = memberReadService.readMyFollowing(principalId);
-        return ResponseEntity.ok(myFollows);
+        return Response.success(myFollows);
     }
 
     /**
      * 나를 팔로우한 회원들 조회
      */
     @GetMapping("/my-followers")
-    public ResponseEntity<Page<MemberResponse>> myFollowers(
+    public Response<Page<MemberResponse>> myFollowers(
             @RequestParam(name = "member") Long principalId
     ) {
         Page<MemberResponse> myFollows = memberReadService.readMyFollowers(principalId);
-        return ResponseEntity.ok(myFollows);
+        return Response.success(myFollows);
     }
 }

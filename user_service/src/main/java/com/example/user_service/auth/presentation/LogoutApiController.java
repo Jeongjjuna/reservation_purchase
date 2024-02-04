@@ -3,7 +3,7 @@ package com.example.user_service.auth.presentation;
 import com.example.user_service.auth.application.LogoutService;
 import com.example.user_service.auth.domain.LogoutInfo;
 import com.example.user_service.auth.security.UserDetailsImpl;
-import org.springframework.http.ResponseEntity;
+import com.example.user_service.common.response.Response;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,25 +22,25 @@ public class LogoutApiController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> logout(
+    public Response<Void> logout(
             @RequestBody LogoutInfo logoutInfo,
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @RequestHeader("X-Device-UUID") String deviceUUID
     ) {
         logoutService.logout(logoutInfo, userDetails.getEmail(), deviceUUID);
-        return ResponseEntity.ok().build();
+        return Response.success();
     }
 
     /**
      * 모든 기기에서 로그아웃 하도록 구현
      */
     @PostMapping("/all-device")
-    public ResponseEntity<Void> logoutAll(
+    public Response<Void> logoutAll(
             @RequestBody LogoutInfo logoutInfo,
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @RequestHeader("X-Device-UUID") String deviceUUID
     ) {
         logoutService.logoutAll(logoutInfo, userDetails.getEmail());
-        return ResponseEntity.ok().build();
+        return Response.success();
     }
 }

@@ -1,13 +1,14 @@
 package com.example.activity_service.follow.presentation.internal;
 
+import com.example.activity_service.common.response.Response;
 import com.example.activity_service.follow.application.FollowService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
+
 
 @Slf4j
 @RestController
@@ -20,18 +21,27 @@ public class InternalFollowApiController {
         this.followService = followService;
     }
 
+    /**
+     * 내가 팔로우한 사용자들의 리스트 반환
+     */
     @GetMapping("/follows")
-    public ResponseEntity<List<Long>> findFollowing(
+    public Response<List<Long>> findFollowing(
             @RequestParam(name = "member") Long principalId
     ) {
-        return ResponseEntity.ok(followService.findByFollowingId(principalId));
+        /**
+         * TODO : 내부 호출의 경우 어떤 약속된 응답을 사용할 지 고민
+         */
+        return Response.success(followService.findByFollowingId(principalId));
     }
 
+    /**
+     * 나를 팔로우한 사용자들의 리스트 반환
+     */
     @GetMapping("/followers")
-    public ResponseEntity<List<Long>> findFollowers(
+    public Response<List<Long>> findFollowers(
             @RequestParam(name = "member") Long principalId
     ) {
-        return ResponseEntity.ok(followService.findByFollowerId(principalId));
+        return Response.success(followService.findByFollowerId(principalId));
     }
 
 }

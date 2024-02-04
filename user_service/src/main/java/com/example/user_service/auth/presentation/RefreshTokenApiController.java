@@ -3,7 +3,7 @@ package com.example.user_service.auth.presentation;
 import com.example.user_service.auth.application.RefreshTokenService;
 import com.example.user_service.auth.domain.RefreshTokenInfo;
 import com.example.user_service.auth.presentation.response.RefreshResponse;
-import org.springframework.http.ResponseEntity;
+import com.example.user_service.common.response.Response;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -25,10 +25,10 @@ public class RefreshTokenApiController {
      * body : 리프레쉬 토큰을 받는다.
      */
     @PostMapping
-    public ResponseEntity<RefreshResponse> refresh(
+    public Response<RefreshResponse> refresh(
             @RequestBody RefreshTokenInfo refreshTokenInfo,
             @RequestHeader("X-Device-UUID") String deviceUUID
     ) {
-        return ResponseEntity.ok(refreshTokenService.refresh(refreshTokenInfo, deviceUUID));
+        return Response.success(refreshTokenService.refresh(refreshTokenInfo, deviceUUID));
     }
 }

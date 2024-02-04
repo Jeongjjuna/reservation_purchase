@@ -1,10 +1,12 @@
 package com.example.user_service.auth.security;
 
-import com.example.user_service.exception.ErrorResponse;
+import com.example.user_service.common.exception.ErrorResponse;
+import com.example.user_service.common.response.Response;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
@@ -34,7 +36,12 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
     }
 
     private void createResponse(HttpServletResponse response, final Exception e) throws IOException {
-        ErrorResponse body = new ErrorResponse(LocalDateTime.now(), "[ERROR] valid authentication token is required");
+        Response<ErrorResponse> body = Response.error(ErrorResponse.builder()
+                .status(HttpStatus.UNAUTHORIZED)
+                .message("[ERROR] valid authentication token is required")
+                .timestamp(LocalDateTime.now())
+                .build()
+        );
         response.setContentType("application/json");
         response.setStatus(401);
         response.getWriter().write(objectMapper.writeValueAsString(body));

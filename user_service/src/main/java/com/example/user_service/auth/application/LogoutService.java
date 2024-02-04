@@ -6,7 +6,7 @@ import com.example.user_service.auth.exception.AuthErrorCode;
 import com.example.user_service.auth.exception.AuthException.UnauthorizedException;
 import com.example.user_service.auth.security.jwt.JwtTokenProvider;
 import com.example.user_service.auth.security.jwt.TokenType;
-import com.example.user_service.exception.GlobalException;
+import com.example.user_service.common.exception.GlobalException;
 import com.example.user_service.member.application.port.MemberRepository;
 import com.example.user_service.member.domain.Member;
 import org.springframework.http.HttpStatus;

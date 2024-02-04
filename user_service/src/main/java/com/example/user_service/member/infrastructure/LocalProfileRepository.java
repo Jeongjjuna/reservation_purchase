@@ -1,6 +1,6 @@
 package com.example.user_service.member.infrastructure;
 
-import com.example.user_service.exception.GlobalException;
+import com.example.user_service.common.exception.GlobalException;
 import com.example.user_service.member.application.port.ProfileRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;

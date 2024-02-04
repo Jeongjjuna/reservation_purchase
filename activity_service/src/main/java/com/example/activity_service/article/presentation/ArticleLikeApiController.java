@@ -1,7 +1,7 @@
 package com.example.activity_service.article.presentation;
 
 import com.example.activity_service.article.application.ArticleLikeService;
-import org.springframework.http.ResponseEntity;
+import com.example.activity_service.common.response.Response;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,11 +22,11 @@ public class ArticleLikeApiController {
      * 게시글 좋아요 기능
      */
     @PostMapping("/articles/{id}/like")
-    public ResponseEntity<Void> create(
+    public Response<Void> create(
             @PathVariable("id") final Long articleId,
             @RequestParam(name = "member", required = false) Long principalId
     ) {
         articleLikeService.like(articleId, principalId);
-        return ResponseEntity.ok().build();
+        return Response.success();
     }
 }

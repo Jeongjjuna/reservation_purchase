@@ -4,7 +4,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.example.activity_service.client.NewsfeedClient;
+import com.example.activity_service.client.NewsfeedFeignClient;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +25,7 @@ class ArticleApiControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private NewsfeedClient newsfeedClient;
+    private NewsfeedFeignClient newsfeedFeignClient;
 
     @DisplayName("게시글 생성 테스트 : 성공")
     @Test
@@ -42,7 +42,7 @@ class ArticleApiControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .param("member", "1")
                         .content(json))
-                .andExpect(status().isCreated());
+                .andExpect(status().isOk());
     }
 
     @DisplayName("내가 팔로우한 사람들의 게시글 조회 : 성공")

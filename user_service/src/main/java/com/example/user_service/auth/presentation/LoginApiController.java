@@ -3,7 +3,7 @@ package com.example.user_service.auth.presentation;
 import com.example.user_service.auth.application.LoginService;
 import com.example.user_service.auth.domain.LoginInfo;
 import com.example.user_service.auth.presentation.response.LoginResponse;
-import org.springframework.http.ResponseEntity;
+import com.example.user_service.common.response.Response;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -21,11 +21,11 @@ public class LoginApiController {
     }
 
     @PostMapping
-    public ResponseEntity<LoginResponse> login(
+    public Response<LoginResponse> login(
             @RequestBody LoginInfo loginInfo,
             @RequestHeader("X-Device-UUID") String deviceUUID
     ) {
         LoginResponse loginResponse = loginService.login(loginInfo, deviceUUID);
-        return ResponseEntity.ok(loginResponse);
+        return Response.success(loginResponse);
     }
 }

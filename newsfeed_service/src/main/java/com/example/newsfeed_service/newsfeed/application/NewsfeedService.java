@@ -46,7 +46,7 @@ public class NewsfeedService {
 
         // TODO : 진짜 만약 팔로우를 걸어놓은 사람이 엄청 많다면? 만명이상?
         // 내가 팔로우한 모든 사람들의 아이디를 가져온다.
-        List<Long> followingIds = activityClient.findFollowing(principalId).getBody();
+        List<Long> followingIds = activityClient.findFollowing(principalId).getData();
 
         // TODO : 마지막으로 확인한 시점 이후로 최신 데이터를 가져온다.
         Pageable pageable = PageRequest.of(
