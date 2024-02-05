@@ -8,7 +8,11 @@ import com.example.activity_service.follow.domain.FollowCreate;
 import com.example.activity_service.follow.exception.FollowErrorCode;
 import com.example.activity_service.follow.exception.FollowException.FollowDuplicatedException;
 import com.example.activity_service.follow.exception.FollowException.FollowUnauthorizedException;
+import io.github.resilience4j.retry.Retry;
+import io.github.resilience4j.retry.RetryRegistry;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cloud.client.circuitbreaker.CircuitBreaker;
+import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
@@ -19,13 +23,19 @@ public class FollowService {
 
     private final FollowRepository followRepository;
     private final NewsfeedFeignClient newsfeedFeignClient;
+    private final CircuitBreakerFactory circuitBreakerFactory;
+    private final RetryRegistry retryRegistry;
 
     public FollowService(
             final FollowRepository followRepository,
-            final NewsfeedFeignClient newsfeedFeignClient
+            final NewsfeedFeignClient newsfeedFeignClient,
+            final CircuitBreakerFactory circuitBreakerFactory,
+            final RetryRegistry retryRegistry
     ) {
         this.followRepository = followRepository;
         this.newsfeedFeignClient = newsfeedFeignClient;
+        this.circuitBreakerFactory = circuitBreakerFactory;
+        this.retryRegistry = retryRegistry;
     }
 
     /**
@@ -56,7 +66,14 @@ public class FollowService {
                 .newsfeedType("follow")
                 .activityId(saved.getId())
                 .build();
-        newsfeedFeignClient.create(newsfeedCreate);
+
+        CircuitBreaker circuitBreaker = circuitBreakerFactory.create("circuitbreaker");
+        Retry retry = retryRegistry.retry("retry");
+        circuitBreaker.run(() -> Retry.decorateFunction(retry, s -> {
+            newsfeedFeignClient.create(newsfeedCreate);
+            return "success";
+        }).apply(1), throwable -> "failure");
+
     }
 
     public List<Long> findByFollowingId(final Long principalId) {

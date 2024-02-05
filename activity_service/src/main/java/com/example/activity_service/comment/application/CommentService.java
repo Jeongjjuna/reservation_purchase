@@ -8,6 +8,10 @@ import com.example.activity_service.comment.application.port.CommentRepository;
 import com.example.activity_service.comment.domain.Comment;
 import com.example.activity_service.comment.domain.CommentCreate;
 import com.example.activity_service.common.exception.GlobalException;
+import io.github.resilience4j.retry.Retry;
+import io.github.resilience4j.retry.RetryRegistry;
+import org.springframework.cloud.client.circuitbreaker.CircuitBreaker;
+import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,15 +22,21 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final ArticleRepository articleRepository;
     private final NewsfeedFeignClient newsfeedFeignClient;
+    private final CircuitBreakerFactory circuitBreakerFactory;
+    private final RetryRegistry retryRegistry;
 
     public CommentService(
             final CommentRepository commentRepository,
             final ArticleRepository articleRepository,
-            final NewsfeedFeignClient newsfeedFeignClient
+            final NewsfeedFeignClient newsfeedFeignClient,
+            final CircuitBreakerFactory circuitBreakerFactory,
+            final RetryRegistry retryRegistry
     ) {
         this.commentRepository = commentRepository;
         this.articleRepository = articleRepository;
         this.newsfeedFeignClient = newsfeedFeignClient;
+        this.circuitBreakerFactory = circuitBreakerFactory;
+        this.retryRegistry = retryRegistry;
     }
 
     @Transactional
@@ -51,7 +61,13 @@ public class CommentService {
                 .newsfeedType("comment")
                 .activityId(saved.getId())
                 .build();
-        newsfeedFeignClient.create(newsfeedCreate);
+
+        CircuitBreaker circuitBreaker = circuitBreakerFactory.create("circuitbreaker");
+        Retry retry = retryRegistry.retry("retry");
+        circuitBreaker.run(() -> Retry.decorateFunction(retry, s -> {
+            newsfeedFeignClient.create(newsfeedCreate);
+            return "success";
+        }).apply(1), throwable -> "failure");
 
         return saved.getId();
     }

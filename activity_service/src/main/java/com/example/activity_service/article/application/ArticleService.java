@@ -5,6 +5,10 @@ import com.example.activity_service.article.domain.Article;
 import com.example.activity_service.article.domain.ArticleCreate;
 import com.example.activity_service.client.NewsfeedCreate;
 import com.example.activity_service.client.NewsfeedFeignClient;
+import io.github.resilience4j.retry.Retry;
+import io.github.resilience4j.retry.RetryRegistry;
+import org.springframework.cloud.client.circuitbreaker.CircuitBreaker;
+import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,13 +17,19 @@ public class ArticleService {
 
     private final ArticleRepository articleRepository;
     private final NewsfeedFeignClient newsfeedFeignClient;
+    private final CircuitBreakerFactory circuitBreakerFactory;
+    private final RetryRegistry retryRegistry;
 
     public ArticleService(
             final ArticleRepository articleRepository,
-            final NewsfeedFeignClient newsfeedFeignClient
+            final NewsfeedFeignClient newsfeedFeignClient,
+            final CircuitBreakerFactory circuitBreakerFactory,
+            final RetryRegistry retryRegistry
     ) {
         this.articleRepository = articleRepository;
         this.newsfeedFeignClient = newsfeedFeignClient;
+        this.circuitBreakerFactory = circuitBreakerFactory;
+        this.retryRegistry = retryRegistry;
     }
 
     @Transactional
@@ -39,7 +49,14 @@ public class ArticleService {
                 .newsfeedType("article")
                 .activityId(saved.getId())
                 .build();
-        newsfeedFeignClient.create(newsfeedCreate);
+
+
+        CircuitBreaker circuitBreaker = circuitBreakerFactory.create("circuitbreaker");
+        Retry retry = retryRegistry.retry("retry");
+        circuitBreaker.run(() -> Retry.decorateFunction(retry, s -> {
+            newsfeedFeignClient.create(newsfeedCreate);
+            return "success";
+        }).apply(1), throwable -> "failure");
 
         return saved.getId();
     }
