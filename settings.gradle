@@ -2,5 +2,5 @@ rootProject.name = 'reservation_purchase'
 
 include 'user_service'
 include 'module_activity_service'
-include 'newsfeed_service'
+include 'module_newsfeed_service'
 include 'apigateway_service'
