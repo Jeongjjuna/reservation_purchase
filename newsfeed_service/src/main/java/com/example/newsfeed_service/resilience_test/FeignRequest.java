@@ -7,11 +7,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @FeignClient(name = "ResilienceNewsfeedFeignClient", url = "http://localhost:8081")
 public interface FeignRequest {
     @RequestMapping(method = RequestMethod.GET, value = "/errorful/case1", consumes = "application/json")
-    void case1();
+    String case1();
 
     @RequestMapping(method = RequestMethod.GET, value = "/errorful/case2", consumes = "application/json")
-    void case2();
+    String case2();
 
     @RequestMapping(method = RequestMethod.GET, value = "/errorful/case3", consumes = "application/json")
-    void case3();
+    String case3();
 }

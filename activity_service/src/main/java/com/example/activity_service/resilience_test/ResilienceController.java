@@ -24,7 +24,7 @@ public class ResilienceController {
 
     @GetMapping("/errorful/case2")
     public ResponseEntity<String> case2() {
-        log.info("8081의 case1 호출");
+        log.info("8081의 case2 호출");
         // Simulate blocking requests every first 10 seconds
         LocalTime currentTime = LocalTime.now();
         int currentSecond = currentTime.getSecond();
@@ -44,7 +44,7 @@ public class ResilienceController {
 
     @GetMapping("/errorful/case3")
     public ResponseEntity<String> case3() {
-        log.info("8081의 case1 호출");
+        log.info("8081의 case3 호출");
         // Simulate 500 error every first 10 seconds
         LocalTime currentTime = LocalTime.now();
         int currentSecond = currentTime.getSecond();
