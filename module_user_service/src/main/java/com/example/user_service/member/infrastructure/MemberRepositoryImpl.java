@@ -35,7 +35,7 @@ public class MemberRepositoryImpl implements MemberRepository {
     }
 
     @Override
-    public Page<Member> findAllByIdIn(List<Long> ids, Pageable pageable) {
+    public Page<Member> findAllByIdIn(final List<Long> ids, final Pageable pageable) {
         return memberJpaRepository.findAllByIdIn(ids, pageable).map(MemberEntity::toModel);
     }
 }

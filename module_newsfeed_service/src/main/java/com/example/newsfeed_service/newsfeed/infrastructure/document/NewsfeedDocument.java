@@ -20,7 +20,7 @@ public class NewsfeedDocument {
     private LocalDateTime createdAt;
 
     public static NewsfeedDocument from(final Newsfeed newsfeed) {
-        NewsfeedDocument newsfeedDocument = new NewsfeedDocument();
+        final NewsfeedDocument newsfeedDocument = new NewsfeedDocument();
         newsfeedDocument.id = newsfeed.getId();
         newsfeedDocument.receiverId = newsfeed.getReceiverId();
         newsfeedDocument.senderId = newsfeed.getSenderId();

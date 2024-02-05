@@ -9,11 +9,13 @@ import com.example.user_service.auth.security.jwt.TokenType;
 import com.example.user_service.common.exception.GlobalException;
 import com.example.user_service.member.application.port.MemberRepository;
 import com.example.user_service.member.domain.Member;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.Map;
 
+@AllArgsConstructor
 @Service
 public class LogoutService {
 
@@ -21,33 +23,23 @@ public class LogoutService {
     private final RedisRefreshRepository redisRefreshRepository;
     private final MemberRepository memberRepository;
 
-    public LogoutService(
-            final JwtTokenProvider jwtTokenProvider,
-            final RedisRefreshRepository redisRefreshRepository,
-            final MemberRepository memberRepository
-    ) {
-        this.jwtTokenProvider = jwtTokenProvider;
-        this.redisRefreshRepository = redisRefreshRepository;
-        this.memberRepository = memberRepository;
-    }
-
     /**
      * 현재 기기에서 로그아웃
      */
     @Transactional
     public void logout(final LogoutInfo logoutInfo, final String principalEmail, final String deviceUUID) {
-        String refreshToken = logoutInfo.getRefreshToken();
+        final String refreshToken = logoutInfo.getRefreshToken();
 
-        String email = jwtTokenProvider.getEmail(refreshToken, TokenType.REFRESH);
+        final String email = jwtTokenProvider.getEmail(refreshToken, TokenType.REFRESH);
 
         checkAuthorized(email, principalEmail);
 
-        Member member = memberRepository.findByEmail(email).orElseThrow(() ->
+        final Member member = memberRepository.findByEmail(email).orElseThrow(() ->
                 new GlobalException(HttpStatus.NOT_FOUND, "[ERROR] User not found"));
 
         // 존재하는 리프레쉬 토큰 확인 후 제거
-        String memberId = String.valueOf(member.getId());
-        String device = redisRefreshRepository.findByValue(memberId + "-" + deviceUUID);
+        final String memberId = String.valueOf(member.getId());
+        final String device = redisRefreshRepository.findByValue(memberId + "-" + deviceUUID);
         if (device == null) {
             throw new GlobalException(HttpStatus.NOT_FOUND, "[ERROR] ] not found refresh token");
         }

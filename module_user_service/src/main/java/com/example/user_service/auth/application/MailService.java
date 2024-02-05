@@ -14,14 +14,14 @@ import java.util.stream.IntStream;
 @Service
 public class MailService {
 
+    private static final String TITLE = "회원 가입 인증 이메일 입니다.";
+    private static final String CONTENT = "인증번호는 %s 입니다.";
+
     private final JavaMailSender emailSender;
     private final RedisMailRepository redisMailRepository;
 
     @Value("${email.id}")
     private String emailId;
-
-    private static final String TITLE = "회원 가입 인증 이메일 입니다.";
-    private static final String CONTENT = "인증번호는 %s 입니다.";
 
     public MailService(
             final JavaMailSender emailSender,
@@ -34,18 +34,18 @@ public class MailService {
     /**
      * 인증 메일을 전송한다
      */
-    public void sendAuthenticationEmail(String toEmail) {
+    public void sendAuthenticationEmail(final String toEmail) {
         // 메일 세팅
-        String randomNumber = generateNumber();
-        String setFrom = emailId;
-        String toMail = toEmail;
-        String title = TITLE;
-        String content = CONTENT.formatted(randomNumber);
+        final String randomNumber = generateNumber();
+        final String setFrom = emailId;
+        final String toMail = toEmail;
+        final String title = TITLE;
+        final String content = CONTENT.formatted(randomNumber);
 
         // 메일 전송
-        MimeMessage message = emailSender.createMimeMessage();
+        final MimeMessage message = emailSender.createMimeMessage();
         try {
-            MimeMessageHelper helper = new MimeMessageHelper(message, true, "utf-8");
+            final MimeMessageHelper helper = new MimeMessageHelper(message, true, "utf-8");
             helper.setFrom(setFrom);
             helper.setTo(toMail);
             helper.setSubject(title);
@@ -59,11 +59,11 @@ public class MailService {
         redisMailRepository.setDataExpire(toEmail, randomNumber, 180L);
     }
 
-    /*
-      인증에 사용할 6자리 난수 생성
-    */
+    /**
+     * 인증에 사용할 6자리 난수 생성
+     */
     private String generateNumber() {
-        Random random = new Random();
+        final Random random = new Random();
 
         return IntStream.range(0, 6)
                 .mapToObj(i -> String.valueOf(random.nextInt(10)))

@@ -25,18 +25,18 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
 
     @Override
     public void commence(
-            HttpServletRequest request,
-            HttpServletResponse response,
-            AuthenticationException authException
+            final HttpServletRequest request,
+            final HttpServletResponse response,
+            final AuthenticationException authException
     ) throws IOException {
         log.error("[ERROR] occurs CustomAuthenticationEntryPoint -> commence()");
 
-        Exception e = (Exception) request.getAttribute("JwtAuthenticationFilterException");
+        final Exception e = (Exception) request.getAttribute("JwtAuthenticationFilterException");
         createResponse(response, e);
     }
 
-    private void createResponse(HttpServletResponse response, final Exception e) throws IOException {
-        Response<ErrorResponse> body = Response.error(ErrorResponse.builder()
+    private void createResponse(final HttpServletResponse response, final Exception e) throws IOException {
+        final Response<ErrorResponse> body = Response.error(ErrorResponse.builder()
                 .status(HttpStatus.UNAUTHORIZED)
                 .message("[ERROR] valid authentication token is required")
                 .timestamp(LocalDateTime.now())

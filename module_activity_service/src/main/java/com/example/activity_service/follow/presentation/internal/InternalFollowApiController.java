@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
-
 @Slf4j
 @RestController
 @RequestMapping("/v1/internal")
@@ -26,11 +25,8 @@ public class InternalFollowApiController {
      */
     @GetMapping("/follows")
     public Response<List<Long>> findFollowing(
-            @RequestParam(name = "member") Long principalId
+            @RequestParam(name = "member") final Long principalId
     ) {
-        /**
-         * TODO : 내부 호출의 경우 어떤 약속된 응답을 사용할 지 고민
-         */
         return Response.success(followService.findByFollowingId(principalId));
     }
 
@@ -39,7 +35,7 @@ public class InternalFollowApiController {
      */
     @GetMapping("/followers")
     public Response<List<Long>> findFollowers(
-            @RequestParam(name = "member") Long principalId
+            @RequestParam(name = "member") final Long principalId
     ) {
         return Response.success(followService.findByFollowerId(principalId));
     }

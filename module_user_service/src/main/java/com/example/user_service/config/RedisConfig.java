@@ -10,7 +10,7 @@ public class RedisConfig {
 
     @Bean
     public RedisTemplate redisTemplate(RedisConnectionFactory connectionFactory) {
-        RedisTemplate template = new RedisTemplate<>();
+        final RedisTemplate template = new RedisTemplate<>();
         template.setConnectionFactory(connectionFactory);
         return template;
     }

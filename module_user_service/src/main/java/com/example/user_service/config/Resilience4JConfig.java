@@ -17,14 +17,14 @@ public class Resilience4JConfig {
 
     @Bean
     public Customizer<Resilience4JCircuitBreakerFactory> globalCustomConfiguration() {
-        CircuitBreakerConfig circuitBreakerConfig = CircuitBreakerConfig.custom()
+        final CircuitBreakerConfig circuitBreakerConfig = CircuitBreakerConfig.custom()
                 .failureRateThreshold(4)
                 .waitDurationInOpenState(Duration.ofMillis(1000))
                 .slidingWindowType(SlidingWindowType.COUNT_BASED)
                 .slidingWindowSize(2)
                 .build();
 
-        TimeLimiterConfig timeLimiterConfig = TimeLimiterConfig.custom()
+        final TimeLimiterConfig timeLimiterConfig = TimeLimiterConfig.custom()
                 .timeoutDuration(Duration.ofSeconds(4))
                 .build();
 
@@ -37,7 +37,7 @@ public class Resilience4JConfig {
 
     @Bean
     public RetryRegistry retryConfiguration() {
-        RetryConfig retryConfig = RetryConfig.custom()
+        final RetryConfig retryConfig = RetryConfig.custom()
                 .maxAttempts(2)
                 .build();
         return RetryRegistry.of(retryConfig);

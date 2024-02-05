@@ -46,7 +46,7 @@ public class ArticleEntity {
     protected LocalDateTime deletedAt;
 
     public static ArticleEntity from(final Article article) {
-        ArticleEntity articleEntity = new ArticleEntity();
+        final ArticleEntity articleEntity = new ArticleEntity();
         articleEntity.id = article.getId();
         articleEntity.writerId = article.getWriterId();
         articleEntity.content = article.getContent();

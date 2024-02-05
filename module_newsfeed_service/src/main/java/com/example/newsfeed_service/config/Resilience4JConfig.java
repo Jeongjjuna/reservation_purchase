@@ -17,14 +17,14 @@ public class Resilience4JConfig {
 
     @Bean
     public Customizer<Resilience4JCircuitBreakerFactory> globalCustomConfiguration() {
-        CircuitBreakerConfig circuitBreakerConfig = CircuitBreakerConfig.custom()
+        final CircuitBreakerConfig circuitBreakerConfig = CircuitBreakerConfig.custom()
                 .failureRateThreshold(4) // CircuitBreaker 열지 결정하는 실패 비율. default 50%
                 .waitDurationInOpenState(Duration.ofMillis(1000)) // CircuitBreaker 오픈한 상태 유지시간. default 60초
                 .slidingWindowType(SlidingWindowType.COUNT_BASED) // 지금까지 호출결과를 카운트로 기록할 것인가, 시간으로 기록할 것인가
                 .slidingWindowSize(2)
                 .build();
 
-        TimeLimiterConfig timeLimiterConfig = TimeLimiterConfig.custom()
+        final TimeLimiterConfig timeLimiterConfig = TimeLimiterConfig.custom()
                 .timeoutDuration(Duration.ofSeconds(4)) // 실패라고 판단되는 시간 제한을 걸어버린다. default 1ch
                 .build();
 
@@ -37,7 +37,7 @@ public class Resilience4JConfig {
 
     @Bean
     public RetryRegistry retryConfiguration() {
-        RetryConfig retryConfig = RetryConfig.custom()
+        final RetryConfig retryConfig = RetryConfig.custom()
                 .maxAttempts(2)
                 .build();
         return RetryRegistry.of(retryConfig);

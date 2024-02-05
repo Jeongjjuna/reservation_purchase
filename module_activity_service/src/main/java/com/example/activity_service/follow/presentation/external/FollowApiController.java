@@ -21,14 +21,11 @@ public class FollowApiController {
 
     /**
      * 팔로우 하기
-     * TODO : followerId, followingId 에 대해 존재하는 id인지 검사는 어디서?
-     * 이 요청은 API GATEWAY를 타고오는가? 아니면 user_service에서 요청해야 하는가?
-     * user_service는 인증만을 위한 서버? 아니면 비즈니스 로직을 섞어도 되는가?
      */
     @PostMapping
     public Response<Void> follow(
             @RequestBody final FollowCreate followCreate,
-            @RequestParam(name = "member", required = false) Long principalId
+            @RequestParam(name = "member") final Long principalId
     ) {
         followService.follow(principalId, followCreate);
         return Response.success();

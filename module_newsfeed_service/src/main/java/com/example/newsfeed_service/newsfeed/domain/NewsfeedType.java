@@ -20,7 +20,7 @@ public enum NewsfeedType {
     /**
      * 존재하는 문자열 형태만 생성한다.
      */
-    public static NewsfeedType create(String newsfeedType) {
+    public static NewsfeedType create(final String newsfeedType) {
         return Arrays.stream(NewsfeedType.values())
                 .filter(value -> value.newsfeedType.equals(newsfeedType))
                 .findFirst()

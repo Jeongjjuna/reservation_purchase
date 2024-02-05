@@ -33,7 +33,7 @@ public class Newsfeed {
 
     public static Newsfeed create(final NewsfeedCreate newsfeedCreate) {
 
-        NewsfeedType type = NewsfeedType.create(newsfeedCreate.getNewsfeedType());
+        final NewsfeedType type = NewsfeedType.create(newsfeedCreate.getNewsfeedType());
 
         return Newsfeed.builder()
                 .receiverId(newsfeedCreate.getReceiverId())

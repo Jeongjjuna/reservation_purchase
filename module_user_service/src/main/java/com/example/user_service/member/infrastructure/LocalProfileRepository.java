@@ -23,9 +23,9 @@ public class LocalProfileRepository implements ProfileRepository {
     @Override
     public String upload(final MultipartFile file) {
 
-        String uuid = UUID.randomUUID().toString();
-        String originalName = file.getOriginalFilename();
-        Path savePath = Paths.get(uploadPath, uuid + "_" + originalName);
+        final String uuid = UUID.randomUUID().toString();
+        final String originalName = file.getOriginalFilename();
+        final Path savePath = Paths.get(uploadPath, uuid + "_" + originalName);
 
         try {
             file.transferTo(savePath);
@@ -41,7 +41,7 @@ public class LocalProfileRepository implements ProfileRepository {
      */
     @Override
     public void delete(String fileName) {
-        Path filePath = Paths.get(uploadPath, fileName);
+        final Path filePath = Paths.get(uploadPath, fileName);
 
         try {
             Files.delete(filePath);

@@ -45,10 +45,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             final String token = parseBearerToken(authorizationHeader);
 
-            String email = jwtTokenProvider.getEmail(token, TokenType.ACCESS);
-            UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+            final String email = jwtTokenProvider.getEmail(token, TokenType.ACCESS);
+            final UserDetails userDetails = userDetailsService.loadUserByUsername(email);
 
-            AbstractAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+            final AbstractAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                     userDetails,
                     token,
                     userDetails.getAuthorities()

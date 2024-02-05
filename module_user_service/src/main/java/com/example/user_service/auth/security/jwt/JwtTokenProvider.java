@@ -25,8 +25,8 @@ public class JwtTokenProvider {
     @Value("${jwt.expired-time.token.refresh}")
     private Long refreshTokenExpiredTimeMs;
 
-    public String generate(String email, String userName, TokenType type) {
-        Claims claims = Jwts.claims();
+    public String generate(final String email, final String userName, final TokenType type) {
+        final Claims claims = Jwts.claims();
         claims.put("userName", userName);
         claims.put("email", email);
 
@@ -34,8 +34,8 @@ public class JwtTokenProvider {
          * TODO : Enum 메서드 안에서 리팩토링 해보자.
          * 토큰 자체를 객체로 만들어서 리팩토링 시도해볼 수 도 있을 것 같다.
          */
-        String secretKey;
-        Long expiredTime;
+        final String secretKey;
+        final Long expiredTime;
         if (type.equals(TokenType.ACCESS)) {
             secretKey = accessSecretKey;
             expiredTime = accessTokenExpiredTimeMs;
@@ -55,32 +55,32 @@ public class JwtTokenProvider {
     /**
      * TODO : 람다 형식으로 리팩토링 해보자.
      */
-    public boolean isExpired(String token, TokenType type) {
-        Date expiredDate = extractClaims(token, type).getExpiration();
+    public boolean isExpired(final String token, final TokenType type) {
+        final Date expiredDate = extractClaims(token, type).getExpiration();
         return expiredDate.before(new Date());
     }
 
-    public long getExpiredTime(String token, TokenType type) {
-        Date expiredDate = extractClaims(token, type).getExpiration();
-        Date currentDate = new Date();
+    public long getExpiredTime(final String token, final TokenType type) {
+        final Date expiredDate = extractClaims(token, type).getExpiration();
+        final Date currentDate = new Date();
         return expiredDate.getTime() - currentDate.getTime();
     }
 
     /**
      * 토큰 속 정보 name 추출
      */
-    public String getName(String token, TokenType type) {
+    public String getName(final String token, final TokenType type) {
         return extractClaims(token, type).get("name", String.class);
     }
 
     /**
      * 토큰 속 정보 email 추출
      */
-    public String getEmail(String token, TokenType type) {
+    public String getEmail(final String token, final TokenType type) {
         return extractClaims(token, type).get("email", String.class);
     }
 
-    private Claims extractClaims(String token, TokenType type) {
+    private Claims extractClaims(final String token, final TokenType type) {
         if (type.equals(TokenType.ACCESS)) {
             return Jwts.parserBuilder().setSigningKey(getKey(accessSecretKey))
                     .build().parseClaimsJws(token).getBody();
@@ -89,7 +89,7 @@ public class JwtTokenProvider {
                 .build().parseClaimsJws(token).getBody();
     }
 
-    private Key getKey(String key) {
+    private Key getKey(final String key) {
         byte[] keyBytes = key.getBytes(StandardCharsets.UTF_8);
         return Keys.hmacShaKeyFor(keyBytes);
     }

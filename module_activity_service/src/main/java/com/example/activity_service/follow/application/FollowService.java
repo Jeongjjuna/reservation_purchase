@@ -10,13 +10,14 @@ import com.example.activity_service.follow.exception.FollowException.FollowDupli
 import com.example.activity_service.follow.exception.FollowException.FollowUnauthorizedException;
 import io.github.resilience4j.retry.Retry;
 import io.github.resilience4j.retry.RetryRegistry;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.client.circuitbreaker.CircuitBreaker;
 import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
-
+@AllArgsConstructor
 @Slf4j
 @Service
 public class FollowService {
@@ -26,55 +27,27 @@ public class FollowService {
     private final CircuitBreakerFactory circuitBreakerFactory;
     private final RetryRegistry retryRegistry;
 
-    public FollowService(
-            final FollowRepository followRepository,
-            final NewsfeedFeignClient newsfeedFeignClient,
-            final CircuitBreakerFactory circuitBreakerFactory,
-            final RetryRegistry retryRegistry
-    ) {
-        this.followRepository = followRepository;
-        this.newsfeedFeignClient = newsfeedFeignClient;
-        this.circuitBreakerFactory = circuitBreakerFactory;
-        this.retryRegistry = retryRegistry;
-    }
-
     /**
      * 팔로우 하기
      */
     @Transactional
     public void follow(final Long principalId, final FollowCreate followCreate) {
 
-        // TODO : member 존재여부를 미리 인증 GATEWAY에서 받아야 하는가?
-        // 만약 user_serivce에게 해당 유저가 존재하는지 확인 요청을 보내야 한다면
-        // 아래에 user_service에 존재 하는지 요청하는 로직을 추가한다.(여러가지 근거들로 장/단점 따져봐야함)
         Long followerMemberId = followCreate.getFollowerMemberId();
         Long followingMemberId = followCreate.getFollowingMemberId();
 
         checkAuthorized(followCreate.getFollowerMemberId(), principalId);
-        checkDuplicated(followCreate);
+        checkDuplicated(followerMemberId, followingMemberId);
 
         Follow follow = Follow.create(followerMemberId, followingMemberId);
-        Follow saved = followRepository.save(follow);
+        followRepository.save(follow);
 
-        /**
-         * 뉴스피드에 좋아요 기록 추가
-         * TODO : 1. 분산 트랜잭션 체크 2. 테스트할때 mongodb 트랜잭션 체크
-         */
-        NewsfeedCreate newsfeedCreate = NewsfeedCreate.builder()
-                .receiverId(followerMemberId)
-                .senderId(followingMemberId)
-                .newsfeedType("follow")
-                .activityId(saved.getId())
-                .build();
+        NewsfeedCreate newsfeedCreate = follow.toNewsfeedCreate();
 
-        CircuitBreaker circuitBreaker = circuitBreakerFactory.create("circuitbreaker");
-        Retry retry = retryRegistry.retry("retry");
-        circuitBreaker.run(() -> Retry.decorateFunction(retry, s -> {
-            newsfeedFeignClient.create(newsfeedCreate);
-            return "success";
-        }).apply(1), throwable -> "failure");
-
+        // newsfeed_service 서비스에 팔로우 뉴스피드 생성 요청(feign client)
+        sendNewsfeedRequest(newsfeedCreate); // TODO : 1. 분산 트랜잭션 체크 2. 테스트할때 mongodb 트랜잭션 체크
     }
+
 
     public List<Long> findByFollowingId(final Long principalId) {
         return followRepository.findFollowing(principalId).stream()
@@ -88,18 +61,27 @@ public class FollowService {
                 .toList();
     }
 
-    private void checkDuplicated(final FollowCreate followCreate) {
-        Long followerMemberId = followCreate.getFollowerMemberId();
-        Long followingMemberId = followCreate.getFollowingMemberId();
-
+    private void checkDuplicated(final Long followerMemberId, Long followingMemberId) {
         followRepository.findByFollowerAndFollowing(followerMemberId, followingMemberId).ifPresent(it -> {
             throw new FollowDuplicatedException(FollowErrorCode.FOLLOW_DUPLICATED);
         });
     }
 
-    private void checkAuthorized(Long targetId, Long principalId) {
+    private void checkAuthorized(final Long targetId, final Long principalId) {
         if (!principalId.equals(targetId)) {
             throw new FollowUnauthorizedException(FollowErrorCode.UNAUTHORIZED_ACCESS_ERROR);
         }
+    }
+
+    /**
+     * TODO : 서킷브레이커, 리트라이의 공통 부분을 어떻게 리팩토링 해볼지 고민해보자.
+     */
+    private void sendNewsfeedRequest(final NewsfeedCreate newsfeedCreate) {
+        final CircuitBreaker circuitBreaker = circuitBreakerFactory.create("circuitbreaker");
+        final Retry retry = retryRegistry.retry("retry");
+        circuitBreaker.run(() -> Retry.decorateFunction(retry, s -> {
+            newsfeedFeignClient.create(newsfeedCreate);
+            return "success";
+        }).apply(1), throwable -> "failure");
     }
 }

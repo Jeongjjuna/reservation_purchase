@@ -8,26 +8,20 @@ import com.example.user_service.member.exception.MemberErrorCode;
 import com.example.user_service.member.exception.MemberException.MemberNotFoundException;
 import com.example.user_service.member.exception.MemberException.MemberUnauthorizedException;
 import com.example.user_service.member.exception.MemberException.ProfileNotFoundException;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-@Slf4j
+@AllArgsConstructor
 @Service
+@Slf4j
 public class ProfileService {
 
     private final MemberRepository memberRepository;
     private final ProfileRepository profileRepository;
-
-    public ProfileService(
-            final MemberRepository memberRepository,
-            final ProfileRepository profileRepository
-    ) {
-        this.memberRepository = memberRepository;
-        this.profileRepository = profileRepository;
-    }
 
     /**
      * 프로필 이미지 업로드
@@ -39,9 +33,9 @@ public class ProfileService {
         checkAuthorized(targetId, principalId);
         checkNullProfile(file);
 
-        Member member = findExistMember(targetId);
+        final Member member = findExistMember(targetId);
 
-        String savedUrl = replaceProfile(member, file); // 로컬 DB 저장
+        final String savedUrl = replaceProfile(member, file); // 로컬 DB 저장
 
         try {
             member.saveProfile(savedUrl);
@@ -66,12 +60,12 @@ public class ProfileService {
         }
     }
 
-    private Member findExistMember(Long id) {
+    private Member findExistMember(final Long id) {
         return memberRepository.findById(id).orElseThrow(() ->
                 new MemberNotFoundException(MemberErrorCode.MEMBER_NOT_FOUND));
     }
 
-    private String replaceProfile(Member member, MultipartFile file) {
+    private String replaceProfile(final Member member, final MultipartFile file) {
         if (member.isProfileUploaded()) {
             profileRepository.delete(member.getProfileUrl());
         }

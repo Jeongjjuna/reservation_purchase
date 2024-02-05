@@ -33,7 +33,7 @@ public class ArticleLike {
         this.updatedAt = deletedAt;
     }
 
-    public static ArticleLike create(Article article, Long writerId) {
+    public static ArticleLike create(final Article article, final Long writerId) {
         return ArticleLike.builder()
                 .article(article)
                 .writerId(writerId)

@@ -23,13 +23,13 @@ public class ArticleService {
     private final RetryRegistry retryRegistry;
 
     @Transactional
-    public Long create(Long principalId, ArticleCreate articleCreate) {
+    public Long create(final Long principalId, final ArticleCreate articleCreate) {
 
-        Article article = Article.create(principalId, articleCreate);
+        final Article article = Article.create(principalId, articleCreate);
 
-        Article saved = articleRepository.save(article);
+        final Article saved = articleRepository.save(article);
 
-        NewsfeedCreate newsfeedCreate = article.toNewsfeedCreate();
+        final NewsfeedCreate newsfeedCreate = article.toNewsfeedCreate();
 
         // newsfeed_service 서비스에 뉴스피드 생성 요청(feign client)
         sendNewsfeedRequest(newsfeedCreate); // TODO : f1. 분산 트랜잭션 체크 2. 테스트할때 mongodb 트랜잭션 체크
@@ -37,9 +37,9 @@ public class ArticleService {
         return saved.getId();
     }
 
-    private void sendNewsfeedRequest(NewsfeedCreate newsfeedCreate) {
-        CircuitBreaker circuitBreaker = circuitBreakerFactory.create("circuitbreaker");
-        Retry retry = retryRegistry.retry("retry");
+    private void sendNewsfeedRequest(final NewsfeedCreate newsfeedCreate) {
+        final CircuitBreaker circuitBreaker = circuitBreakerFactory.create("circuitbreaker");
+        final Retry retry = retryRegistry.retry("retry");
         circuitBreaker.run(() -> Retry.decorateFunction(retry, s -> {
             newsfeedFeignClient.create(newsfeedCreate);
             return "success";

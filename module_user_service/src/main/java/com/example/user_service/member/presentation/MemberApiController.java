@@ -12,6 +12,7 @@ import com.example.user_service.member.domain.MemberUpdate;
 import com.example.user_service.member.domain.PasswordUpdate;
 import com.example.user_service.member.presentation.response.MemberJoinResponse;
 import com.example.user_service.member.presentation.response.MemberResponse;
+import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+@AllArgsConstructor
 @RestController
 @RequestMapping("/v1/members")
 public class MemberApiController {
@@ -33,18 +35,6 @@ public class MemberApiController {
     private final MemberUpdateService memberUpdateService;
     private final ProfileService profileService;
 
-    public MemberApiController(
-            final MemberReadService memberReadService,
-            final MemberJoinService memberJoinService,
-            final MemberUpdateService memberUpdateService,
-            final ProfileService profileService
-    ) {
-        this.memberReadService = memberReadService;
-        this.memberJoinService = memberJoinService;
-        this.memberUpdateService = memberUpdateService;
-        this.profileService = profileService;
-    }
-
     /**
      * 회원가입
      */
@@ -52,7 +42,7 @@ public class MemberApiController {
     public Response<MemberJoinResponse> signup(
             @RequestBody final MemberCreate memberCreate
     ) {
-        MemberJoinResponse response = memberJoinService.signup(memberCreate);
+        final MemberJoinResponse response = memberJoinService.signup(memberCreate);
         return Response.success(response);
     }
 
@@ -61,11 +51,12 @@ public class MemberApiController {
      * (기존 이미지 있을 시 대체)
      */
     @PostMapping("/{id}/profile")
-    public Response<String> uploadProfile(@PathVariable("id") final Long memberId,
-                                                @RequestParam("file") MultipartFile multipartFile,
-                                                @AuthenticationPrincipal UserDetailsImpl userDetails
+    public Response<String> uploadProfile(
+            @PathVariable("id") final Long memberId,
+            @RequestParam("file") final MultipartFile multipartFile,
+            @AuthenticationPrincipal final UserDetailsImpl userDetails
     ) {
-        String url = profileService.upload(memberId, userDetails.getId(), multipartFile);
+        final String url = profileService.upload(memberId, userDetails.getId(), multipartFile);
         return Response.success(url);
     }
 
@@ -76,7 +67,7 @@ public class MemberApiController {
     public Response<Void> update(
             @RequestBody final MemberUpdate memberUpdate,
             @PathVariable("id") final Long id,
-            @AuthenticationPrincipal UserDetailsImpl userDetails
+            @AuthenticationPrincipal final UserDetailsImpl userDetails
     ) {
         memberUpdateService.update(memberUpdate, id, userDetails.getId());
         return Response.success();
@@ -89,7 +80,7 @@ public class MemberApiController {
     public Response<Void> updatePassword(
             @RequestBody final PasswordUpdate passwordUpdate,
             @PathVariable("id") final Long id,
-            @AuthenticationPrincipal UserDetailsImpl userDetails
+            @AuthenticationPrincipal final UserDetailsImpl userDetails
     ) {
         memberUpdateService.updatePassword(passwordUpdate, id, userDetails.getId());
         return Response.success();
@@ -101,9 +92,9 @@ public class MemberApiController {
     @GetMapping("/{id}")
     public Response<MemberResponse> read(
             @PathVariable("id") final Long id,
-            @AuthenticationPrincipal UserDetailsImpl userDetails
+            @AuthenticationPrincipal final UserDetailsImpl userDetails
     ) {
-        Member member = memberReadService.read(id, userDetails.getId());
+        final Member member = memberReadService.read(id, userDetails.getId());
         return Response.success(MemberResponse.from(member));
     }
 
@@ -112,9 +103,9 @@ public class MemberApiController {
      */
     @GetMapping("/my-followings")
     public Response<Page<MemberResponse>> myFollowing(
-            @RequestParam(name = "member") Long principalId
+            @RequestParam(name = "member") final Long principalId
     ) {
-        Page<MemberResponse> myFollows = memberReadService.readMyFollowing(principalId);
+        final Page<MemberResponse> myFollows = memberReadService.readMyFollowing(principalId);
         return Response.success(myFollows);
     }
 
@@ -123,9 +114,9 @@ public class MemberApiController {
      */
     @GetMapping("/my-followers")
     public Response<Page<MemberResponse>> myFollowers(
-            @RequestParam(name = "member") Long principalId
+            @RequestParam(name = "member") final Long principalId
     ) {
-        Page<MemberResponse> myFollows = memberReadService.readMyFollowers(principalId);
+        final Page<MemberResponse> myFollows = memberReadService.readMyFollowers(principalId);
         return Response.success(myFollows);
     }
 }

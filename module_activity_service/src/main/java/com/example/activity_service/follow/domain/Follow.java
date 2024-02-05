@@ -1,5 +1,7 @@
 package com.example.activity_service.follow.domain;
 
+import com.example.activity_service.client.NewsfeedCreate;
+import com.example.activity_service.common.domain.ActivityType;
 import lombok.Builder;
 import lombok.Getter;
 import java.time.LocalDateTime;
@@ -32,6 +34,15 @@ public class Follow {
         return Follow.builder()
                 .followerMemberId(followerMember)
                 .followingMemberId(followingMember)
+                .build();
+    }
+
+    public NewsfeedCreate toNewsfeedCreate() {
+        return NewsfeedCreate.builder()
+                .receiverId(followerMemberId)
+                .senderId(followingMemberId)
+                .newsfeedType(ActivityType.FOLLOW.getActivityType())
+                .activityId(id)
                 .build();
     }
 }

@@ -22,13 +22,13 @@ public class ArticleReadService {
     /**
      * 내가 팔로우한 사용자들의 게시글 목록을 불러온다.
      */
-    public Page<ArticleResponse> readMyFollowsArticles(Long principalId) {
+    public Page<ArticleResponse> readMyFollowsArticles(final Long principalId) {
 
-        List<Long> myFollowingIds = followRepository.findFollowing(principalId).stream()
+        final List<Long> myFollowingIds = followRepository.findFollowing(principalId).stream()
                 .map(Follow::getFollowingMemberId)
                 .toList();
 
-        Pageable pageable = PageRequest.of(0, 20,
+        final Pageable pageable = PageRequest.of(0, 20,
                 Sort.by(Sort.Direction.DESC, "createdAt")
         );
         return articleRepository.findByWriterIdIn(myFollowingIds, pageable).map(ArticleResponse::from);

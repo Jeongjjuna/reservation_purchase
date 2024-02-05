@@ -28,12 +28,12 @@ public class ArticleLikeService {
     @Transactional
     public void like(final Long articleId, final Long principalId) {
 
-        ArticleLike saved = articleRepository.findById(articleId)
+        final ArticleLike saved = articleRepository.findById(articleId)
                 .map(article -> ArticleLike.create(article, principalId))
                 .map(articleLikeRepository::save)
                 .orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, "[ERROR] 게시글이 존재하지 않습니다."));
 
-        NewsfeedCreate newsfeedCreate = saved.toNewsfeedCreate();
+        final NewsfeedCreate newsfeedCreate = saved.toNewsfeedCreate();
 
         // newsfeed_service 서비스에 뉴스피드 생성 요청(feign client)
         sendNewsfeedRequest(newsfeedCreate); // TODO : f1. 분산 트랜잭션 체크 2. 테스트할때 mongodb 트랜잭션 체크
@@ -43,9 +43,9 @@ public class ArticleLikeService {
     /**
      * TODO : 서킷브레이커, 리트라이의 공통 부분을 어떻게 리팩토링 해볼지 고민해보자.
      */
-    private void sendNewsfeedRequest(NewsfeedCreate newsfeedCreate) {
-        CircuitBreaker circuitBreaker = circuitBreakerFactory.create("circuitbreaker");
-        Retry retry = retryRegistry.retry("retry");
+    private void sendNewsfeedRequest(final NewsfeedCreate newsfeedCreate) {
+        final CircuitBreaker circuitBreaker = circuitBreakerFactory.create("circuitbreaker");
+        final Retry retry = retryRegistry.retry("retry");
         circuitBreaker.run(() -> Retry.decorateFunction(retry, s -> {
             newsfeedFeignClient.create(newsfeedCreate);
             return "success";

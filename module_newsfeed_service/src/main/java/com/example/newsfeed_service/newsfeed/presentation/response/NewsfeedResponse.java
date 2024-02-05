@@ -16,7 +16,13 @@ public class NewsfeedResponse {
     private NewsfeedType newsfeedType;
 
     @Builder
-    public NewsfeedResponse(final String id, final Long receiverId, final Long senderId, final LocalDateTime createdAt, final NewsfeedType newsfeedType) {
+    public NewsfeedResponse(
+            final String id,
+            final Long receiverId,
+            final Long senderId,
+            final LocalDateTime createdAt,
+            final NewsfeedType newsfeedType
+    ) {
         this.id = id;
         this.receiverId = receiverId;
         this.senderId = senderId;
@@ -24,7 +30,7 @@ public class NewsfeedResponse {
         this.newsfeedType = newsfeedType;
     }
 
-    public static NewsfeedResponse from(Newsfeed newsfeed) {
+    public static NewsfeedResponse from(final Newsfeed newsfeed) {
         return NewsfeedResponse.builder()
                 .id(newsfeed.getId())
                 .receiverId(newsfeed.getReceiverId())

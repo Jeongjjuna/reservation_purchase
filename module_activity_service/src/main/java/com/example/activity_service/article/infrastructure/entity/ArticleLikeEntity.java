@@ -50,7 +50,7 @@ public class ArticleLikeEntity {
     private boolean likeCheck;
 
     public static ArticleLikeEntity from(final ArticleLike articleLike) {
-        ArticleLikeEntity articleLikeEntity = new ArticleLikeEntity();
+        final ArticleLikeEntity articleLikeEntity = new ArticleLikeEntity();
         articleLikeEntity.id = articleLike.getId();
         articleLikeEntity.articleEntity = ArticleEntity.from(articleLike.getArticle());
         articleLikeEntity.memberId = articleLike.getWriterId();

@@ -8,27 +8,19 @@ import com.example.user_service.member.domain.PasswordUpdate;
 import com.example.user_service.member.exception.MemberErrorCode;
 import com.example.user_service.member.exception.MemberException.MemberNotFoundException;
 import com.example.user_service.member.exception.MemberException.MemberUnauthorizedException;
+import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.Map;
 
+@AllArgsConstructor
 @Service
 public class MemberUpdateService {
 
     private final MemberRepository memberRepository;
     private final BCryptPasswordEncoder passwordEncoder;
     private final RedisRefreshRepository redisRefreshRepository;
-
-    public MemberUpdateService(
-            final MemberRepository memberRepository,
-            final BCryptPasswordEncoder passwordEncoder,
-            final RedisRefreshRepository redisRefreshRepository
-    ) {
-        this.memberRepository = memberRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.redisRefreshRepository = redisRefreshRepository;
-    }
 
     /**
      * 이름, 인사말 업데이트
@@ -38,7 +30,7 @@ public class MemberUpdateService {
 
         checkAuthorized(targetId, principalId);
 
-        Member member = findExistMember(targetId);
+        final Member member = findExistMember(targetId);
 
         member.update(memberUpdate);
 
@@ -57,21 +49,21 @@ public class MemberUpdateService {
 
         checkAuthorized(targetId, principalId);
 
-        Member member = findExistMember(targetId);
+        final Member member = findExistMember(targetId);
 
         passwordUpdate.validate();
 
-        String encodedPassword = passwordEncoder.encode(passwordUpdate.getPassword());
+        final String encodedPassword = passwordEncoder.encode(passwordUpdate.getPassword());
         member.applyEncodedPassword(encodedPassword);
 
         memberRepository.save(member);
 
         // 비밀번호 업데이트 시 모든 기기에서 로그아웃 한다.
         // 존재하는 모든 리프레쉬 토큰 확인 후 제거
-        String memberId = String.valueOf(member.getId());
+        final String memberId = String.valueOf(member.getId());
         // 존재하는 모든 uuid - refreshToken 가져오기
-        Map<String, String> allDevice = redisRefreshRepository.getAllFromHash(memberId);
-        for (String uuid : allDevice.keySet()) {
+        final Map<String, String> allDevice = redisRefreshRepository.getAllFromHash(memberId);
+        for (final String uuid : allDevice.keySet()) {
             redisRefreshRepository.delete(memberId + "-" + uuid);
             redisRefreshRepository.delete(uuid);
             redisRefreshRepository.removeFromHash(memberId, uuid);
@@ -80,13 +72,13 @@ public class MemberUpdateService {
 
     }
 
-    private void checkAuthorized(Long targetId, Long principalId) {
+    private void checkAuthorized(final Long targetId, final Long principalId) {
         if (!targetId.equals(principalId)) {
             throw new MemberUnauthorizedException(MemberErrorCode.UNAUTHORIZED_ACCESS_ERROR);
         }
     }
 
-    private Member findExistMember(Long id) {
+    private Member findExistMember(final Long id) {
         return memberRepository.findById(id).orElseThrow(() ->
                 new MemberNotFoundException(MemberErrorCode.MEMBER_NOT_FOUND));
 

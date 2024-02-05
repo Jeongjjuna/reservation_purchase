@@ -50,7 +50,8 @@ class ArticleApiControllerTest {
     void 나의_팔로우한_사람들의_게시글_조회_요청() throws Exception {
         // when, then
         mockMvc.perform(get("/v1/articles/my-follows")
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("member", "1"))
                 .andExpect(status().isOk());
     }
 }

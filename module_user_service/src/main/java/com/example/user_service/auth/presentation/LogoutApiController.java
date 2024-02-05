@@ -4,6 +4,7 @@ import com.example.user_service.auth.application.LogoutService;
 import com.example.user_service.auth.domain.LogoutInfo;
 import com.example.user_service.auth.security.UserDetailsImpl;
 import com.example.user_service.common.response.Response;
+import lombok.AllArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -11,21 +12,18 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@AllArgsConstructor
 @RestController
 @RequestMapping("/v1/auth")
 public class LogoutApiController {
 
     private final LogoutService logoutService;
 
-    public LogoutApiController(final LogoutService logoutService) {
-        this.logoutService = logoutService;
-    }
-
     @PostMapping("logout")
     public Response<Void> logout(
-            @RequestBody LogoutInfo logoutInfo,
-            @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @RequestHeader("X-Device-UUID") String deviceUUID
+            @RequestBody final LogoutInfo logoutInfo,
+            @AuthenticationPrincipal final UserDetailsImpl userDetails,
+            @RequestHeader("X-Device-UUID") final String deviceUUID
     ) {
         logoutService.logout(logoutInfo, userDetails.getEmail(), deviceUUID);
         return Response.success();
@@ -36,9 +34,9 @@ public class LogoutApiController {
      */
     @PostMapping("/all-device")
     public Response<Void> logoutAll(
-            @RequestBody LogoutInfo logoutInfo,
-            @AuthenticationPrincipal UserDetailsImpl userDetails,
-            @RequestHeader("X-Device-UUID") String deviceUUID
+            @RequestBody final LogoutInfo logoutInfo,
+            @AuthenticationPrincipal final UserDetailsImpl userDetails,
+            @RequestHeader("X-Device-UUID") final String deviceUUID
     ) {
         logoutService.logoutAll(logoutInfo, userDetails.getEmail());
         return Response.success();

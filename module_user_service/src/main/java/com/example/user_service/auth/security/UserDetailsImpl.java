@@ -24,7 +24,7 @@ public class UserDetailsImpl implements UserDetails {
         this.authorities = authorities;
     }
 
-    public static UserDetailsImpl from(Member member) {
+    public static UserDetailsImpl from(final Member member) {
         /**
          * 추후에 역할 권한이 필요하면 추가로 작성한다.
          * Set<MemberRole> roleTypes = Set.of(member.getMemberRole());

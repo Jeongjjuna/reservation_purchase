@@ -11,7 +11,7 @@ public class CommentLike {
     private Comment comment;
     private Long writerId;
     private boolean likeCheck;
-    protected LocalDateTime createdAt;
+    private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
     @Builder
@@ -29,5 +29,12 @@ public class CommentLike {
         this.likeCheck = likeCheck;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+    }
+
+    public static CommentLike create(final Comment comment, final Long writerId) {
+        return CommentLike.builder()
+                .comment(comment)
+                .writerId(writerId)
+                .build();
     }
 }

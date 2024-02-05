@@ -17,7 +17,14 @@ public class Article {
     protected LocalDateTime deletedAt;
 
     @Builder
-    public Article(final Long id, final Long writerId, final String content, final LocalDateTime createdAt, final LocalDateTime updatedAt, final LocalDateTime deletedAt) {
+    public Article(
+            final Long id,
+            final Long writerId,
+            final String content,
+            final LocalDateTime createdAt,
+            final LocalDateTime updatedAt,
+            final LocalDateTime deletedAt
+    ) {
         this.id = id;
         this.writerId = writerId;
         this.content = content;

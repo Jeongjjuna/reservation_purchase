@@ -23,13 +23,13 @@ public class RedisMailRepositoryImpl implements RedisMailRepository {
     }
 
     @Override
-    public String getData(String key) {
+    public String getData(final String key) {
         ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
         return valueOperations.get(key);
     }
 
     @Override
-    public void deleteData(String key) {
+    public void deleteData(final String key) {
         redisTemplate.delete(key);
     }
 }

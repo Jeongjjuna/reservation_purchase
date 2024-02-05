@@ -1,6 +1,8 @@
 package com.example.activity_service.comment.domain;
 
 import com.example.activity_service.article.domain.Article;
+import com.example.activity_service.client.NewsfeedCreate;
+import com.example.activity_service.common.domain.ActivityType;
 import lombok.Builder;
 import lombok.Getter;
 import java.time.LocalDateTime;
@@ -44,6 +46,15 @@ public class Comment {
                 .article(article)
                 .writerId(principalId)
                 .content(commentCreate.getContent())
+                .build();
+    }
+
+    public NewsfeedCreate toNewsfeedCreate() {
+        return NewsfeedCreate.builder()
+                .receiverId(article.getWriterId())
+                .senderId(writerId)
+                .newsfeedType(ActivityType.COMMENT.getActivityType())
+                .activityId(id)
                 .build();
     }
 }

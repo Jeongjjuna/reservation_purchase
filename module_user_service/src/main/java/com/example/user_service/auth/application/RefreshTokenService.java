@@ -7,12 +7,13 @@ import com.example.user_service.auth.security.jwt.JwtTokenProvider;
 import com.example.user_service.auth.security.jwt.TokenType;
 import com.example.user_service.common.exception.GlobalException;
 import com.example.user_service.member.application.port.MemberRepository;
-import com.example.user_service.member.domain.Member;
 import com.example.user_service.member.exception.MemberErrorCode;
 import com.example.user_service.member.exception.MemberException.MemberNotFoundException;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+@AllArgsConstructor
 @Service
 public class RefreshTokenService {
 
@@ -20,45 +21,33 @@ public class RefreshTokenService {
     private final MemberRepository memberRepository;
     private final RedisRefreshRepository redisRefreshRepository;
 
-    public RefreshTokenService(
-            final JwtTokenProvider jwtTokenProvider,
-            final MemberRepository memberRepository,
-            final RedisRefreshRepository redisRefreshRepository
-    ) {
-        this.jwtTokenProvider = jwtTokenProvider;
-        this.memberRepository = memberRepository;
-        this.redisRefreshRepository = redisRefreshRepository;
-    }
-
     public RefreshResponse refresh(final RefreshTokenInfo refreshTokenInfo, final String deviceUUID) {
-        String refreshToken = refreshTokenInfo.getRefreshToken();
+        final String refreshToken = refreshTokenInfo.getRefreshToken();
 
-        // 1. redis 저장소에 해당 기기에 refresh 토큰이 존재하는지 확인한다.
-        String findRefresh = redisRefreshRepository.findByValue(deviceUUID);
-        if (findRefresh == null) {
-            throw new GlobalException(HttpStatus.NOT_FOUND, "[ERROR] ] not found refresh token");
-        }
+        final String findRefresh = redisRefreshRepository.findByValue(deviceUUID);
 
-        // 2. 해당 기기의 토큰과, 재발급 요청한 토큰이 같은지 확인한다.
-        if (!findRefresh.equals(refreshTokenInfo.getRefreshToken())) {
-            throw new GlobalException(HttpStatus.NOT_FOUND, "[ERROR] ] not correct refresh token");
-        }
+        checkNull(findRefresh);
+        checkSameToken(findRefresh, refreshTokenInfo);
 
-        // 3. refresh로부터 member정보를 꺼내 DB에서 가져온다.
-        String email = jwtTokenProvider.getEmail(refreshToken, TokenType.REFRESH);
-        Member member = memberRepository.findByEmail(email).orElseThrow(() ->
-                new MemberNotFoundException(MemberErrorCode.MEMBER_NOT_FOUND));
+        final String email = jwtTokenProvider.getEmail(refreshToken, TokenType.REFRESH);
 
-        // 만료기간이 안끝난 refresh토큰만 입력받는다고 가정한다.
-        // (기한이 지나면 브라우저 상에서 삭제되어 보낼 수 없음)
-//        if (jwtTokenProvider.isExpired(refreshToken)) {
-//            throw new IllegalArgumentException("재발급 불가. 다시 로그인 하세요.");
-//        }
-
-        // 4. AccessToken을 발급하여 기존 RefreshToken과 함께 응답한다.
-        String accessToken = jwtTokenProvider.generate(email, member.getName(), TokenType.ACCESS);
+        final String accessToken = memberRepository.findByEmail(email)
+                .map(member -> jwtTokenProvider.generate(email, member.getName(), TokenType.ACCESS))
+                .orElseThrow(() -> new MemberNotFoundException(MemberErrorCode.MEMBER_NOT_FOUND));
 
         // TODO : 리프레쉬 기간이 얼마 안남으면 그냥 리프레쉬도 새로 발급해준다.(보류)
         return RefreshResponse.from(accessToken, refreshToken);
+    }
+
+    private void checkSameToken(final String findRefresh, final RefreshTokenInfo refreshTokenInfo) {
+        if (!findRefresh.equals(refreshTokenInfo.getRefreshToken())) {
+            throw new GlobalException(HttpStatus.NOT_FOUND, "[ERROR] ] not correct refresh token");
+        }
+    }
+
+    private void checkNull(final String findRefresh) {
+        if (findRefresh == null) {
+            throw new GlobalException(HttpStatus.NOT_FOUND, "[ERROR] ] not found refresh token");
+        }
     }
 }

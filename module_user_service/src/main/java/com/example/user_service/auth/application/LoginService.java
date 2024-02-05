@@ -11,10 +11,12 @@ import com.example.user_service.member.application.port.MemberRepository;
 import com.example.user_service.member.domain.Member;
 import com.example.user_service.member.exception.MemberErrorCode;
 import com.example.user_service.member.exception.MemberException.MemberNotFoundException;
+import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@AllArgsConstructor
 @Service
 public class LoginService {
 
@@ -23,49 +25,34 @@ public class LoginService {
     private final BCryptPasswordEncoder passwordEncoder;
     private final RedisRefreshRepository redisRefreshRepository;
 
-    public LoginService(
-            final MemberRepository memberRepository,
-            final JwtTokenProvider jwtTokenProvider,
-            final BCryptPasswordEncoder passwordEncoder,
-            final RedisRefreshRepository redisRefreshRepository) {
-        this.memberRepository = memberRepository;
-        this.jwtTokenProvider = jwtTokenProvider;
-        this.passwordEncoder = passwordEncoder;
-        this.redisRefreshRepository = redisRefreshRepository;
-    }
 
     /**
-     * 로그인
+     * 로그인 -> redis에저장
+     * device = {memberId1 + : +uuid1} - 자동만료가능
+     * deviceToken = {uuid1 : refreshToken1} - 자동만료가능
+     * memberLogins = {memberId : {uuid1, uuid2, . . .}} -> 위에가 자동만료되었을 때 어떻게 할 것인가?
      */
     @Transactional
-    public LoginResponse login(LoginInfo loginInfo, final String deviceUUID) {
-        String email = loginInfo.getEmail();
-        String password = loginInfo.getPassword();
+    public LoginResponse login(final LoginInfo loginInfo, final String deviceUUID) {
+        final String email = loginInfo.getEmail();
+        final String password = loginInfo.getPassword();
 
-        Member member = findExistMember(email);
+        final Member member = findExistMember(email);
 
         checkPassword(password, member);
 
-        String accessToken = jwtTokenProvider.generate(member.getEmail(), member.getName(), TokenType.ACCESS);
-        String refreshToken = jwtTokenProvider.generate(member.getEmail(), member.getName(), TokenType.REFRESH);
+        final String accessToken = jwtTokenProvider.generate(member.getEmail(), member.getName(), TokenType.ACCESS);
+        final String refreshToken = jwtTokenProvider.generate(member.getEmail(), member.getName(), TokenType.REFRESH);
 
-        /**
-         * redis에저장
-         * device = {memberId1 + : +uuid1} - 자동만료가능
-         * deviceToken = {uuid1 : refreshToken1} - 자동만료가능
-         * memberLogins = {memberId : {uuid1, uuid2, . . .}} -> 위에가 자동만료되었을 때 어떻게 할 것인가?
-         */
-        long duration = jwtTokenProvider.getExpiredTime(refreshToken, TokenType.REFRESH);
+        final long duration = jwtTokenProvider.getExpiredTime(refreshToken, TokenType.REFRESH);
 
-        String memberId = String.valueOf(member.getId());
-        String device = redisRefreshRepository.findByValue(memberId + deviceUUID);
+        final String memberId = String.valueOf(member.getId());
+        final String device = redisRefreshRepository.findByValue(memberId + deviceUUID);
+
         // 이미 존재 하면 덮어쓰운다.
-        if (device != null) {
-            redisRefreshRepository.save(memberId + "-" + deviceUUID, String.valueOf(member.getId()), duration);
-            redisRefreshRepository.save(deviceUUID, refreshToken, duration);
-        } else {
-            redisRefreshRepository.save(memberId + "-" + deviceUUID, String.valueOf(member.getId()), duration);
-            redisRefreshRepository.save(deviceUUID, refreshToken, duration);
+        redisRefreshRepository.save(memberId + "-" + deviceUUID, String.valueOf(member.getId()), duration);
+        redisRefreshRepository.save(deviceUUID, refreshToken, duration);
+        if (device == null) {
             redisRefreshRepository.addToHash(memberId, deviceUUID, "NULL");
         }
 
