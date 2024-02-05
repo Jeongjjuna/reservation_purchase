@@ -16,4 +16,8 @@ public class FollowingIdList {
         this.code = code;
         this.data = data;
     }
+
+    public static FollowingIdList of() {
+        return FollowingIdList.builder().build();
+    }
 }
