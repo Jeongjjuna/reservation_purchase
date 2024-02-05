@@ -7,11 +7,13 @@ import com.example.activity_service.client.NewsfeedCreate;
 import com.example.activity_service.client.NewsfeedFeignClient;
 import io.github.resilience4j.retry.Retry;
 import io.github.resilience4j.retry.RetryRegistry;
+import lombok.AllArgsConstructor;
 import org.springframework.cloud.client.circuitbreaker.CircuitBreaker;
 import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@AllArgsConstructor
 @Service
 public class ArticleService {
 
@@ -20,18 +22,6 @@ public class ArticleService {
     private final CircuitBreakerFactory circuitBreakerFactory;
     private final RetryRegistry retryRegistry;
 
-    public ArticleService(
-            final ArticleRepository articleRepository,
-            final NewsfeedFeignClient newsfeedFeignClient,
-            final CircuitBreakerFactory circuitBreakerFactory,
-            final RetryRegistry retryRegistry
-    ) {
-        this.articleRepository = articleRepository;
-        this.newsfeedFeignClient = newsfeedFeignClient;
-        this.circuitBreakerFactory = circuitBreakerFactory;
-        this.retryRegistry = retryRegistry;
-    }
-
     @Transactional
     public Long create(Long principalId, ArticleCreate articleCreate) {
 
@@ -39,25 +29,20 @@ public class ArticleService {
 
         Article saved = articleRepository.save(article);
 
-        /**
-         * 뉴스피드에 게시글 작성 기록 추가
-         * TODO : 명시적으로 null을 넣지않는 더 좋은 방법이 있을까?
-         */
-        NewsfeedCreate newsfeedCreate = NewsfeedCreate.builder()
-                .receiverId(null)
-                .senderId(article.getWriterId())
-                .newsfeedType("article")
-                .activityId(saved.getId())
-                .build();
+        NewsfeedCreate newsfeedCreate = article.toNewsfeedCreate();
 
+        // newsfeed_service 서비스에 뉴스피드 생성 요청(feign client)
+        sendNewsfeedRequest(newsfeedCreate); // TODO : f1. 분산 트랜잭션 체크 2. 테스트할때 mongodb 트랜잭션 체크
 
+        return saved.getId();
+    }
+
+    private void sendNewsfeedRequest(NewsfeedCreate newsfeedCreate) {
         CircuitBreaker circuitBreaker = circuitBreakerFactory.create("circuitbreaker");
         Retry retry = retryRegistry.retry("retry");
         circuitBreaker.run(() -> Retry.decorateFunction(retry, s -> {
             newsfeedFeignClient.create(newsfeedCreate);
             return "success";
         }).apply(1), throwable -> "failure");
-
-        return saved.getId();
     }
 }

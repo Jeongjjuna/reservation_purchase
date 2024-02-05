@@ -1,5 +1,7 @@
 package com.example.activity_service.article.domain;
 
+import com.example.activity_service.client.NewsfeedCreate;
+import com.example.activity_service.common.domain.ActivityType;
 import lombok.Builder;
 import lombok.Getter;
 import java.time.LocalDateTime;
@@ -28,6 +30,14 @@ public class Article {
         return Article.builder()
                 .writerId(principalId)
                 .content(articleCreate.getContent())
+                .build();
+    }
+
+    public NewsfeedCreate toNewsfeedCreate() {
+        return NewsfeedCreate.builder()
+                .senderId(writerId)
+                .newsfeedType(ActivityType.ARTICLE.getActivityType())
+                .activityId(id)
                 .build();
     }
 }
