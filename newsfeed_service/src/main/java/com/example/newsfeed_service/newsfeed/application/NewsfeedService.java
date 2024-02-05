@@ -2,16 +2,20 @@ package com.example.newsfeed_service.newsfeed.application;
 
 import com.example.newsfeed_service.newsfeed.application.port.NewsfeedRepository;
 import com.example.newsfeed_service.newsfeed.client.ActivityClient;
+import com.example.newsfeed_service.newsfeed.client.FollowingIdList;
 import com.example.newsfeed_service.newsfeed.domain.Newsfeed;
 import com.example.newsfeed_service.newsfeed.domain.NewsfeedCreate;
+import io.github.resilience4j.retry.Retry;
+import io.github.resilience4j.retry.RetryRegistry;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cloud.client.circuitbreaker.CircuitBreaker;
+import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.util.List;
 
 @Slf4j
 @Service
@@ -19,13 +23,19 @@ public class NewsfeedService {
 
     private final NewsfeedRepository newsfeedRepository;
     private final ActivityClient activityClient;
+    private final CircuitBreakerFactory circuitBreakerFactory;
+    private final RetryRegistry retryRegistry;
 
     public NewsfeedService(
             final NewsfeedRepository newsfeedRepository,
-            final ActivityClient activityClient
+            final ActivityClient activityClient,
+            final CircuitBreakerFactory circuitBreakerFactory,
+            final RetryRegistry retryRegistry
     ) {
         this.newsfeedRepository = newsfeedRepository;
         this.activityClient = activityClient;
+        this.circuitBreakerFactory = circuitBreakerFactory;
+        this.retryRegistry = retryRegistry;
     }
 
     /**
@@ -46,7 +56,12 @@ public class NewsfeedService {
 
         // TODO : 진짜 만약 팔로우를 걸어놓은 사람이 엄청 많다면? 만명이상?
         // 내가 팔로우한 모든 사람들의 아이디를 가져온다.
-        List<Long> followingIds = activityClient.findFollowing(principalId).getData();
+        CircuitBreaker circuitBreaker = circuitBreakerFactory.create("circuitbreaker");
+        Retry retry = retryRegistry.retry("retry");
+        FollowingIdList followingIds = circuitBreaker.run(
+                () -> Retry.decorateFunction(retry, s -> activityClient.findFollowing(principalId)).apply(1),
+                throwable -> FollowingIdList.of()
+        );
 
         // TODO : 마지막으로 확인한 시점 이후로 최신 데이터를 가져온다.
         Pageable pageable = PageRequest.of(
@@ -54,6 +69,6 @@ public class NewsfeedService {
                 20,
                 Sort.by(Sort.Direction.DESC, "createdAt")
         );
-        return newsfeedRepository.findAllByFollowingIds(followingIds, pageable);
+        return newsfeedRepository.findAllByFollowingIds(followingIds.getData(), pageable);
     }
 }

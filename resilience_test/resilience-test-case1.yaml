@@ -1,0 +1,13 @@
+config:
+    target: "http://localhost:8082"
+    phases:
+        - duration: 60
+          arrivalRate: 5 # 60초동안, 1초당 5개씩 보낸다. 처리량(Throughput : 5)
+          name: case1
+
+
+scenarios: # 한명의 사용자가 요청하는 시나리오
+    - name: "request error case1"
+      flow:
+          - get:
+                url: "/errorful/case1"

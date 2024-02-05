@@ -7,6 +7,10 @@ import com.example.activity_service.article.domain.ArticleLike;
 import com.example.activity_service.client.NewsfeedCreate;
 import com.example.activity_service.client.NewsfeedFeignClient;
 import com.example.activity_service.common.exception.GlobalException;
+import io.github.resilience4j.retry.Retry;
+import io.github.resilience4j.retry.RetryRegistry;
+import org.springframework.cloud.client.circuitbreaker.CircuitBreaker;
+import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,15 +21,21 @@ public class ArticleLikeService {
     private final ArticleRepository articleRepository;
     private final ArticleLikeRepository articleLikeRepository;
     private final NewsfeedFeignClient newsfeedFeignClient;
+    private final CircuitBreakerFactory circuitBreakerFactory;
+    private final RetryRegistry retryRegistry;
 
     public ArticleLikeService(
             final ArticleRepository articleRepository,
             final ArticleLikeRepository articleLikeRepository,
-            final NewsfeedFeignClient newsfeedFeignClient
+            final NewsfeedFeignClient newsfeedFeignClient,
+            final CircuitBreakerFactory circuitBreakerFactory,
+            final RetryRegistry retryRegistry
     ) {
         this.articleRepository = articleRepository;
         this.articleLikeRepository = articleLikeRepository;
         this.newsfeedFeignClient = newsfeedFeignClient;
+        this.circuitBreakerFactory = circuitBreakerFactory;
+        this.retryRegistry = retryRegistry;
     }
 
     @Transactional
@@ -52,6 +62,12 @@ public class ArticleLikeService {
                 .newsfeedType("articleLike")
                 .activityId(saved.getId())
                 .build();
-        newsfeedFeignClient.create(newsfeedCreate);
+
+        CircuitBreaker circuitBreaker = circuitBreakerFactory.create("circuitbreaker");
+        Retry retry = retryRegistry.retry("retry");
+        circuitBreaker.run(() -> Retry.decorateFunction(retry, s -> {
+            newsfeedFeignClient.create(newsfeedCreate);
+            return "success";
+        }).apply(1), throwable -> "failure");
     }
 }

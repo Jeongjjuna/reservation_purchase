@@ -33,6 +33,6 @@ public class NewsfeedApiController {
     ) {
         log.info("NewsfeedApiController read()호출 : 특정 회원의 뉴스피드 요청");
         Page<NewsfeedResponse> myNewsfeeds = newsfeedService.my(principalId).map(NewsfeedResponse::from);
-        return Response.success();
+        return Response.success(myNewsfeeds);
     }
 }
