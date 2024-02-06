@@ -41,8 +41,8 @@ public class LoginService {
 
         checkPassword(password, member);
 
-        final String accessToken = jwtTokenProvider.generate(member.getEmail(), member.getName(), TokenType.ACCESS);
-        final String refreshToken = jwtTokenProvider.generate(member.getEmail(), member.getName(), TokenType.REFRESH);
+        final String accessToken = jwtTokenProvider.generate(member.getId(), member.getEmail(), TokenType.ACCESS);
+        final String refreshToken = jwtTokenProvider.generate(member.getId(), member.getEmail(), TokenType.REFRESH);
 
         final long duration = jwtTokenProvider.getExpiredTime(refreshToken, TokenType.REFRESH);
 

@@ -25,9 +25,9 @@ public class JwtTokenProvider {
     @Value("${jwt.expired-time.token.refresh}")
     private Long refreshTokenExpiredTimeMs;
 
-    public String generate(final String email, final String userName, final TokenType type) {
+    public String generate(final Long memberId, final String email, final TokenType type) {
         final Claims claims = Jwts.claims();
-        claims.put("userName", userName);
+        claims.put("memberId", memberId);
         claims.put("email", email);
 
         /**
@@ -67,17 +67,14 @@ public class JwtTokenProvider {
     }
 
     /**
-     * 토큰 속 정보 name 추출
-     */
-    public String getName(final String token, final TokenType type) {
-        return extractClaims(token, type).get("name", String.class);
-    }
-
-    /**
      * 토큰 속 정보 email 추출
      */
     public String getEmail(final String token, final TokenType type) {
         return extractClaims(token, type).get("email", String.class);
+    }
+
+    public Long getMemberId(final String token, final TokenType type) {
+        return extractClaims(token, type).get("memberId", Long.class);
     }
 
     private Claims extractClaims(final String token, final TokenType type) {

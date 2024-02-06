@@ -32,7 +32,7 @@ public class RefreshTokenService {
         final String email = jwtTokenProvider.getEmail(refreshToken, TokenType.REFRESH);
 
         final String accessToken = memberRepository.findByEmail(email)
-                .map(member -> jwtTokenProvider.generate(email, member.getName(), TokenType.ACCESS))
+                .map(member -> jwtTokenProvider.generate(member.getId(), email, TokenType.ACCESS))
                 .orElseThrow(() -> new MemberNotFoundException(MemberErrorCode.MEMBER_NOT_FOUND));
 
         // TODO : 리프레쉬 기간이 얼마 안남으면 그냥 리프레쉬도 새로 발급해준다.(보류)
