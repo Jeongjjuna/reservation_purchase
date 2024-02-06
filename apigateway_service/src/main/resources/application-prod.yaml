@@ -1,0 +1,25 @@
+server:
+    port: 8083
+
+spring:
+    config:
+        activate:
+            on-profile: prod
+    application:
+        name: apigateway_service
+    cloud:
+        gateway:
+            default-filters:
+                - name: LoggingFilter
+            routes:
+                - id: article_service
+                  uri: ${REQUEST_URL}
+                  predicates:
+                      - Path=${ROUTING_PATH}
+                  filters:
+                      - AuthenticationFilter
+
+jwt:
+    secret-key:
+        access: ${JWT_ACCESS_SECRET_KEY}
+

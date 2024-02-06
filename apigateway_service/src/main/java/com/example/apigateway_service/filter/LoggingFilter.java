@@ -19,8 +19,8 @@ public class LoggingFilter extends AbstractGatewayFilterFactory<LoggingFilter.Co
     @Override
     public GatewayFilter apply(final Config config) {
         return (exchange, chain) -> {
-            ServerHttpRequest request = exchange.getRequest();
-            ServerHttpResponse response = exchange.getResponse();
+            final ServerHttpRequest request = exchange.getRequest();
+            final ServerHttpResponse response = exchange.getResponse();
 
             log.info("API Gateway 요청 필터 : request uri -> {}", request.getURI());
 
