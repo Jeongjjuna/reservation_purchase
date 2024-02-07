@@ -33,4 +33,12 @@ public class Product {
         this.updatedAt = updatedAt;
         this.deletedAt = deletedAt;
     }
+
+    public static Product create(final ProductCreate productCreate) {
+        return Product.builder()
+                .name(productCreate.getName())
+                .content(productCreate.getContent())
+                .price(productCreate.getPrice())
+                .build();
+    }
 }

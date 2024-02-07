@@ -1,4 +1,4 @@
-package com.example.ecommerce_service.product.presentation;
+package com.example.ecommerce_service.product.infrastructure;
 
 import com.example.ecommerce_service.product.application.port.ProductRepository;
 import com.example.ecommerce_service.product.domain.Product;
