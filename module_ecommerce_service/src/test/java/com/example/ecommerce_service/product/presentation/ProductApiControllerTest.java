@@ -1,5 +1,6 @@
 package com.example.ecommerce_service.product.presentation;
 
+import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -27,6 +28,31 @@ class ProductApiControllerTest {
 
     @Autowired
     private ProductRepository productRepository;
+
+    @DisplayName("상품 전체조회 테스트 : 성공")
+    @Test
+    void 상품_전체_조회_요청() throws Exception {
+        // given
+        Product product1 = Product.builder()
+                .name("name1")
+                .content("content1")
+                .price(20000L)
+                .build();
+        productRepository.save(product1);
+        Product product2 = Product.builder()
+                .name("name2")
+                .content("content2")
+                .price(20000L)
+                .build();
+        productRepository.save(product2);
+
+        // when, then
+        mockMvc.perform(get("/v1/products")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.desc").value("success"))
+                .andExpect(jsonPath("$.data.content", hasSize(2)));
+    }
 
     @DisplayName("상품 단건조회 테스트 : 성공")
     @Test
