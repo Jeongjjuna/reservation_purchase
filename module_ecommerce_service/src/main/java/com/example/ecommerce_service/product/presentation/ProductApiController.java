@@ -5,7 +5,9 @@ import com.example.ecommerce_service.product.application.ProductReadService;
 import com.example.ecommerce_service.product.application.ProductService;
 import com.example.ecommerce_service.product.domain.Product;
 import com.example.ecommerce_service.product.domain.ProductCreate;
+import com.example.ecommerce_service.product.domain.ProductStock;
 import com.example.ecommerce_service.product.presentation.response.ProductResponse;
+import com.example.ecommerce_service.product.presentation.response.ProductStockResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -43,7 +45,16 @@ public class ProductApiController {
      */
     @GetMapping
     public Response<Page<ProductResponse>> readAll() {
-        Page<Product> products = productReadService.findAll();
+        final  Page<Product> products = productReadService.findAll();
         return Response.success(products.map(ProductResponse::from));
+    }
+
+    /**
+     * 상품 재고 수량 조회
+     */
+    @GetMapping("/{id}/stock")
+    public Response<ProductStockResponse> readStockCount(@PathVariable Long id) {
+        final ProductStock productStock = productReadService.readStockCount(id);
+        return Response.success(ProductStockResponse.from(productStock));
     }
 }

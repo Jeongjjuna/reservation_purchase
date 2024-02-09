@@ -7,7 +7,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.example.ecommerce_service.product.application.port.ProductRepository;
+import com.example.ecommerce_service.product.application.port.ProductStockRepository;
 import com.example.ecommerce_service.product.domain.Product;
+import com.example.ecommerce_service.product.domain.ProductStock;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +30,36 @@ class ProductApiControllerTest {
 
     @Autowired
     private ProductRepository productRepository;
+
+    @Autowired
+    private ProductStockRepository productStockRepository;
+
+    @DisplayName("상품 재고수량 조회 테스트 : 성공")
+    @Test
+    void 상품_재고_수량_조회_요청() throws Exception {
+        // given
+        Product product = Product.builder()
+                .name("name")
+                .content("content")
+                .price(20000L)
+                .build();
+        Product saved = productRepository.save(product);
+
+        ProductStock productStock = ProductStock.builder()
+                .productId(saved.getId())
+                .stockCount(50)
+                .build();
+        productStockRepository.save(productStock);
+
+        // when, then
+        mockMvc.perform(get("/v1/products/{productId}/stock", saved.getId())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.desc").value("success"))
+                .andExpect(jsonPath("$.data.productId").value(saved.getId()))
+                .andExpect(jsonPath("$.data.stockCount").value(50));
+
+    }
 
     @DisplayName("상품 전체조회 테스트 : 성공")
     @Test
@@ -83,7 +115,8 @@ class ProductApiControllerTest {
                 {
                     "name" : "상품이름",
                     "content" : "상품내용",
-                    "price" : "20000"
+                    "price" : "20000",
+                    "stockCount" : "50"
                 }
                 """;
 

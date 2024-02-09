@@ -14,4 +14,14 @@ public class ProductStock {
         this.productId = productId;
         this.stockCount = stockCount;
     }
+
+    public static ProductStock create(
+            final Long productId,
+            final ProductCreate productCreate
+    ) {
+        return ProductStock.builder()
+                .productId(productId)
+                .stockCount(productCreate.getStockCount())
+                .build();
+    }
 }
