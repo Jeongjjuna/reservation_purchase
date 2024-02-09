@@ -3,6 +3,7 @@ package com.example.ecommerce_service.product.presentation;
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -34,10 +35,7 @@ class ProductApiControllerTest {
     @Autowired
     private ProductStockRepository productStockRepository;
 
-    @DisplayName("상품 재고수량 조회 테스트 : 성공")
-    @Test
-    void 상품_재고_수량_조회_요청() throws Exception {
-        // given
+    private Long saveProduct() {
         Product product = Product.builder()
                 .name("name")
                 .content("content")
@@ -51,32 +49,57 @@ class ProductApiControllerTest {
                 .build();
         productStockRepository.save(productStock);
 
+        return saved.getId();
+    }
+
+    @DisplayName("상품 정보 수정 테스트 : 성공")
+    @Test
+    void 상품_정보_수정_요청() throws Exception {
+        // given
+        Long productId = saveProduct();
+        String json = """
+                {
+                    "name" : "이름수정",
+                    "content" : "내용수정",
+                    "price" : 10000,
+                    "stockCount" : 100
+                }
+                """;
+
         // when, then
-        mockMvc.perform(get("/v1/products/{productId}/stock", saved.getId())
+        mockMvc.perform(put("/v1/products/{productId}", productId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.desc").value("success"));
+    }
+
+    @DisplayName("상품 재고수량 조회 테스트 : 성공")
+    @Test
+    void 상품_재고_수량_조회_요청() throws Exception {
+        // given
+        Long productId = saveProduct();
+
+        // when, then
+        mockMvc.perform(get("/v1/products/{productId}/stock", productId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.desc").value("success"))
-                .andExpect(jsonPath("$.data.productId").value(saved.getId()))
+                .andExpect(jsonPath("$.data.productId").value(productId))
                 .andExpect(jsonPath("$.data.stockCount").value(50));
-
     }
 
     @DisplayName("상품 전체조회 테스트 : 성공")
     @Test
     void 상품_전체_조회_요청() throws Exception {
         // given
-        Product product1 = Product.builder()
-                .name("name1")
-                .content("content1")
-                .price(20000L)
+        Long productId = saveProduct();
+        Product product = Product.builder()
+                .name("name")
+                .content("content")
+                .price(10000L)
                 .build();
-        productRepository.save(product1);
-        Product product2 = Product.builder()
-                .name("name2")
-                .content("content2")
-                .price(20000L)
-                .build();
-        productRepository.save(product2);
+        productRepository.save(product);
 
         // when, then
         mockMvc.perform(get("/v1/products")
@@ -90,15 +113,10 @@ class ProductApiControllerTest {
     @Test
     void 상품_단건_조회_요청() throws Exception {
         // given
-        Product product = Product.builder()
-                .name("name")
-                .content("content")
-                .price(20000L)
-                .build();
-        Product saved = productRepository.save(product);
+        Long productId = saveProduct();
 
         // when, then
-        mockMvc.perform(get("/v1/products/{productId}", saved.getId())
+        mockMvc.perform(get("/v1/products/{productId}", productId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.desc").value("success"))

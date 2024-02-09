@@ -41,4 +41,11 @@ public class Product {
                 .price(productCreate.getPrice())
                 .build();
     }
+
+    public Product update(final ProductUpdate productUpdate) {
+        this.name = productUpdate.getName();
+        this.content = productUpdate.getContent();
+        this.price = productUpdate.getPrice();
+        return this;
+    }
 }

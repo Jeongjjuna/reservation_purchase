@@ -24,4 +24,9 @@ public class ProductStock {
                 .stockCount(productCreate.getStockCount())
                 .build();
     }
+
+    public ProductStock update(final ProductUpdate productUpdate) {
+        this.stockCount = productUpdate.getStockCount();
+        return this;
+    }
 }
