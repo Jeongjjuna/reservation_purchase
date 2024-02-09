@@ -68,7 +68,6 @@ public class ProductApiController {
             @PathVariable final Long id,
             @RequestBody final ProductUpdate productUpdate
     ) {
-        System.out.println("test");
         productService.update(id, productUpdate);
         return Response.success();
     }
