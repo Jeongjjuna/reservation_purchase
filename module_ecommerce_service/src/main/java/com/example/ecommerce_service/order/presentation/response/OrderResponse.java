@@ -1,7 +1,6 @@
 package com.example.ecommerce_service.order.presentation.response;
 
 import com.example.ecommerce_service.order.domain.Order;
-import com.example.ecommerce_service.order.domain.ProductType;
 import lombok.Builder;
 import lombok.Getter;
 import java.time.LocalDateTime;
@@ -11,7 +10,7 @@ public class OrderResponse {
 
     private Long id;
     private Long productId;
-    private ProductType productType;
+    private String productType;
     private Long quantity;
     private Long memberId;
     private String address;
@@ -22,7 +21,7 @@ public class OrderResponse {
     public OrderResponse(
             final Long id,
             final Long productId,
-            final ProductType productType,
+            final String productType,
             final Long quantity,
             final Long memberId,
             final String address,
@@ -43,6 +42,7 @@ public class OrderResponse {
         return OrderResponse.builder()
                 .id(order.getId())
                 .productId(order.getProductId())
+                .productType(order.getProductType().getProductType())
                 .quantity(order.getQuantity())
                 .memberId(order.getMemberId())
                 .address(order.getAddress())

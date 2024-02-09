@@ -1,7 +1,9 @@
 package com.example.ecommerce_service.order.domain;
 
+import lombok.Getter;
 import java.util.Arrays;
 
+@Getter
 public enum ProductType {
     PRODUCT("product"),
     RESERVATION_PRODUCT("reservationProduct");
