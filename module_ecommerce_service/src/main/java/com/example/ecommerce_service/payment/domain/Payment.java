@@ -27,4 +27,11 @@ public class Payment {
         this.createdAt = createdAt;
         this.deletedAt = deletedAt;
     }
+
+    public static Payment create(final PaymentCreate paymentCreate) {
+        return Payment.builder()
+                .orderId(paymentCreate.getOrderId())
+                .memberId(paymentCreate.getMemberId())
+                .build();
+    }
 }
