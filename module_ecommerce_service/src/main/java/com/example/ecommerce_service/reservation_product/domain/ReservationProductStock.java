@@ -41,4 +41,9 @@ public class ReservationProductStock {
         stockCount =- 1;
         return this;
     }
+
+    public ReservationProductStock addStockByOne() {
+        stockCount += 1;
+        return this;
+    }
 }

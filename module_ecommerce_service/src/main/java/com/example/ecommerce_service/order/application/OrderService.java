@@ -23,7 +23,7 @@ public class OrderService {
     @Transactional
     public Long create(final OrderCreate orderCreate) {
 
-        ReservationProductStock reservationProductStock = reservationProductStockRepository.findById(orderCreate.getProductId())
+        reservationProductStockRepository.findById(orderCreate.getProductId())
                 .map(ReservationProductStock::validateStock) // 만약 재고가 0 이하라면 예외 발생
                 .map(ReservationProductStock::subtractStockByOne) // 재고개수 -1 해주기
                 .map(reservationProductStockRepository::save) // 변경된 재고 수량 저장
@@ -35,4 +35,19 @@ public class OrderService {
         return saved.getId();
     }
 
+    /**
+     * 고객 변심으로 결제 화면 창을 떠날 때 요청된다.
+     * 주문 취소
+     */
+    public void cancel(final Long orderId) {
+        Order order  = orderRepository.findById(orderId)
+                .map(Order::cancel) // 주문 취소 하기
+                .map(orderRepository::save) // 주문 취소 저장하기
+                .orElseThrow(() -> new IllegalArgumentException("해당 주문을 찾을 수 없음"));
+
+        reservationProductStockRepository.findById(order.getProductId())
+                .map(ReservationProductStock::addStockByOne) // 재고개수 + 1 해주기
+                .map(reservationProductStockRepository::save) // 변경된 재고 수량 저장
+                .orElseThrow(() -> new IllegalArgumentException("해당 상품 재고를 찾을 수 없음"));
+    }
 }
