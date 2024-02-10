@@ -17,7 +17,7 @@ public class PaymentApiController {
     private final PaymentService paymentService;
 
     @PostMapping
-    public Response create(@RequestBody final PaymentCreate paymentCreate) {
+    public Response<String> create(@RequestBody final PaymentCreate paymentCreate) {
         String result = paymentService.create(paymentCreate);
 
         if (result.equals("failure")) {

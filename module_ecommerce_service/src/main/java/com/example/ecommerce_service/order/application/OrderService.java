@@ -39,6 +39,7 @@ public class OrderService {
      * 고객 변심으로 결제 화면 창을 떠날 때 요청된다.
      * 주문 취소
      */
+    @Transactional
     public void cancel(final Long orderId) {
         Order order  = orderRepository.findById(orderId)
                 .map(Order::cancel) // 주문 취소 하기

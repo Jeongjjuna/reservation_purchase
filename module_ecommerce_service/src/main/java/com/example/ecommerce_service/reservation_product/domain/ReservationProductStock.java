@@ -38,12 +38,12 @@ public class ReservationProductStock {
     }
 
     public ReservationProductStock subtractStockByOne() {
-        stockCount =- 1;
+        stockCount = stockCount - 1;
         return this;
     }
 
     public ReservationProductStock addStockByOne() {
-        stockCount += 1;
+        stockCount = stockCount + 1;
         return this;
     }
 }

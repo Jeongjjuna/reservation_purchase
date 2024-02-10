@@ -24,7 +24,7 @@ public class PaymentService {
     public String create(final PaymentCreate paymentCreate) {
 
         final Payment payment = Payment.create(paymentCreate);
-        final Payment saved = paymentRepository.save(payment);
+        final Payment savedPayment = paymentRepository.save(payment);
 
         //  외부 결제 시스템을 통한 결제 진행
 
@@ -36,11 +36,17 @@ public class PaymentService {
 
         // 실패 프로세스 진행
         Order order = orderRepository.findById(payment.getOrderId())
+                .map(Order::cancel)
+                .map(orderRepository::save)
                 .orElseThrow(() -> new IllegalArgumentException("해당 주문을 찾을 수 없음"));
 
         reservationProductStockRepository.findById(order.getProductId())
                 .map(ReservationProductStock::addStockByOne) // 재고개수 + 1 해주기
+                .map(reservationProductStockRepository::save)
                 .orElseThrow(() -> new IllegalArgumentException("해당 재고를 찾을 수 없음"));
+
+        savedPayment.cancel();
+        paymentRepository.save(savedPayment);
         return "failure";
     }
 

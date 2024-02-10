@@ -27,15 +27,15 @@ public class OrderApiController {
      * 주문 생성(결제 페이지 진입 시 요청)
      */
     @PostMapping
-    public Response<Void> create(@RequestBody final OrderCreate orderCreate) {
-        orderService.create(orderCreate);
-        return Response.success();
+    public Response<Long> create(@RequestBody final OrderCreate orderCreate) {
+        final Long savedOrderId = orderService.create(orderCreate);
+        return Response.success(savedOrderId);
     }
 
     /**
      * 주문 취소(결제 페이지 진입 후에, 고객 변심 발생 시 요청)
      */
-    @DeleteMapping("/v1/orders/{id}")
+    @DeleteMapping("/{id}")
     public Response<Void> cancel(@PathVariable Long id) {
         orderService.cancel(id);
         return Response.success();
