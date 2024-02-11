@@ -11,6 +11,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.util.Optional;
 
 @AllArgsConstructor
 @Service
@@ -24,12 +25,12 @@ public class ReservationProductService {
      */
     @Transactional
     public Long create(final ReservationProductCreate reservationProductCreate) {
-        final ReservationProduct reservationProduct = ReservationProduct.create(reservationProductCreate);
-
-        final ReservationProduct saved = reservationProductRepository.save(reservationProduct);
-        final ReservationProductStock reservationProductStock = ReservationProductStock.create(saved.getId(), reservationProductCreate);
-
-        return reservationProductStockRepository.save(reservationProductStock).getProductId();
+        final ReservationProductStock saved = Optional.of(ReservationProduct.create(reservationProductCreate))  // 예약 상품 생성/저장
+                .map(reservationProductRepository::save)
+                .map(savedProduct -> ReservationProductStock.create(savedProduct.getId(), reservationProductCreate)) // 예약 상품 재고 생성/저장
+                .map(reservationProductStockRepository::save)
+                .orElseThrow(() -> new GlobalException(HttpStatus.INTERNAL_SERVER_ERROR, "[ERROR] reservation product save fail"));
+        return saved.getProductId();
     }
 
     /**
