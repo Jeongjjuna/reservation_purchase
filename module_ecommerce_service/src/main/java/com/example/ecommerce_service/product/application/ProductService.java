@@ -11,6 +11,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.util.Optional;
 
 @AllArgsConstructor
 @Service
@@ -24,12 +25,13 @@ public class ProductService {
      */
     @Transactional
     public Long create(final ProductCreate productCreate) {
-        final Product product = Product.create(productCreate);
+        final ProductStock productStock = Optional.of(Product.create(productCreate)) // 상품 생성/저장
+                .map(productRepository::save)
+                .map(saved -> ProductStock.create(saved.getId(), productCreate)) // 상품 재고 생성/저장
+                .map(productStockRepository::save)
+                .orElseThrow(() -> new GlobalException(HttpStatus.INTERNAL_SERVER_ERROR, "[ERROR] product save fail"));
 
-        final Product saved = productRepository.save(product);
-        final ProductStock productStock = ProductStock.create(saved.getId(), productCreate);
-
-        return productStockRepository.save(productStock).getProductId();
+        return productStock.getProductId();
     }
 
     /**

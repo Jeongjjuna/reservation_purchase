@@ -47,4 +47,9 @@ public class Order {
                 .address(orderCreate.getAddress())
                 .build();
     }
+
+    public Order cancel() {
+        deletedAt = LocalDateTime.now();
+        return this;
+    }
 }

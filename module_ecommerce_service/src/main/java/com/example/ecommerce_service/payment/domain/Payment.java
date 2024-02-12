@@ -34,4 +34,8 @@ public class Payment {
                 .memberId(paymentCreate.getMemberId())
                 .build();
     }
+
+    public void cancel() {
+        deletedAt = LocalDateTime.now();
+    }
 }
