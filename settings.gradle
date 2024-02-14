@@ -1,7 +1,9 @@
 rootProject.name = 'reservation_purchase'
 
+include 'module_product_service'
+include 'module_order_service'
+include 'module_payment_service'
 include 'module_user_service'
 include 'module_activity_service'
 include 'module_newsfeed_service'
 include 'apigateway_service'
-include 'module_payment_service'
