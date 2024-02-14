@@ -20,13 +20,7 @@ class ReservationProductStockTest {
                 .build();
 
         // when
-        reservationProductStock.update(new ReservationProductUpdate(
-                "수정된 이름",
-                "수정된 내용",
-                20000L,
-                LocalDateTime.now(),
-                100
-        ));
+        reservationProductStock.update(100);
 
         // then
         assertThat(reservationProductStock.getStockCount()).isEqualTo(100);

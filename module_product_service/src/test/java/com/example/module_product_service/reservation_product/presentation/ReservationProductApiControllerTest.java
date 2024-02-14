@@ -7,10 +7,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.example.ecommerce_service.reservation_product.application.port.ReservationProductRepository;
-import com.example.ecommerce_service.reservation_product.application.port.ReservationProductStockRepository;
-import com.example.ecommerce_service.reservation_product.domain.ReservationProduct;
-import com.example.ecommerce_service.reservation_product.domain.ReservationProductStock;
+import com.example.module_product_service.reservation_product.application.port.ReservationProductRepository;
+import com.example.module_product_service.reservation_product.application.port.ReservationProductStockRepository;
+import com.example.module_product_service.reservation_product.domain.ReservationProduct;
+import com.example.module_product_service.reservation_product.domain.ReservationProductStock;
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

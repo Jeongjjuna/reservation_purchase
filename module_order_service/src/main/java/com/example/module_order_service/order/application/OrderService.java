@@ -3,8 +3,10 @@ package com.example.module_order_service.order.application;
 
 import com.example.module_order_service.common.exception.GlobalException;
 import com.example.module_order_service.order.application.port.OrderRepository;
+import com.example.module_order_service.order.application.port.ReservationProductStockRepository;
 import com.example.module_order_service.order.domain.Order;
 import com.example.module_order_service.order.domain.OrderCreate;
+import com.example.module_order_service.order.domain.ReservationProductStock;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class OrderService {
 
     private final OrderRepository orderRepository;
-    // private final ReservationProductStockRepository reservationProductStockRepository;
+    private final ReservationProductStockRepository reservationProductStockRepository;
 
     /**
      * 결제 화면 들어가기 버튼 클릭 시 주문 생성이 요청된다.
@@ -30,11 +32,11 @@ public class OrderService {
          * 원자적으로 처리해야 함(시작)
          */
         // TODO : feign client 요청 구현 예정
-        //reservationProductStockRepository.findById(orderCreate.getProductId())
-        //        .map(ReservationProductStock::validateStock) // 만약 재고가 0 이하라면 예외 발생
-        //        .map(ReservationProductStock::subtractStockByOne) // 재고개수 - 1 해주기
-        //        .map(reservationProductStockRepository::save) // 변경된 재고 수량 저장
-        //        .orElseThrow(() -> new IllegalArgumentException("해당 상품 재고를 찾을 수 없음"));
+        reservationProductStockRepository.findById(orderCreate.getProductId())
+                .map(ReservationProductStock::validateStock) // 만약 재고가 0 이하라면 예외 발생
+                .map(ReservationProductStock::subtractStockByOne) // 재고개수 - 1 해주기
+                .map(reservationProductStockRepository::update) // 변경된 재고 수량 저장
+                .orElseThrow(() -> new IllegalArgumentException("해당 상품 재고를 찾을 수 없음"));
         /**
          * 원자적으로 처리해야 함(끝)
          */
@@ -62,10 +64,10 @@ public class OrderService {
          * 원자적으로 처리해야 함(시작)
          */
         // TODO : feign client 요청 구현 예정
-        //reservationProductStockRepository.findById(order.getProductId())
-        //        .map(ReservationProductStock::addStockByOne) // 재고개수 + 1 해주기
-        //        .map(reservationProductStockRepository::save) // 변경된 재고 수량 저장
-        //        .orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, "[ERROR] not found product stock"));
+        reservationProductStockRepository.findById(order.getProductId())
+                .map(ReservationProductStock::addStockByOne) // 재고개수 + 1 해주기
+                .map(reservationProductStockRepository::update) // 변경된 재고 수량 저장
+                .orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, "[ERROR] not found product stock"));
         /**
          * 원자적으로 처리해야 함(끝)
          */

@@ -45,7 +45,19 @@ public class ReservationProductService {
                 .orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, "[ERROR] reservation product not found"));
 
         reservationProductStockRepository.findById(productId)
-                .map(productStock -> productStock.update(reservationProductUpdate))
+                .map(productStock -> productStock.update(reservationProductUpdate.getStockCount()))
+                .map(reservationProductStockRepository::save)
+                .orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, "[ERROR] reservation product stock not found"));
+    }
+
+    /**
+     * 재소 수량 변경
+     */
+    @Transactional
+    public ReservationProductStock updateStock(final Long reservationProductId, final ReservationProductStock reservationProductStock) {
+        return reservationProductStockRepository.findById(reservationProductId)
+                .map(productStock -> productStock.update(reservationProductStock.getStockCount()))
+                .map(reservationProductStockRepository::save)
                 .orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, "[ERROR] reservation product stock not found"));
     }
 }

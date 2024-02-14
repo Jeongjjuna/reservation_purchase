@@ -28,6 +28,9 @@ public class ReservationProductApiController {
     private final ReservationProductService reservationProductService;
     private final ReservationProductReadService reservationProductReadService;
 
+    /**
+     * 예약 상품 생성
+     */
     @PostMapping
     public Response<Void> create(@RequestBody final ReservationProductCreate reservationProductCreate) {
         reservationProductService.create(reservationProductCreate);
