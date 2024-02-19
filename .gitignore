@@ -44,7 +44,8 @@ out/
 
 ### 개발용 설정파일
 src/main/resources/application-dev.yaml
-table.sql
+newsfeed.sql
+reservation_product.sql
 
 resilience_test/test_script.sh
 

@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatCode;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import java.time.LocalDateTime;
 
 @DisplayName("단위테스트 [ProductStock]")
 class ProductStockTest {
@@ -19,12 +20,7 @@ class ProductStockTest {
                 .build();
 
         // when
-        productStock.update(new ProductUpdate(
-                "수정된 이름",
-                "수정된 내용",
-                20000L,
-                100
-        ));
+        productStock.update(100);
 
         // then
         assertThat(productStock.getStockCount()).isEqualTo(100);
@@ -37,6 +33,7 @@ class ProductStockTest {
                 "name",
                 "content",
                 10000L,
+                LocalDateTime.now(),
                 50
         );
 

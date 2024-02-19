@@ -25,8 +25,25 @@ public class ProductStock {
                 .build();
     }
 
-    public ProductStock update(final ProductUpdate productUpdate) {
-        this.stockCount = productUpdate.getStockCount();
+    public ProductStock update(final Integer stockCount) {
+        this.stockCount = stockCount;
+        return this;
+    }
+
+    public ProductStock validateStock() {
+        if (stockCount  <= 0) {
+            throw new IllegalArgumentException("재고 개수가 0보다 같거나 작습니다.");
+        }
+        return this;
+    }
+
+    public ProductStock subtractStockByOne() {
+        stockCount = stockCount - 1;
+        return this;
+    }
+
+    public ProductStock addStockByOne() {
+        stockCount = stockCount + 1;
         return this;
     }
 }

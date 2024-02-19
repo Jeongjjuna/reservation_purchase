@@ -22,12 +22,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 @AllArgsConstructor
 @RestController
-@RequestMapping("/v1/products")
+@RequestMapping("/v1/reservation-products")
 public class ProductApiController {
 
     private final ProductService productService;
     private final ProductReadService productReadService;
 
+    /**
+     * 예약 상품 생성
+     */
     @PostMapping
     public Response<Void> create(@RequestBody final ProductCreate productCreate) {
         productService.create(productCreate);
@@ -35,7 +38,7 @@ public class ProductApiController {
     }
 
     /**
-     * 상품 단건 조회
+     * 예약 상품 단건 조회
      */
     @GetMapping("/{id}")
     public Response<ProductResponse> read(@PathVariable Long id) {
@@ -44,16 +47,16 @@ public class ProductApiController {
     }
 
     /**
-     * 상품 전체 조회
+     * 예약 상품 전체 조회
      */
     @GetMapping
     public Response<Page<ProductResponse>> readAll() {
-        final  Page<Product> products = productReadService.findAll();
-        return Response.success(products.map(ProductResponse::from));
+        final  Page<Product> reservationProducts = productReadService.findAll();
+        return Response.success(reservationProducts.map(ProductResponse::from));
     }
 
     /**
-     * 상품 재고 수량 조회
+     * 예약 상품 재고 수량 조회
      */
     @GetMapping("/{id}/stock")
     public Response<ProductStockResponse> readStockCount(@PathVariable Long id) {
@@ -62,7 +65,7 @@ public class ProductApiController {
     }
 
     /**
-     * 상품 정보 수정 테스트
+     * 예약 상품 정보 수정 테스트
      */
     @PutMapping("/{id}")
     public Response<Void> update(

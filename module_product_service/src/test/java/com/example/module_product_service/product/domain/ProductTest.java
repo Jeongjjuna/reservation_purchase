@@ -6,10 +6,10 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import java.time.LocalDateTime;
 
 @DisplayName("단위테스트 [Product]")
 class ProductTest {
-
 
     @DisplayName("수정 테스트")
     @Test
@@ -19,6 +19,7 @@ class ProductTest {
                 "name",
                 "content",
                 10000L,
+                LocalDateTime.now(),
                 50
         );
         Product product = Product.create(productCreate);
@@ -28,6 +29,7 @@ class ProductTest {
                 "수정된 이름",
                 "수정된 내용",
                 20000L,
+                LocalDateTime.now(),
                 100
         ));
 
@@ -46,6 +48,7 @@ class ProductTest {
                 "name",
                 "content",
                 10000L,
+                LocalDateTime.now(),
                 50
         );
 

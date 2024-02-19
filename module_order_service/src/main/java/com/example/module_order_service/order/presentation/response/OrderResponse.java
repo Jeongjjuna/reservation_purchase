@@ -1,18 +1,18 @@
 package com.example.module_order_service.order.presentation.response;
 
 import com.example.module_order_service.order.domain.Order;
-import java.time.LocalDateTime;
 import lombok.Builder;
 import lombok.Getter;
+import java.time.LocalDateTime;
 
 @Getter
 public class OrderResponse {
 
     private Long id;
     private Long productId;
-    private String productType;
-    private Long quantity;
     private Long memberId;
+    private Long quantity;
+    private Long price;
     private String address;
     private LocalDateTime createdAt;
     private LocalDateTime deletedAt;
@@ -21,18 +21,18 @@ public class OrderResponse {
     public OrderResponse(
             final Long id,
             final Long productId,
-            final String productType,
-            final Long quantity,
             final Long memberId,
+            final Long quantity,
+            final Long price,
             final String address,
             final LocalDateTime createdAt,
             final LocalDateTime deletedAt
     ) {
         this.id = id;
         this.productId = productId;
-        this.productType = productType;
-        this.quantity = quantity;
         this.memberId = memberId;
+        this.quantity = quantity;
+        this.price = price;
         this.address = address;
         this.createdAt = createdAt;
         this.deletedAt = deletedAt;
@@ -42,9 +42,9 @@ public class OrderResponse {
         return OrderResponse.builder()
                 .id(order.getId())
                 .productId(order.getProductId())
-                .productType(order.getProductType().getProductType())
-                .quantity(order.getQuantity())
                 .memberId(order.getMemberId())
+                .quantity(order.getQuantity())
+                .price(order.getPrice())
                 .address(order.getAddress())
                 .createdAt(order.getCreatedAt())
                 .deletedAt(order.getDeletedAt())
