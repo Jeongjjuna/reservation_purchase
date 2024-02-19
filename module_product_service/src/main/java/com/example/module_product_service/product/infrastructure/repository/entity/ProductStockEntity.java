@@ -19,7 +19,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 public class ProductStockEntity {
 
     @Id
-    @Column(name = "product_id", updatable = false)
+    @Column(name = "product_number", updatable = false)
     private Long productId;
 
     @Column(name = "stock_count", nullable = false)

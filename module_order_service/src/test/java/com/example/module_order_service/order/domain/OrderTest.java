@@ -13,13 +13,13 @@ class OrderTest {
     void 생성테스트() {
         OrderCreate orderCreate = new OrderCreate(
                 1L,
-                "reservationProduct",
                 2L,
                 4L,
                 "서울특별시 xxx동 xxx아파트 xx호"
         );
+        Long price = 8000L;
 
-        assertThatCode(() -> Order.create(orderCreate)
+        assertThatCode(() -> Order.create(orderCreate, price)
         ).doesNotThrowAnyException();
     }
 }

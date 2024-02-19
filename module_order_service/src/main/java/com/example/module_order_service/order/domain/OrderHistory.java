@@ -1,53 +1,51 @@
-package com.example.module_order_service.order.presentation.response;
+package com.example.module_order_service.order.domain;
 
-import com.example.module_order_service.order.domain.Order;
 import lombok.Builder;
 import lombok.Getter;
 import java.time.LocalDateTime;
 
 @Getter
-public class OrderResponse {
+public class OrderHistory {
 
-    private Long id;
+    private Long orderId;
     private Long productId;
     private Long memberId;
     private Long quantity;
     private Long price;
     private String address;
+    private Status status;
     private LocalDateTime createdAt;
-    private LocalDateTime deletedAt;
 
     @Builder
-    public OrderResponse(
-            final Long id,
+    public OrderHistory(
+            final Long orderId,
             final Long productId,
             final Long memberId,
             final Long quantity,
             final Long price,
             final String address,
-            final LocalDateTime createdAt,
-            final LocalDateTime deletedAt
+            final Status status,
+            final LocalDateTime createdAt
     ) {
-        this.id = id;
+        this.orderId = orderId;
         this.productId = productId;
         this.memberId = memberId;
         this.quantity = quantity;
         this.price = price;
         this.address = address;
+        this.status = status;
         this.createdAt = createdAt;
-        this.deletedAt = deletedAt;
     }
 
-    public static OrderResponse from(Order order) {
-        return OrderResponse.builder()
-                .id(order.getId())
+    public static OrderHistory create(final Order order) {
+        return OrderHistory.builder()
+                .orderId(order.getId())
                 .productId(order.getProductId())
                 .memberId(order.getMemberId())
                 .quantity(order.getQuantity())
                 .price(order.getPrice())
                 .address(order.getAddress())
-                .createdAt(order.getCreatedAt())
-                .deletedAt(order.getDeletedAt())
+                .status(Status.PROCESSING)
                 .build();
     }
 }

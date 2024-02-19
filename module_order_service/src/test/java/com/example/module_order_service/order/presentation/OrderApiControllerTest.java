@@ -10,9 +10,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.example.module_order_service.order.application.port.OrderRepository;
 import com.example.module_order_service.order.application.port.ReservationProductStockAdapter;
 import com.example.module_order_service.order.domain.Order;
-import com.example.module_order_service.order.domain.ProductType;
+import com.example.module_order_service.order.domain.OrderProduct;
 import com.example.module_order_service.order.domain.ReservationProductStock;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -21,8 +22,10 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
+@Tag("reservation_purchase_app")
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
@@ -42,9 +45,9 @@ class OrderApiControllerTest {
     private Long saveOrder() {
         Order order = Order.builder()
                 .productId(1L)
-                .productType(ProductType.RESERVATION_PRODUCT)
-                .quantity(2L)
                 .memberId(3L)
+                .quantity(2L)
+                .price(8000L)
                 .address("서울특별시 xxx동 xxx아파트 xx호")
                 .build();
         Order saved = orderRepository.save(order);
@@ -64,9 +67,9 @@ class OrderApiControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.desc").value("success"))
                 .andExpect(jsonPath("$.data.productId").value("1"))
-                .andExpect(jsonPath("$.data.productType").value("reservationProduct"))
-                .andExpect(jsonPath("$.data.quantity").value("2"))
                 .andExpect(jsonPath("$.data.memberId").value("3"))
+                .andExpect(jsonPath("$.data.quantity").value("2"))
+                .andExpect(jsonPath("$.data.price").value("8000"))
                 .andExpect(jsonPath("$.data.address").value("서울특별시 xxx동 xxx아파트 xx호"));
     }
 
@@ -77,13 +80,15 @@ class OrderApiControllerTest {
         String json = """
                 {
                     "productId" : 1,
-                    "productType" : "reservationProduct",
+                    "productType" : "product",
                     "quantity" : 2,
                     "memberId" : 99,
                     "address" : "서울특별시 xxx동 xxx아파트 xx호"
                 }
                 """;
 
+        when(reservationProductStockAdapter.findOrderProductById(any(Long.class)))
+                .thenReturn(Optional.of(new OrderProduct("name", "content", 8000L, LocalDateTime.now())));
         when(reservationProductStockAdapter.findById(any(Long.class)))
                 .thenReturn(Optional.of(new ReservationProductStock(1L, 3)));
         when(reservationProductStockAdapter.update(any(ReservationProductStock.class)))

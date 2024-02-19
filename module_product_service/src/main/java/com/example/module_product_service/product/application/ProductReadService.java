@@ -22,7 +22,7 @@ public class ProductReadService {
 
     public Product find(final Long productId) {
         return productRepository.findById(productId).orElseThrow(() ->
-                new GlobalException(HttpStatus.NOT_FOUND, "[ERROR] product not found"));
+                new GlobalException(HttpStatus.NOT_FOUND, "[ERROR] reservation product not found"));
     }
 
     public Page<Product> findAll() {
@@ -32,6 +32,6 @@ public class ProductReadService {
 
     public ProductStock readStockCount(final Long productId) {
         return productStockRepository.findById(productId)
-                .orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, "[ERROR] product stock not found"));
+                .orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, "[ERROR] reservation product stock not found"));
     }
 }

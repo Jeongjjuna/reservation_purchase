@@ -1,8 +1,8 @@
 package com.example.module_product_service.product.domain;
 
-import java.time.LocalDateTime;
 import lombok.Builder;
 import lombok.Getter;
+import java.time.LocalDateTime;
 
 @Getter
 public class Product {

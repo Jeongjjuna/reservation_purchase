@@ -1,11 +1,10 @@
 package com.example.module_order_service.order.infrastructure.repository.entity;
 
-import com.example.module_order_service.order.domain.Order;
+import com.example.module_order_service.order.domain.OrderHistory;
+import com.example.module_order_service.order.domain.Status;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
@@ -19,13 +18,12 @@ import java.time.LocalDateTime;
 @EntityListeners(value = {AuditingEntityListener.class})
 @Getter
 @Entity
-@Table(name = "orders")
-public class OrderEntity {
+@Table(name = "order_history")
+public class OrderHistoryEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "orders_number", updatable = false)
-    private Long id;
+    private Long orderId;
 
     @Column(name = "product_number", nullable = false)
     private Long productId;
@@ -42,36 +40,37 @@ public class OrderEntity {
     @Column(name = "address", nullable = false)
     private String address;
 
+    @Column(name = "status", nullable = false)
+    private Status status;
+
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    @Column(name = "deleted_at")
-    private LocalDateTime deletedAt;
 
-    public static OrderEntity from(final Order order) {
-        final OrderEntity orderEntity = new OrderEntity();
-        orderEntity.id = order.getId();
-        orderEntity.productId = order.getProductId();
-        orderEntity.memberId = order.getMemberId();
-        orderEntity.quantity = order.getQuantity();
-        orderEntity.price = order.getPrice();
-        orderEntity.address = order.getAddress();
-        orderEntity.createdAt = order.getCreatedAt();
-        orderEntity.deletedAt = order.getDeletedAt();
-        return orderEntity;
+    public static OrderHistoryEntity from(final OrderHistory orderHistory) {
+        final OrderHistoryEntity orderHistoryEntity = new OrderHistoryEntity();
+        orderHistoryEntity.orderId = orderHistory.getOrderId();
+        orderHistoryEntity.productId = orderHistory.getProductId();
+        orderHistoryEntity.memberId = orderHistory.getMemberId();
+        orderHistoryEntity.quantity = orderHistory.getQuantity();
+        orderHistoryEntity.price = orderHistory.getPrice();
+        orderHistoryEntity.address = orderHistory.getAddress();
+        orderHistoryEntity.status = orderHistory.getStatus();
+        orderHistoryEntity.createdAt = orderHistory.getCreatedAt();
+        return orderHistoryEntity;
     }
 
-    public Order toModel() {
-        return Order.builder()
-                .id(id)
+    public OrderHistory toModel() {
+        return OrderHistory.builder()
+                .orderId(orderId)
                 .productId(productId)
                 .memberId(memberId)
                 .quantity(quantity)
                 .price(price)
                 .address(address)
+                .status(status)
                 .createdAt(createdAt)
-                .deletedAt(deletedAt)
                 .build();
     }
 }
