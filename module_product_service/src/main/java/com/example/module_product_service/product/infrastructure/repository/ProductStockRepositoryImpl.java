@@ -11,15 +11,15 @@ import java.util.Optional;
 @Repository
 public class ProductStockRepositoryImpl implements ProductStockRepository {
 
-    private final ReservationProductStockJpaRepository reservationProductStockJpaRepository;
+    private final ProductStockJpaRepository productStockJpaRepository;
 
     @Override
     public ProductStock save(final ProductStock productStock) {
-        return reservationProductStockJpaRepository.save(ProductStockEntity.from(productStock)).toModel();
+        return productStockJpaRepository.save(ProductStockEntity.from(productStock)).toModel();
     }
 
     @Override
     public Optional<ProductStock> findById(final Long productId) {
-        return reservationProductStockJpaRepository.findById(productId).map(ProductStockEntity::toModel);
+        return productStockJpaRepository.findById(productId).map(ProductStockEntity::toModel);
     }
 }
