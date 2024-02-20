@@ -5,6 +5,8 @@ import com.example.module_order_service.order.domain.Status;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
@@ -32,14 +34,15 @@ public class OrderHistoryEntity {
     private Long memberId;
 
     @Column(name = "quantity", nullable = false)
-    private Long quantity;
+    private Integer quantity;
 
     @Column(name = "price", nullable = false)
-    private Long price;
+    private Integer price;
 
     @Column(name = "address", nullable = false)
     private String address;
 
+    @Enumerated(EnumType.STRING) // Enum 값을 문자열로 매핑
     @Column(name = "status", nullable = false)
     private Status status;
 

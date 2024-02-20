@@ -1,6 +1,7 @@
 package com.example.module_order_service.order.presentation;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -8,9 +9,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.example.module_order_service.order.application.port.OrderRepository;
-import com.example.module_order_service.order.application.port.ReservationProductStockAdapter;
+import com.example.module_order_service.order.application.port.ProductServiceAdapter;
+import com.example.module_order_service.order.application.port.StockServiceAdapter;
 import com.example.module_order_service.order.domain.Order;
 import com.example.module_order_service.order.domain.OrderProduct;
+import com.example.module_order_service.order.domain.OrderStock;
 import com.example.module_order_service.order.domain.ReservationProductStock;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
@@ -39,15 +42,18 @@ class OrderApiControllerTest {
     private OrderRepository orderRepository;
 
     @MockBean
-    private ReservationProductStockAdapter reservationProductStockAdapter;
+    private ProductServiceAdapter productServiceAdapter;
+
+    @MockBean
+    private StockServiceAdapter stockServiceAdapter;
 
 
     private Long saveOrder() {
         Order order = Order.builder()
                 .productId(1L)
                 .memberId(3L)
-                .quantity(2L)
-                .price(8000L)
+                .quantity(2)
+                .price(8000)
                 .address("서울특별시 xxx동 xxx아파트 xx호")
                 .build();
         Order saved = orderRepository.save(order);
@@ -87,12 +93,14 @@ class OrderApiControllerTest {
                 }
                 """;
 
-        when(reservationProductStockAdapter.findOrderProductById(any(Long.class)))
-                .thenReturn(Optional.of(new OrderProduct("name", "content", 8000L, LocalDateTime.now())));
-        when(reservationProductStockAdapter.findById(any(Long.class)))
+        when(productServiceAdapter.findOrderProductById(any(Long.class)))
+                .thenReturn(Optional.of(new OrderProduct("name", "content", 8000, LocalDateTime.now())));
+        when(productServiceAdapter.findById(any(Long.class)))
                 .thenReturn(Optional.of(new ReservationProductStock(1L, 3)));
-        when(reservationProductStockAdapter.update(any(ReservationProductStock.class)))
+        when(productServiceAdapter.update(any(ReservationProductStock.class)))
                 .thenReturn(new ReservationProductStock(1L, 3));
+        doNothing().when(stockServiceAdapter).subtract(any(Long.class), any(OrderStock.class));
+
 
         // when, then
         mockMvc.perform(post("/v1/orders")

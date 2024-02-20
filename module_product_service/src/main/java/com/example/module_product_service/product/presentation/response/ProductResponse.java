@@ -8,26 +8,28 @@ import java.time.LocalDateTime;
 @Getter
 public class ProductResponse {
 
+    private Long productId;
     private String name;
     private String content;
     private Long price;
-    private LocalDateTime purchaseButtonActivationAt;
 
     @Builder
     public ProductResponse(
+            final Long productId,
             final String name,
             final String content,
             final Long price,
-            final LocalDateTime purchaseButtonActivationAt
+            final LocalDateTime reservationStartAt
     ) {
+        this.productId = productId;
         this.name = name;
         this.content = content;
         this.price = price;
-        this.purchaseButtonActivationAt = purchaseButtonActivationAt;
     }
 
     public static ProductResponse from(Product product) {
         return ProductResponse.builder()
+                .productId(product.getId())
                 .name(product.getName())
                 .content(product.getContent())
                 .price(product.getPrice())

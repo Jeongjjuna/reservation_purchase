@@ -2,26 +2,28 @@ package com.example.module_product_service.product.application;
 
 import com.example.module_product_service.common.exception.GlobalException;
 import com.example.module_product_service.product.application.port.ProductRepository;
-import com.example.module_product_service.product.application.port.ProductStockRepository;
 import com.example.module_product_service.product.application.port.ReservationTimeRepository;
+import com.example.module_product_service.product.application.port.StockServiceAdapter;
 import com.example.module_product_service.product.domain.Product;
 import com.example.module_product_service.product.domain.ProductCreate;
 import com.example.module_product_service.product.domain.ProductStock;
 import com.example.module_product_service.product.domain.ProductUpdate;
 import com.example.module_product_service.product.domain.ReservationTime;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 
+@Slf4j
 @AllArgsConstructor
 @Service
 public class ProductService {
 
     private final ProductRepository productRepository;
     private final ReservationTimeRepository reservationTimeRepository;
-    private final ProductStockRepository productStockRepository;
+    private final StockServiceAdapter stockServiceAdapter;
 
     /**
      * 상품 등록
@@ -47,21 +49,13 @@ public class ProductService {
                 .map(productRepository::save)
                 .orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, "[ERROR] reservation product not found"));
 
-        productStockRepository.findById(productId)
-                .map(productStock -> productStock.update(productUpdate.getStockCount()))
-                .map(productStockRepository::save)
-                .orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, "[ERROR] reservation product stock not found"));
-    }
-
-    /**
-     * 재소 수량 변경
-     */
-    @Transactional
-    public ProductStock updateStock(final Long reservationProductId, final ProductStock reservationProductStock) {
-        return productStockRepository.findById(reservationProductId)
-                .map(productStock -> productStock.update(reservationProductStock.getStockCount()))
-                .map(productStockRepository::save)
-                .orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, "[ERROR] reservation product stock not found"));
+        // 재고 수량 정보 변경(재고서비스에 feign 요청)
+        ProductStock productStock = ProductStock.builder()
+                .productId(productId)
+                .stockCount(productUpdate.getStockCount())
+                .build();
+        stockServiceAdapter.updateStockCount(productId, productStock);
+        log.info("feign응답성공 : 재고서비스의 재고업데이트 요청");
     }
 
     private Product saveReservationTime(Product product, ProductCreate productCreate) {
@@ -71,8 +65,13 @@ public class ProductService {
     }
 
     private Product saveProductStock(Product product, ProductCreate productCreate) {
-        ProductStock productStock = ProductStock.create(product.getId(), productCreate);
-        productStockRepository.save(productStock);
+        // 재고 생성 요청(재고서비스에 feign 요청)
+        ProductStock productStock = ProductStock.builder()
+                .productId(product.getId())
+                .stockCount(productCreate.getStockCount())
+                .build();
+        stockServiceAdapter.createStockCount(product.getId(), productStock);
+        log.info("feign응답성공 : 재고서비스의 재고생성 요청");
         return product;
     }
 }

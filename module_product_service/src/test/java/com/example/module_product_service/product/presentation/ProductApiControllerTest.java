@@ -7,10 +7,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.example.module_product_service.product.application.port.ProductRepository;
-import com.example.module_product_service.product.application.port.ProductStockRepository;
 import com.example.module_product_service.product.application.port.ReservationTimeRepository;
 import com.example.module_product_service.product.domain.Product;
-import com.example.module_product_service.product.domain.ProductStock;
 import com.example.module_product_service.product.domain.ReservationTime;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -37,9 +35,6 @@ class ProductApiControllerTest {
     @Autowired
     private ReservationTimeRepository reservationTimeRepository;
 
-    @Autowired
-    private ProductStockRepository productStockRepository;
-
     private Long saveProduct() {
         Product product = Product.builder()
                 .name("name")
@@ -47,12 +42,6 @@ class ProductApiControllerTest {
                 .price(20000L)
                 .build();
         Product saved = productRepository.save(product);
-
-        ProductStock productStock = ProductStock.builder()
-                .productId(saved.getId())
-                .stockCount(50)
-                .build();
-        productStockRepository.save(productStock);
 
         ReservationTime reservationTime = ReservationTime.builder()
                 .productId(saved.getId())

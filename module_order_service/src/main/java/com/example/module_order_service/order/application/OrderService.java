@@ -1,27 +1,28 @@
 package com.example.module_order_service.order.application;
 
-import com.example.module_order_service.common.exception.GlobalException;
 import com.example.module_order_service.order.application.port.OrderHistoryRepository;
 import com.example.module_order_service.order.application.port.OrderRepository;
-import com.example.module_order_service.order.application.port.ReservationProductStockAdapter;
+import com.example.module_order_service.order.application.port.ProductServiceAdapter;
+import com.example.module_order_service.order.application.port.StockServiceAdapter;
 import com.example.module_order_service.order.domain.Order;
 import com.example.module_order_service.order.domain.OrderCreate;
 import com.example.module_order_service.order.domain.OrderHistory;
 import com.example.module_order_service.order.domain.OrderProduct;
-import com.example.module_order_service.order.domain.ReservationProductStock;
+import com.example.module_order_service.order.domain.OrderStock;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.util.Optional;
 
+@Slf4j
 @AllArgsConstructor
 @Service
 public class OrderService {
 
     private final OrderRepository orderRepository;
     private final OrderHistoryRepository orderHistoryRepository;
-    private final ReservationProductStockAdapter reservationProductStockAdapter;
+    private final ProductServiceAdapter productServiceAdapter;
+    private final StockServiceAdapter stockServiceAdapter;
 
     /**
      * 결제 화면 들어가기 버튼 클릭 시 주문 생성이 요청된다.
@@ -30,27 +31,28 @@ public class OrderService {
     @Transactional
     public Long create(final OrderCreate orderCreate) {
 
-        // 상품 서비스에 상품 가격 정보 조회 요청
-        OrderProduct orderProduct = reservationProductStockAdapter.findOrderProductById(orderCreate.getProductId())
+        // 1. 해당 상품이 존재하는가?
+        final OrderProduct orderProduct = productServiceAdapter.findOrderProductById(orderCreate.getProductId())
                     .orElseThrow(() -> new IllegalArgumentException("해당 상품 재고를 찾을 수 없음"));
+        log.info("feign응답성공 : 상품서비스의 상품조회 요청");
 
-        // TODO : 거의 동시에 100~1000개 이상 들어올 수 도 있음(동시 클릭)
-        // TODO : 현재는 feign사용 -> redis, 비동기이벤트로 개선 예정
-        // TODO : 원자적으로 재고수량 변경 처리해야 함
-        reservationProductStockAdapter.findById(orderCreate.getProductId())
-                .map(ReservationProductStock::validateStock) // 만약 재고가 0 이하라면 예외 발생
-                .map(ReservationProductStock::subtractStockByOne) // 재고개수 - 1 해주기
-                .map(reservationProductStockAdapter::update) // 변경된 재고 수량 저장
-                .orElseThrow(() -> new IllegalArgumentException("해당 상품 재고를 찾을 수 없음"));
 
+        // 2. 주문 생성
         final Order order = Order.create(orderCreate, orderProduct.getPrice());
-        final Order savedOrder = Optional.of(order)
-                .map(orderRepository::save)
-                .orElseThrow(() -> new GlobalException(HttpStatus.INTERNAL_SERVER_ERROR, "[ERROR] order save fail"));
+        final Order savedOrder = orderRepository.save(order);
 
-        Optional.of(OrderHistory.create(savedOrder))
-                .map(orderHistoryRepository::save)
-                .orElseThrow(() -> new GlobalException(HttpStatus.INTERNAL_SERVER_ERROR, "[ERROR] order history save fail"));
+        // 3. 주문 기록 생성
+        final OrderHistory orderHistory = OrderHistory.create(savedOrder);
+        orderHistoryRepository.save(orderHistory);
+
+        // 4. 재고 서비스 서버에 재고 감소 요청(동기 feign)
+        OrderStock orderStock = OrderStock.builder()
+                .productId(order.getProductId())
+                .stockCount(order.getQuantity())
+                .build();
+        stockServiceAdapter.subtract(order.getProductId(), orderStock);
+        log.info("feign응답성공 : 재고서비스의 재고감소 요청");
+
 
         return savedOrder.getId();
     }
@@ -61,19 +63,40 @@ public class OrderService {
      */
     @Transactional
     public Order cancel(final Long orderId) {
-        final Order order  = orderRepository.findById(orderId)
-                .map(Order::cancel) // 주문 취소 하기
-                .map(orderRepository::save) // 주문 취소 저장하기
-                .orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, "[ERROR] not found order"));
 
-        // TODO : 현재는 feign사용 -> redis, 비동기이벤트로 개선 예정
-        // TODO : 원자적으로 재고수량 변경 처리해야 함
-        reservationProductStockAdapter.findById(order.getProductId())
-                .map(ReservationProductStock::addStockByOne) // 재고개수 + 1 해주기
-                .map(reservationProductStockAdapter::update) // 변경된 재고 수량 저장
-                .orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, "[ERROR] not found product stock"));
+        // TODO : 애초에 주문 엔티티를 가져올 때 deleted_at == null 인 값만 가져와야 한다.
+        // 1. 해당주문이 존재하는가? 존재하면 주문 취소
+        final Order order  = orderRepository.findById(orderId)
+                .map(Order::cancel)
+                .map(orderRepository::save)
+                .orElseThrow(() -> new IllegalArgumentException("해당 주문을 찾을 수 없음"));
+
+        // 2. 해당 주문 기록이 존재하는가? 존재하면 주문기록 취소
+        final OrderHistory orderHistory = orderHistoryRepository.findByOrderId(order.getId())
+                .map(OrderHistory::cancel)
+                .map(orderHistoryRepository::save)
+                .orElseThrow(() -> new IllegalArgumentException("해당 주문기록을 찾을 수 없음"));
+
+        // 3. 재고 서비스 서버에 재고 증가 요청(동기 feign)
+        OrderStock orderStock = OrderStock.builder()
+                .productId(order.getProductId())
+                .stockCount(order.getQuantity())
+                .build();
+        stockServiceAdapter.addStock(order.getProductId(), orderStock);
+        log.info("feign응답성공 : 재고서비스의 재고증가 요청");
 
         return order;
     }
 
+    public Order complete(final Long orderId) {
+        final Order order  = orderRepository.findById(orderId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 주문을 찾을 수 없음"));
+
+        final OrderHistory orderHistory = orderHistoryRepository.findByOrderId(orderId)
+                .map(OrderHistory::complete)
+                .map(orderHistoryRepository::save)
+                .orElseThrow(() -> new IllegalArgumentException("해당 주문기록을 찾을 수 없음"));
+
+        return order;
+    }
 }

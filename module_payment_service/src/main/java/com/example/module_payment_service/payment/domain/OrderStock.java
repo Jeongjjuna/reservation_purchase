@@ -1,16 +1,16 @@
-package com.example.module_product_service.product.domain;
+package com.example.module_payment_service.payment.domain;
 
 import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-public class ProductStock {
+public class OrderStock {
 
     private Long productId;
     private Integer stockCount;
 
     @Builder
-    public ProductStock(final Long productId, final Integer stockCount) {
+    public OrderStock(final Long productId, final Integer stockCount) {
         this.productId = productId;
         this.stockCount = stockCount;
     }

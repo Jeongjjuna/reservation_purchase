@@ -9,13 +9,13 @@ public class OrderCreate {
 
     private Long productId;
     private Long memberId;
-    private Long quantity;
+    private Integer quantity;
     private String address;
 
     public OrderCreate(
             final Long productId,
             final Long memberId,
-            final Long quantity,
+            final Integer quantity,
             final String address
     ) {
         this.productId = productId;

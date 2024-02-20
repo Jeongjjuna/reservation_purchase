@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @AllArgsConstructor
 @RestController
-@RequestMapping("/v1/reservation-products")
+@RequestMapping("/v1/stocks")
 public class StockApiController {
 
     private final StockService stockService;
@@ -20,9 +20,9 @@ public class StockApiController {
     /**
      * 재고 수량 조회
      */
-    @GetMapping("/{id}/stock")
-    public Response<StockResponse> readStockCount(@PathVariable Long id) {
-        final Stock productStock = stockService.readStockCount(id);
+    @GetMapping("/products/{productId}")
+    public Response<StockResponse> readStockCount(@PathVariable Long productId) {
+        final Stock productStock = stockService.readStockCount(productId);
         return Response.success(StockResponse.from(productStock));
     }
 }

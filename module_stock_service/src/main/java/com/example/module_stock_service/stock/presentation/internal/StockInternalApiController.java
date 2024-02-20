@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,30 +14,66 @@ import org.springframework.web.bind.annotation.RestController;
 
 @AllArgsConstructor
 @RestController
-@RequestMapping("/v1/internal/reservation-product-stock")
+@RequestMapping("/v1/internal/stock")
 public class StockInternalApiController {
 
     private final StockService stockService;
 
     /**
-     * 상품 재고 조회
+     * 재고 생성
      */
-    @GetMapping( "/{reservationProductId}")
-    public ResponseEntity<Stock> findByReservationProductStockId(
-            @PathVariable final Long reservationProductId
+    @PostMapping("/products/{productId}")
+    public ResponseEntity<Stock> createStock(
+            @PathVariable("productId") Long productId,
+            @RequestBody final Stock productStock
     ) {
-        return ResponseEntity.ok(stockService.readStockCount(reservationProductId));
+        return ResponseEntity.ok(stockService.create(productId, productStock));
     }
 
     /**
-     * 상품 재고수량 변경
+     * 재고 수량 변경
      */
-    @PutMapping("/{reservationProductId}")
-    public ResponseEntity<Stock> updateReservationProductStock(
-            @PathVariable("reservationProductId") Long reservationProductId,
+    @PutMapping("/products/{productId}")
+    public ResponseEntity<Stock> updateStock(
+            @PathVariable("productId") Long productId,
             @RequestBody final Stock productStock
     ) {
-        return ResponseEntity.ok(stockService.updateStock(reservationProductId, productStock));
+        return ResponseEntity.ok(stockService.update(productId, productStock));
     }
+
+    /**
+     * 재고 수량 더하기
+     */
+    @PostMapping( "/increase/products/{productId}")
+    public ResponseEntity<Void> addStock(
+            @PathVariable final Long productId,
+            @RequestBody final Stock productStock
+    ) {
+        stockService.add(productId, productStock);
+        return ResponseEntity.ok().build();
+    }
+
+    /**
+     * 재고 수량 빼기
+     */
+    @PostMapping("/decrease/products/{productId}")
+    public ResponseEntity<Stock> subtractStock(
+            @PathVariable final Long productId,
+            @RequestBody final Stock productStock
+    ) {
+        stockService.subtract(productId, productStock);
+        return ResponseEntity.ok().build();
+    }
+
+    /**
+     * 재고 수량 조회
+     */
+    @GetMapping( "/products/{productId}")
+    public ResponseEntity<Stock> findStock(
+            @PathVariable final Long productId
+    ) {
+        return ResponseEntity.ok(stockService.readStockCount(productId));
+    }
+
 }
 

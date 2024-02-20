@@ -14,10 +14,10 @@ class OrderTest {
         OrderCreate orderCreate = new OrderCreate(
                 1L,
                 2L,
-                4L,
+                4,
                 "서울특별시 xxx동 xxx아파트 xx호"
         );
-        Long price = 8000L;
+        Integer price = 8000;
 
         assertThatCode(() -> Order.create(orderCreate, price)
         ).doesNotThrowAnyException();

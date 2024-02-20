@@ -6,10 +6,8 @@ import com.example.module_product_service.product.application.ProductReadService
 import com.example.module_product_service.product.application.ProductService;
 import com.example.module_product_service.product.domain.Product;
 import com.example.module_product_service.product.domain.ProductCreate;
-import com.example.module_product_service.product.domain.ProductStock;
 import com.example.module_product_service.product.domain.ProductUpdate;
 import com.example.module_product_service.product.presentation.response.ProductResponse;
-import com.example.module_product_service.product.presentation.response.ProductStockResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,14 +20,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 @AllArgsConstructor
 @RestController
-@RequestMapping("/v1/reservation-products")
+@RequestMapping("/v1/products")
 public class ProductApiController {
 
     private final ProductService productService;
     private final ProductReadService productReadService;
 
     /**
-     * 예약 상품 생성
+     * 상품 생성
      */
     @PostMapping
     public Response<Void> create(@RequestBody final ProductCreate productCreate) {
@@ -38,16 +36,16 @@ public class ProductApiController {
     }
 
     /**
-     * 예약 상품 단건 조회
+     * 상품 단건 조회
      */
-    @GetMapping("/{id}")
-    public Response<ProductResponse> read(@PathVariable Long id) {
-        Product product = productReadService.find(id);
+    @GetMapping("/{productId}")
+    public Response<ProductResponse> read(@PathVariable Long productId) {
+        Product product = productReadService.find(productId);
         return Response.success(ProductResponse.from(product));
     }
 
     /**
-     * 예약 상품 전체 조회
+     * 상품 전체 조회
      */
     @GetMapping
     public Response<Page<ProductResponse>> readAll() {
@@ -56,23 +54,14 @@ public class ProductApiController {
     }
 
     /**
-     * 예약 상품 재고 수량 조회
-     */
-    @GetMapping("/{id}/stock")
-    public Response<ProductStockResponse> readStockCount(@PathVariable Long id) {
-        final ProductStock productStock = productReadService.readStockCount(id);
-        return Response.success(ProductStockResponse.from(productStock));
-    }
-
-    /**
      * 예약 상품 정보 수정 테스트
      */
-    @PutMapping("/{id}")
+    @PutMapping("/{productId}")
     public Response<Void> update(
-            @PathVariable final Long id,
+            @PathVariable final Long productId,
             @RequestBody final ProductUpdate productUpdate
     ) {
-        productService.update(id, productUpdate);
+        productService.update(productId, productUpdate);
         return Response.success();
     }
 }

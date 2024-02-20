@@ -10,9 +10,9 @@ public class Order {
 
     private Long id;
     private Long productId;
-    private ProductType productType;
-    private Long quantity;
     private Long memberId;
+    private ProductType productType;
+    private Integer quantity;
     private String address;
     private LocalDateTime createdAt;
     private LocalDateTime deletedAt;
@@ -21,9 +21,9 @@ public class Order {
     public Order(
             final Long id,
             final Long productId,
-            final ProductType productType,
-            final Long quantity,
             final Long memberId,
+            final ProductType productType,
+            final Integer quantity,
             final String address,
             final LocalDateTime createdAt,
             final LocalDateTime deletedAt

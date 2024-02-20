@@ -14,4 +14,7 @@ public interface OrderFeignClient {
 
     @RequestMapping(method = RequestMethod.DELETE, value = "/v1/internal/orders/{orderId}", consumes = "application/json")
     Order cancel(@PathVariable final Long orderId);
+
+    @RequestMapping(method = RequestMethod.POST, value = "/v1/internal/orders/{orderId}/complete", consumes = "application/json")
+    Order complete(@PathVariable final Long orderId);
 }

@@ -1,7 +1,9 @@
 package com.example.module_order_service.order.domain;
 
+import com.example.module_order_service.common.exception.GlobalException;
 import lombok.Builder;
 import lombok.Getter;
+import org.springframework.http.HttpStatus;
 import java.time.LocalDateTime;
 
 @Getter
@@ -10,8 +12,8 @@ public class Order {
     private Long id;
     private Long productId;
     private Long memberId;
-    private Long quantity;
-    private Long price;
+    private Integer quantity;
+    private Integer price;
     private String address;
     private LocalDateTime createdAt;
     private LocalDateTime deletedAt;
@@ -21,8 +23,8 @@ public class Order {
             final Long id,
             final Long productId,
             final Long memberId,
-            final Long quantity,
-            final Long price,
+            final Integer quantity,
+            final Integer price,
             final String address,
             final LocalDateTime createdAt,
             final LocalDateTime deletedAt
@@ -37,7 +39,7 @@ public class Order {
         this.deletedAt = deletedAt;
     }
 
-    public static Order create(final OrderCreate orderCreate, final Long price) {
+    public static Order create(final OrderCreate orderCreate, final Integer price) {
         return Order.builder()
                 .productId(orderCreate.getProductId())
                 .memberId(orderCreate.getMemberId())
@@ -48,6 +50,9 @@ public class Order {
     }
 
     public Order cancel() {
+        if (deletedAt != null) {
+            throw new GlobalException(HttpStatus.CONFLICT, "이미 취소 되어 있는 상품을 또 취소할 수 없습니다.");
+        }
         deletedAt = LocalDateTime.now();
         return this;
     }

@@ -37,13 +37,13 @@ public class Stock {
         return this;
     }
 
-    public Stock subtractStockByOne() {
-        stockCount = stockCount - 1;
+    public Stock subtractStock(int quantity) {
+        stockCount = stockCount - quantity;
         return this;
     }
 
-    public Stock addStockByOne() {
-        stockCount = stockCount + 1;
+    public Stock addStock(int quantity) {
+        stockCount = stockCount + quantity;
         return this;
     }
 }

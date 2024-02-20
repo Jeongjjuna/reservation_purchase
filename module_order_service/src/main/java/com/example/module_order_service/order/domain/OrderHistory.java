@@ -1,7 +1,9 @@
 package com.example.module_order_service.order.domain;
 
+import com.example.module_order_service.common.exception.GlobalException;
 import lombok.Builder;
 import lombok.Getter;
+import org.springframework.http.HttpStatus;
 import java.time.LocalDateTime;
 
 @Getter
@@ -10,8 +12,8 @@ public class OrderHistory {
     private Long orderId;
     private Long productId;
     private Long memberId;
-    private Long quantity;
-    private Long price;
+    private Integer quantity;
+    private Integer price;
     private String address;
     private Status status;
     private LocalDateTime createdAt;
@@ -21,8 +23,8 @@ public class OrderHistory {
             final Long orderId,
             final Long productId,
             final Long memberId,
-            final Long quantity,
-            final Long price,
+            final Integer quantity,
+            final Integer price,
             final String address,
             final Status status,
             final LocalDateTime createdAt
@@ -47,5 +49,21 @@ public class OrderHistory {
                 .address(order.getAddress())
                 .status(Status.PROCESSING)
                 .build();
+    }
+
+    public OrderHistory cancel() {
+        if (this.status != Status.PROCESSING) {
+            throw new GlobalException(HttpStatus.CONFLICT, "주문 진행중이 아닙니다. 취소할 수 없습니다.");
+        }
+        this.status = Status.CANCELED;
+        return this;
+    }
+
+    public OrderHistory complete() {
+        if (this.status != Status.PROCESSING) {
+            throw new GlobalException(HttpStatus.CONFLICT, "주문 진행중이 아닙니다. 완료할 수 없습니다.");
+        }
+        this.status = Status.COMPLETED;
+        return this;
     }
 }
