@@ -24,13 +24,13 @@ public class PaymentEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "payment_id", updatable = false)
+    @Column(name = "payment_number", updatable = false)
     private Long id;
 
-    @Column(name = "order_id", nullable = false)
+    @Column(name = "orders_number", nullable = false)
     private Long orderId;
 
-    @Column(name = "member_id", nullable = false)
+    @Column(name = "member_number", nullable = false)
     private Long memberId;
 
     @CreatedDate

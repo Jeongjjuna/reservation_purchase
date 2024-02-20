@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -18,15 +19,22 @@ public class OrderInternalApiController {
     private final OrderService orderService;
     private final OrderReadService orderReadService;
 
-    @GetMapping("/v1/internal/orders/{orderId}")
+    @GetMapping("/{orderId}")
     public Order findById(@PathVariable("orderId") Long orderId) {
         return orderReadService.find(orderId);
     }
 
-    @DeleteMapping("/v1/internal/orders/{orderId}")
-    public Order update(
+    @DeleteMapping("/{orderId}")
+    public Order cancel(
             @PathVariable("orderId") Long orderId
     ) {
         return orderService.cancel(orderId);
+    }
+
+    @PostMapping("/{orderId}/complete")
+    public Order complete(
+            @PathVariable("orderId") Long orderId
+    ) {
+        return orderService.complete(orderId);
     }
 }

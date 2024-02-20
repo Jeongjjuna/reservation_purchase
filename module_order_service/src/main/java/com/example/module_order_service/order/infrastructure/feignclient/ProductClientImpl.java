@@ -1,15 +1,15 @@
 package com.example.module_order_service.order.infrastructure.feignclient;
 
-import com.example.module_order_service.order.application.port.ReservationProductStockAdapter;
+import com.example.module_order_service.order.application.port.ProductServiceAdapter;
 import com.example.module_order_service.order.domain.OrderProduct;
 import com.example.module_order_service.order.domain.ReservationProductStock;
 import lombok.AllArgsConstructor;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @AllArgsConstructor
-@Repository
-public class ProductClientImpl implements ReservationProductStockAdapter {
+@Service
+public class ProductClientImpl implements ProductServiceAdapter {
 
     private final ProductFeignClient productFeignClient;
 

@@ -11,8 +11,8 @@ public class OrderResponse {
     private Long id;
     private Long productId;
     private Long memberId;
-    private Long quantity;
-    private Long price;
+    private Integer quantity;
+    private Integer price;
     private String address;
     private LocalDateTime createdAt;
     private LocalDateTime deletedAt;
@@ -22,8 +22,8 @@ public class OrderResponse {
             final Long id,
             final Long productId,
             final Long memberId,
-            final Long quantity,
-            final Long price,
+            final Integer quantity,
+            final Integer price,
             final String address,
             final LocalDateTime createdAt,
             final LocalDateTime deletedAt

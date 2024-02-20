@@ -1,6 +1,6 @@
-package com.example.module_product_service.product.infrastructure.repository.entity;
+package com.example.module_stock_service.stock.infrastructure.repository.entity;
 
-import com.example.module_product_service.product.domain.ProductStock;
+import com.example.module_stock_service.stock.domain.Stock;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -16,7 +16,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Getter
 @Entity
 @Table(name = "product_stock")
-public class ProductStockEntity {
+public class StockEntity {
 
     @Id
     @Column(name = "product_number", updatable = false)
@@ -25,15 +25,15 @@ public class ProductStockEntity {
     @Column(name = "stock_count", nullable = false)
     private Integer stockCount;
 
-    public static ProductStockEntity from(final ProductStock productStock) {
-        final ProductStockEntity productStockEntity = new ProductStockEntity();
+    public static StockEntity from(final Stock productStock) {
+        final StockEntity productStockEntity = new StockEntity();
         productStockEntity.productId = productStock.getProductId();
         productStockEntity.stockCount = productStock.getStockCount();
         return productStockEntity;
     }
 
-    public ProductStock toModel() {
-        return ProductStock.builder()
+    public Stock toModel() {
+        return Stock.builder()
                 .productId(productId)
                 .stockCount(stockCount)
                 .build();

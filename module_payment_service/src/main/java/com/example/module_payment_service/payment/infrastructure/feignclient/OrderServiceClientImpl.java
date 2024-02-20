@@ -1,6 +1,6 @@
 package com.example.module_payment_service.payment.infrastructure.feignclient;
 
-import com.example.module_payment_service.payment.application.port.OrderAdapter;
+import com.example.module_payment_service.payment.application.port.OrderServiceAdapter;
 import com.example.module_payment_service.payment.domain.Order;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -8,7 +8,7 @@ import java.util.Optional;
 
 @AllArgsConstructor
 @Repository
-public class OrderClientImpl implements OrderAdapter {
+public class OrderServiceClientImpl implements OrderServiceAdapter {
 
     private final OrderFeignClient orderFeignClient;
 
@@ -20,5 +20,10 @@ public class OrderClientImpl implements OrderAdapter {
     @Override
     public Order cancel(final Long orderId) {
         return orderFeignClient.cancel(orderId);
+    }
+
+    @Override
+    public Order complete(final Long orderId) {
+        return orderFeignClient.complete(orderId);
     }
 }

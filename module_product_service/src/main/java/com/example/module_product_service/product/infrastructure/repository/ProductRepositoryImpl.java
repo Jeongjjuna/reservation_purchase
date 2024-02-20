@@ -13,20 +13,20 @@ import java.util.Optional;
 @Repository
 public class ProductRepositoryImpl implements ProductRepository {
 
-    private final ReservationProductJpaRepository reservationProductJpaRepository;
+    private final ProductJpaRepository productJpaRepository;
 
     @Override
     public Product save(final Product product) {
-        return reservationProductJpaRepository.save(ProductEntity.from(product)).toModel();
+        return productJpaRepository.save(ProductEntity.from(product)).toModel();
     }
 
     @Override
     public Optional<Product> findById(final Long productId) {
-        return reservationProductJpaRepository.findById(productId).map(ProductEntity::toModel);
+        return productJpaRepository.findById(productId).map(ProductEntity::toModel);
     }
 
     @Override
     public Page<Product> findAll(final Pageable pageable) {
-        return reservationProductJpaRepository.findAll(pageable).map(ProductEntity::toModel);
+        return productJpaRepository.findAll(pageable).map(ProductEntity::toModel);
     }
 }

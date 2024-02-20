@@ -34,10 +34,10 @@ public class OrderEntity {
     private Long memberId;
 
     @Column(name = "quantity", nullable = false)
-    private Long quantity;
+    private Integer quantity;
 
     @Column(name = "price", nullable = false)
-    private Long price;
+    private Integer price;
 
     @Column(name = "address", nullable = false)
     private String address;
