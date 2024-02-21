@@ -50,9 +50,10 @@ public class OrderService {
                 .productId(order.getProductId())
                 .stockCount(order.getQuantity())
                 .build();
-        stockServiceAdapter.subtract(order.getProductId(), orderStock);
-        log.info("feign응답성공 : 재고서비스의 재고감소 요청");
 
+        // 여기서 예외가 발생할 수 있다.
+        stockServiceAdapter.subtractStock(order.getProductId(), orderStock);
+        log.info("feign응답성공 : 재고 서비스의 재고감소 요청");
 
         return savedOrder.getId();
     }

@@ -1,8 +1,12 @@
 package com.example.module_stock_service.stock.domain;
 
+import com.example.module_stock_service.common.exception.GlobalException;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 
+@Slf4j
 @Getter
 public class Stock {
 
@@ -38,6 +42,10 @@ public class Stock {
     }
 
     public Stock subtractStock(int quantity) {
+        System.out.println(stockCount + " : " + quantity);
+        if (stockCount < quantity) {
+            throw new GlobalException(HttpStatus.CONFLICT, "재고수량이 부족합니다.");
+        }
         stockCount = stockCount - quantity;
         return this;
     }

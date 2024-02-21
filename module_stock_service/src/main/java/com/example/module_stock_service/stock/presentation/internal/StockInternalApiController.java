@@ -45,7 +45,7 @@ public class StockInternalApiController {
      * 재고 수량 더하기
      */
     @PostMapping( "/increase/products/{productId}")
-    public ResponseEntity<Void> addStock(
+    public ResponseEntity addStock(
             @PathVariable final Long productId,
             @RequestBody final Stock productStock
     ) {
@@ -57,7 +57,7 @@ public class StockInternalApiController {
      * 재고 수량 빼기
      */
     @PostMapping("/decrease/products/{productId}")
-    public ResponseEntity<Stock> subtractStock(
+    public ResponseEntity subtractStock(
             @PathVariable final Long productId,
             @RequestBody final Stock productStock
     ) {

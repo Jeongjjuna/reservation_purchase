@@ -99,7 +99,7 @@ class OrderApiControllerTest {
                 .thenReturn(Optional.of(new ReservationProductStock(1L, 3)));
         when(productServiceAdapter.update(any(ReservationProductStock.class)))
                 .thenReturn(new ReservationProductStock(1L, 3));
-        doNothing().when(stockServiceAdapter).subtract(any(Long.class), any(OrderStock.class));
+        doNothing().when(stockServiceAdapter).subtractStock(any(Long.class), any(OrderStock.class));
 
 
         // when, then

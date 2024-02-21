@@ -25,6 +25,7 @@ public class StockService {
     /**
      * 재고 생성(상품 최초 등록 시)
      */
+    @Transactional
     public Stock create(final Long productId, final Stock productStock) {
         return stockRepository.save(productStock);
     }
@@ -45,7 +46,7 @@ public class StockService {
      * 재소 수량 증가
      */
     @Transactional
-    public void add(final Long productId, final Stock productStock) {
+    public synchronized void add(final Long productId, final Stock productStock) {
         // TODO : 임계영역 처리
         stockRepository.findById(productId)
                 .map(stock -> stock.addStock(productStock.getStockCount()))
@@ -58,7 +59,13 @@ public class StockService {
      * 재고 수량 감소
      */
     @Transactional
-    public void subtract(final Long productId, final Stock productStock) {
+    public synchronized void subtract(final Long productId, final Stock productStock) {
+
+        try {
+            Thread.sleep(100);
+        }catch (Exception e) {
+        }
+
         // TODO : 임계영역 처리
         stockRepository.findById(productId)
                 .map(stock -> stock.subtractStock(productStock.getStockCount()))
