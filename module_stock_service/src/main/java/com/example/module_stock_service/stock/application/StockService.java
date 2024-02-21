@@ -60,18 +60,10 @@ public class StockService {
      */
     @Transactional
     public synchronized void subtract(final Long productId, final Stock productStock) {
-
-        try {
-            Thread.sleep(100);
-        }catch (Exception e) {
-        }
-
-        // TODO : 임계영역 처리
         stockRepository.findById(productId)
                 .map(stock -> stock.subtractStock(productStock.getStockCount()))
                 .map(stockRepository::save)
                 .orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, "[ERROR] product stock not found"));
-        // 임계영역 끝
     }
 
 }
