@@ -1,5 +1,6 @@
 package com.example.module_order_service.order.application;
 
+import com.example.module_order_service.common.exception.GlobalException;
 import com.example.module_order_service.order.application.port.OrderHistoryRepository;
 import com.example.module_order_service.order.application.port.OrderRepository;
 import com.example.module_order_service.order.application.port.ProductServiceAdapter;
@@ -11,6 +12,7 @@ import com.example.module_order_service.order.domain.OrderProduct;
 import com.example.module_order_service.order.domain.OrderStock;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,11 +33,15 @@ public class OrderService {
     @Transactional
     public Long create(final OrderCreate orderCreate) {
 
+        // 0. 예약 구매 이전시간에 주문했는가?
+        if (!productServiceAdapter.isAfterReservationStartAt(orderCreate.getProductId())) {
+            throw new GlobalException(HttpStatus.CONFLICT, "해당 상품의 예약 구매 오픈 시간 이전 입니다.");
+        }
+
         // 1. 해당 상품이 존재하는가?
         final OrderProduct orderProduct = productServiceAdapter.findOrderProductById(orderCreate.getProductId())
                     .orElseThrow(() -> new IllegalArgumentException("해당 상품 재고를 찾을 수 없음"));
         log.info("feign응답성공 : 상품서비스의 상품조회 요청");
-
 
         // 2. 주문 생성
         final Order order = Order.create(orderCreate, orderProduct.getPrice());

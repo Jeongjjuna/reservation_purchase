@@ -93,6 +93,8 @@ class OrderApiControllerTest {
                 }
                 """;
 
+        when(productServiceAdapter.isAfterReservationStartAt(any(Long.class)))
+                .thenReturn(true);
         when(productServiceAdapter.findOrderProductById(any(Long.class)))
                 .thenReturn(Optional.of(new OrderProduct("name", "content", 8000, LocalDateTime.now())));
         when(productServiceAdapter.findById(any(Long.class)))

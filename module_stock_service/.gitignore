@@ -38,3 +38,5 @@ out/
 
 ### application.yaml ###
 application-dev.yaml
+
+application-test.yaml
