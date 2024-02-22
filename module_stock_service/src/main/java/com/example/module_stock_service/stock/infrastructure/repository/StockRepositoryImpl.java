@@ -19,7 +19,12 @@ public class StockRepositoryImpl implements StockRepository {
     }
 
     @Override
-    public Optional<Stock> findById(final Long productId) {
-        return productStockJpaRepository.findById(productId).map(StockEntity::toModel);
+    public Optional<Stock> findByProductId(final Long productId) {
+        return productStockJpaRepository.findByProductId(productId).map(StockEntity::toModel);
+    }
+
+    @Override
+    public Optional<Stock> findByProductIdForRead(final Long productId) {
+        return productStockJpaRepository.findByProductIdForRead(productId).map(StockEntity::toModel);
     }
 }

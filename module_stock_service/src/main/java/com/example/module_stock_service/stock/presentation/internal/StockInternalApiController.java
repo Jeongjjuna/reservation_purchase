@@ -4,7 +4,6 @@ import com.example.module_stock_service.stock.application.StockService;
 import com.example.module_stock_service.stock.domain.Stock;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -68,12 +67,12 @@ public class StockInternalApiController {
     /**
      * 재고 수량 조회
      */
-    @GetMapping( "/products/{productId}")
-    public ResponseEntity<Stock> findStock(
-            @PathVariable final Long productId
-    ) {
-        return ResponseEntity.ok(stockService.readStockCount(productId));
-    }
+//    @GetMapping( "/products/{productId}")
+//    public ResponseEntity<Stock> findStock(
+//            @PathVariable final Long productId
+//    ) {
+//        return ResponseEntity.ok(stockService.readStockCount(productId));
+//    }
 
 }
 

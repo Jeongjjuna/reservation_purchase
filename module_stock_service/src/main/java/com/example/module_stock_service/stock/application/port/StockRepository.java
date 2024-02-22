@@ -6,5 +6,7 @@ import java.util.Optional;
 public interface StockRepository {
     Stock save(Stock stock);
 
-    Optional<Stock> findById(Long productId);
+    Optional<Stock> findByProductId(Long productId);
+
+    Optional<Stock> findByProductIdForRead(Long productId);
 }

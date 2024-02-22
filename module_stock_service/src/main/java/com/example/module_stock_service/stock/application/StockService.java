@@ -17,9 +17,10 @@ public class StockService {
     /**
      * 재소 수량 조회
      */
-    public Stock readStockCount(final Long productId) {
-        return stockRepository.findById(productId)
-                .orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, "[ERROR] reservation product stock not found"));
+    public Stock read(final Long productId) {
+        // TODO : 락을 사용하지 않는 읽기 전용 로직으로 변경
+        return stockRepository.findByProductIdForRead(productId)
+                .orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, "[ERROR] stock not found"));
     }
 
     /**
@@ -36,7 +37,7 @@ public class StockService {
     @Transactional
     public Stock update(final Long reservationProductId, final Stock reservationProductStock) {
         // TODO : 임계영역 처리
-        return stockRepository.findById(reservationProductId)
+        return stockRepository.findByProductId(reservationProductId)
                 .map(productStock -> productStock.update(reservationProductStock.getStockCount()))
                 .map(stockRepository::save)
                 .orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, "[ERROR] reservation product stock not found"));
@@ -48,7 +49,7 @@ public class StockService {
     @Transactional
     public synchronized void add(final Long productId, final Stock productStock) {
         // TODO : 임계영역 처리
-        stockRepository.findById(productId)
+        stockRepository.findByProductId(productId)
                 .map(stock -> stock.addStock(productStock.getStockCount()))
                 .map(stockRepository::save)
                 .orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, "[ERROR] product stock not found"));
@@ -60,10 +61,11 @@ public class StockService {
      */
     @Transactional
     public synchronized void subtract(final Long productId, final Stock productStock) {
-        stockRepository.findById(productId)
+        stockRepository.findByProductId(productId)
                 .map(stock -> stock.subtractStock(productStock.getStockCount()))
                 .map(stockRepository::save)
                 .orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, "[ERROR] product stock not found"));
     }
+
 
 }

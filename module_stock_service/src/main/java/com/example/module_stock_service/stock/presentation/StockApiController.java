@@ -21,8 +21,8 @@ public class StockApiController {
      * 재고 수량 조회
      */
     @GetMapping("/products/{productId}")
-    public Response<StockResponse> readStockCount(@PathVariable Long productId) {
-        final Stock productStock = stockService.readStockCount(productId);
+    public Response<StockResponse> read(@PathVariable Long productId) {
+        final Stock productStock = stockService.read(productId);
         return Response.success(StockResponse.from(productStock));
     }
 }
