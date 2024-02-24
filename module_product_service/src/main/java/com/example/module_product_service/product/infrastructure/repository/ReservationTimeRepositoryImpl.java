@@ -20,6 +20,6 @@ public class ReservationTimeRepositoryImpl implements ReservationTimeRepository 
 
     @Override
     public Optional<ReservationTime> findByProductId(final Long productId) {
-        return reservationTimeJpaRepository.findById(productId).map(ReservationTimeEntity::toModel);
+        return reservationTimeJpaRepository.findByProductId(productId).map(ReservationTimeEntity::toModel);
     }
 }
