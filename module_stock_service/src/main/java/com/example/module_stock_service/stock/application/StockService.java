@@ -5,10 +5,12 @@ import com.example.module_stock_service.stock.application.port.StockRepository;
 import com.example.module_stock_service.stock.domain.Stock;
 import com.example.module_stock_service.stock.infrastructure.repository.RedisStockRepository;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @AllArgsConstructor
 @Service
 public class StockService {
@@ -63,31 +65,38 @@ public class StockService {
      * 재소 수량 증가
      */
     @Transactional
-    public synchronized void add(final Long productId, final Stock productStock) {
-        // DB에 반영한다.
-        Stock preStock = stockRepository.findByProductId(productId)
-                .map(stock -> stock.addStock(productStock.getStockCount()))
-                .map(stockRepository::save)
-                .orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, "[ERROR] product stock not found"));
+    public void add(final Long productId, final Stock productStock) {
+        // TODO : DB에 언제 갱신해줄 것인가?
+//        Stock preStock = stockRepository.findByProductId(productId)
+//                .map(stock -> stock.addStock(productStock.getStockCount()))
+//                .map(stockRepository::save)
+//                .orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, "[ERROR] product stock not found"));
 
         // DB에 최신화된 재고 수량정보를 redis에 넣어준다.
-        redisStockRepository.setKey(productId, preStock);
-        // System.out.println("+1 요청 후 : " + preStock.getStockCount());
+        synchronized (this) {
+            Long incrementResult = redisStockRepository.increase(productId, productStock.getStockCount());
+            log.info("재고증가 후 : " + incrementResult);
+        }
     }
 
     /**
      * 재고 수량 감소
      */
     @Transactional
-    public synchronized void subtract(final Long productId, final Stock productStock) {
-        Stock preStock = stockRepository.findByProductId(productId)
-                .map(stock -> stock.subtractStock(productStock.getStockCount()))
-                .map(stockRepository::save)
-                .orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, "[ERROR] product stock not found"));
+    public void subtract(final Long productId, final Stock productStock) {
+        // TODO : DB에 언제 갱신해줄 것인가?
+//        Stock preStock = stockRepository.findByProductId(productId)
+//                .map(stock -> stock.subtractStock(productStock.getStockCount()))
+//                .map(stockRepository::save)
+//                .orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, "[ERROR] product stock not found"));
 
-        // DB에 최신화된 재고 수량정보를 redis에 넣어준다.
-        redisStockRepository.setKey(productId, preStock);
-        // System.out.println("-1 요청 후 : " + preStock.getStockCount());
+        synchronized (this) {
+            if (redisStockRepository.decrease(productId, productStock.getStockCount()) < 0) {
+                Long restoreResult = redisStockRepository.increase(productId, productStock.getStockCount());
+                log.info("복구 후 : " + restoreResult);
+                throw new IllegalArgumentException("재고 수량 부족");
+            }
+        }
     }
 
 

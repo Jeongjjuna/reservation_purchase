@@ -22,30 +22,30 @@ public class PaymentService {
     @Transactional
     public String create(final PaymentCreate paymentCreate) {
 
-        double probability = Math.random();
-        if (0.2 < probability) {
-            // 1. 결제 정보 생성
-            final Payment payment = Payment.create(paymentCreate);
-            final Payment savedPayment = paymentRepository.save(payment);
+        final Order order = orderServiceAdapter.findById(paymentCreate.getOrderId())
+                .orElseThrow(() -> new IllegalArgumentException("해당 주문을 찾을 수 없음"));
 
-            // 2. 외부 결제 시스템을 통한 결제 진행
+        final Payment payment = Payment.create(paymentCreate);
+
+        // 2. 외부 결제 시스템을 통한 결제 진행
+        double externalPaymentResult = Math.random();
+        if (0.2 < externalPaymentResult) {
+
+            paymentRepository.save(payment);
 
             orderServiceAdapter.complete(payment.getOrderId());
             log.info("feign응답성공 : 주문서비스의 주문완료 요청");
+
             return "success";
-        } else {
-            Order order = orderServiceAdapter.findById(paymentCreate.getOrderId())
-                    .map(Order::cancel)
-                    .map(o -> orderServiceAdapter.cancel(o.getId()))
-                    .orElseThrow(() -> new IllegalArgumentException("해당 주문을 찾을 수 없음"));
-            log.info("feign응답성공 : 주문서비스의 주문취소 요청");
-
-            final Payment payment = Payment.create(paymentCreate);
-            payment.cancel();
-            final Payment savedPayment = paymentRepository.save(payment);
-
-            return "failure";
         }
-    }
 
+        payment.cancel();
+        paymentRepository.save(payment);
+
+        orderServiceAdapter.cancel(order.getId());
+        log.info("feign응답성공 : 주문서비스의 주문취소 요청");
+
+        return "failure";
+
+    }
 }
