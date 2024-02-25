@@ -58,6 +58,6 @@ public class Order {
     }
 
     public boolean isCanceled() {
-        return deletedAt == null;
+        return !(deletedAt == null);
     }
 }

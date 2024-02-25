@@ -15,29 +15,26 @@ public class GlobalControllerAdvice {
     @ExceptionHandler(GlobalException.class)
     public ResponseEntity handleGlobalException(final GlobalException e) {
         log.error("Error occurs {}", e.toString());
-        System.out.println("재고 감소 실패@@@@@@@@@");
         Response body = Response.error(ErrorResponse.builder()
                 .status(e.getHttpStatus())
                 .message(e.getDetailMessage())
                 .timestamp(LocalDateTime.now())
                 .build());
-        return ResponseEntity.status(e.getHttpStatus()).body(body);
-//        return Response.error(ErrorResponse.builder()
-//                .status(e.getHttpStatus())
-//                .message(e.getDetailMessage())
-//                .timestamp(LocalDateTime.now())
-//                .build()
-//        );
+        return ResponseEntity
+                .status(e.getHttpStatus())
+                .body(body);
     }
 
     @ExceptionHandler(RuntimeException.class)
-    public Response<ErrorResponse> handleGlobalException(final RuntimeException e) {
+    public ResponseEntity handleGlobalException(final RuntimeException e) {
         log.error("Error occurs {}", e.getMessage());
-        return Response.error(ErrorResponse.builder()
+        Response body = Response.error(ErrorResponse.builder()
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .message("[ERROR] check server error log")
+                .message(e.getMessage())
                 .timestamp(LocalDateTime.now())
-                .build()
-        );
+                .build());
+        return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(body);
     }
 }
