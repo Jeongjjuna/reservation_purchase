@@ -1,6 +1,7 @@
 package com.example.module_product_service.product.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -11,7 +12,7 @@ class ReservationTimeTest {
 
     @DisplayName("현재 시간이 예약 시작 이후 라면 true 반환")
     @Test
-    void name() {
+    void isAfterReservationStartAt() {
         // given
         ReservationTime reservationTime = ReservationTime.builder()
                 .id(1L)
@@ -25,5 +26,22 @@ class ReservationTimeTest {
 
         // then
         assertThat(result).isTrue();
+    }
+
+    @DisplayName("생성 테스트")
+    @Test
+    void create() {
+        // given
+        Product product = Product.builder()
+                .id(1L)
+                .build();
+        LocalDateTime reservationStartAt = LocalDateTime.now();
+        ProductCreate productCreate = new ProductCreate(
+                "name", "content", 2000L, reservationStartAt, 10
+        );
+
+        // when, then
+        assertThatCode(() -> ReservationTime.create(product, productCreate))
+                .doesNotThrowAnyException();
     }
 }

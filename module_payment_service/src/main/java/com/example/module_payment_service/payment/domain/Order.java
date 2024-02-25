@@ -37,9 +37,4 @@ public class Order {
         this.createdAt = createdAt;
         this.deletedAt = deletedAt;
     }
-
-    public Order cancel() {
-        deletedAt = LocalDateTime.now();
-        return this;
-    }
 }
