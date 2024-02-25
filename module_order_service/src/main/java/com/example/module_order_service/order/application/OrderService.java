@@ -38,9 +38,10 @@ public class OrderService {
         final int orderProductPrice = requestOrderProduct(orderCreate).getPrice();
 
         final Order order = Order.create(orderCreate, orderProductPrice);
-        orderRepository.save(order);
+        final Order savedOrder = orderRepository.save(order);
 
-        final OrderHistory orderHistory = OrderHistory.create(order);
+        final OrderHistory orderHistory = OrderHistory.create(savedOrder);
+        System.out.println(orderHistory.getOrderId());
         orderHistoryRepository.save(orderHistory);
 
         requestSubtractStock(order);
