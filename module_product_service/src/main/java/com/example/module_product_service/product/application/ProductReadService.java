@@ -21,7 +21,7 @@ public class ProductReadService {
 
     public Product find(final Long productId) {
         return productRepository.findById(productId).orElseThrow(() ->
-                new GlobalException(HttpStatus.NOT_FOUND, "[ERROR] reservation product not found"));
+                new GlobalException(HttpStatus.NOT_FOUND, "[ERROR] 상품을 찾을 수 없습니다."));
     }
 
     public Page<Product> findAll() {
@@ -31,7 +31,7 @@ public class ProductReadService {
 
     public Boolean isAfterReservationStartAt(final Long productId) {
         ReservationTime reservationTime = reservationTimeRepository.findByProductId(productId)
-                .orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, "[ERROR] reservation product not found"));
+                .orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, "[ERROR] 상품을 찾을 수 없습니다."));
 
         return reservationTime.isAfterReservationStartAt();
     }
