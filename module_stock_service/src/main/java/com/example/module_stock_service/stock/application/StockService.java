@@ -72,6 +72,7 @@ public class StockService {
 
         // DB에 최신화된 재고 수량정보를 redis에 넣어준다.
         redisStockRepository.setKey(productId, preStock);
+        // System.out.println("+1 요청 후 : " + preStock.getStockCount());
     }
 
     /**
@@ -86,6 +87,7 @@ public class StockService {
 
         // DB에 최신화된 재고 수량정보를 redis에 넣어준다.
         redisStockRepository.setKey(productId, preStock);
+        // System.out.println("-1 요청 후 : " + preStock.getStockCount());
     }
 
 

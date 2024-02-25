@@ -95,9 +95,14 @@ public class OrderService {
         return order;
     }
 
+    @Transactional
     public Order complete(final Long orderId) {
         final Order order  = orderRepository.findById(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 주문을 찾을 수 없음"));
+
+        if (order.isCanceled()) {
+            throw new IllegalArgumentException("이미 삭제된 주문 입니다. 완료할 수 없습니다.");
+        }
 
         final OrderHistory orderHistory = orderHistoryRepository.findByOrderId(orderId)
                 .map(OrderHistory::complete)
