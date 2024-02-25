@@ -1,35 +1,40 @@
 package com.example.module_order_service.common.exception;
 
 import com.example.module_order_service.common.response.Response;
-import java.time.LocalDateTime;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import java.time.LocalDateTime;
 
 @Slf4j
 @RestControllerAdvice
 public class GlobalControllerAdvice {
 
     @ExceptionHandler(GlobalException.class)
-    public Response<ErrorResponse> handleGlobalException(final GlobalException e) {
+    public ResponseEntity handleGlobalException(final GlobalException e) {
         log.error("Error occurs {}", e.toString());
-        return Response.error(ErrorResponse.builder()
+        Response body = Response.error(ErrorResponse.builder()
                 .status(e.getHttpStatus())
                 .message(e.getDetailMessage())
                 .timestamp(LocalDateTime.now())
-                .build()
-        );
+                .build());
+        return ResponseEntity
+                .status(e.getHttpStatus())
+                .body(body);
     }
 
     @ExceptionHandler(RuntimeException.class)
-    public Response<ErrorResponse> handleGlobalException(final RuntimeException e) {
+    public ResponseEntity handleGlobalException(final RuntimeException e) {
         log.error("Error occurs {}", e.getMessage());
-        return Response.error(ErrorResponse.builder()
+        Response body = Response.error(ErrorResponse.builder()
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .message("[ERROR] check server error log")
+                .message(e.getMessage())
                 .timestamp(LocalDateTime.now())
-                .build()
-        );
+                .build());
+        return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(body);
     }
 }

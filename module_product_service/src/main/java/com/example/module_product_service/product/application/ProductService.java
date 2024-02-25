@@ -35,7 +35,7 @@ public class ProductService {
                 .map(product -> productRepository.save(product))  // 상품 저장
                 .map(product -> saveReservationTime(product, productCreate)) // 상품 예약 시간 저장
                 .map(product -> saveProductStock(product, productCreate)) // 상품 재고 수량 저장
-                .orElseThrow(() -> new GlobalException(HttpStatus.INTERNAL_SERVER_ERROR, "[ERROR] reservation product save fail"));
+                .orElseThrow(() -> new GlobalException(HttpStatus.INTERNAL_SERVER_ERROR, "[ERROR] 상품 저장에 실패 했습니다."));
         return saved.getId();
     }
 
@@ -47,15 +47,20 @@ public class ProductService {
         productRepository.findById(productId)
                 .map(product -> product.update(productUpdate))
                 .map(productRepository::save)
-                .orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, "[ERROR] reservation product not found"));
+                .orElseThrow(() -> new GlobalException(HttpStatus.INTERNAL_SERVER_ERROR, "[ERROR] 상품 수정에 실패 했습니다."));
 
-        // 재고 수량 정보 변경(재고서비스에 feign 요청)
+        requestUpdateStockCount(productId, productUpdate);
+    }
+
+    /**
+     * feign client 요청
+     */
+    private void requestUpdateStockCount(final Long productId, final ProductUpdate productUpdate) {
         ProductStock productStock = ProductStock.builder()
                 .productId(productId)
                 .stockCount(productUpdate.getStockCount())
                 .build();
         stockServiceAdapter.updateStockCount(productId, productStock);
-        log.info("feign응답성공 : 재고서비스의 재고업데이트 요청");
     }
 
     private Product saveReservationTime(Product product, ProductCreate productCreate) {
@@ -71,7 +76,6 @@ public class ProductService {
                 .stockCount(productCreate.getStockCount())
                 .build();
         stockServiceAdapter.createStockCount(product.getId(), productStock);
-        log.info("feign응답성공 : 재고서비스의 재고생성 요청");
         return product;
     }
 }

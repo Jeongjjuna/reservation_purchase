@@ -33,10 +33,8 @@ public class StockService {
                     .build();
         }
 
-        // 그렇지 않으면 DB에서 조회 후 redis에 저장
-        // TODO : 락을 사용하지 않는 읽기 전용 로직으로 변경
         Stock preStock = stockRepository.findByProductIdForRead(productId)
-                .orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, "[ERROR] stock not found"));
+                .orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, "[ERROR] 해당 상품의 재고 정보를 찾을 수 없습니다."));
         redisStockRepository.setKey(productId, preStock);
         return preStock;
     }
@@ -58,46 +56,34 @@ public class StockService {
         return stockRepository.findByProductId(reservationProductId)
                 .map(productStock -> productStock.update(reservationProductStock.getStockCount()))
                 .map(stockRepository::save)
-                .orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, "[ERROR] reservation product stock not found"));
+                .orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, "[ERROR] 해당 상품의 재고 정보를 찾을 수 없습니다."));
     }
 
     /**
      * 재소 수량 증가
+     * redis의 원자적 연산을 위해서 동기화 기법 사용. -> 여러대의 서버를 운영할 경우 별도의 redis원자적 연산을 고려해봐야함(ex Lua)
      */
     @Transactional
     public void add(final Long productId, final Stock productStock) {
-        // TODO : DB에 언제 갱신해줄 것인가?
-//        Stock preStock = stockRepository.findByProductId(productId)
-//                .map(stock -> stock.addStock(productStock.getStockCount()))
-//                .map(stockRepository::save)
-//                .orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, "[ERROR] product stock not found"));
-
-        // DB에 최신화된 재고 수량정보를 redis에 넣어준다.
-        synchronized (this) {
+        synchronized (this) { // TODO : DB에 언제 갱신해줄 것인가?
             Long incrementResult = redisStockRepository.increase(productId, productStock.getStockCount());
-            log.info("재고증가 후 : " + incrementResult);
+            log.info("재고 증가 후 : " + incrementResult);
         }
     }
 
     /**
      * 재고 수량 감소
+     * redis의 원자적 연산을 위해서 동기화 기법 사용. -> 여러대의 서버를 운영할 경우 별도의 redis원자적 연산을 고려해봐야함(ex Lua)
      */
     @Transactional
     public void subtract(final Long productId, final Stock productStock) {
-        // TODO : DB에 언제 갱신해줄 것인가?
-//        Stock preStock = stockRepository.findByProductId(productId)
-//                .map(stock -> stock.subtractStock(productStock.getStockCount()))
-//                .map(stockRepository::save)
-//                .orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, "[ERROR] product stock not found"));
-
         synchronized (this) {
             if (redisStockRepository.decrease(productId, productStock.getStockCount()) < 0) {
                 Long restoreResult = redisStockRepository.increase(productId, productStock.getStockCount());
                 log.info("복구 후 : " + restoreResult);
-                throw new IllegalArgumentException("재고 수량 부족");
+                throw new GlobalException(HttpStatus.CONFLICT, "[ERROR] 재고 수량이 부족 합니다.");
             }
         }
     }
-
 
 }

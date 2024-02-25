@@ -64,15 +64,5 @@ public class StockInternalApiController {
         return ResponseEntity.ok().build();
     }
 
-    /**
-     * 재고 수량 조회
-     */
-//    @GetMapping( "/products/{productId}")
-//    public ResponseEntity<Stock> findStock(
-//            @PathVariable final Long productId
-//    ) {
-//        return ResponseEntity.ok(stockService.readStockCount(productId));
-//    }
-
 }
 
