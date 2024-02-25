@@ -3,28 +3,48 @@ package com.example.module_stock_service.stock.application;
 import com.example.module_stock_service.common.exception.GlobalException;
 import com.example.module_stock_service.stock.application.port.StockRepository;
 import com.example.module_stock_service.stock.domain.Stock;
+import com.example.module_stock_service.stock.infrastructure.repository.RedisStockRepository;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @AllArgsConstructor
 @Service
 public class StockService {
 
     private final StockRepository stockRepository;
 
+    private final RedisStockRepository redisStockRepository;
+
     /**
      * 재소 수량 조회
      */
-    public Stock readStockCount(final Long productId) {
-        return stockRepository.findById(productId)
-                .orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, "[ERROR] reservation product stock not found"));
+    public Stock read(final Long productId) {
+
+        // redis에 값이 존재한다면 조회 후 리턴
+        if (redisStockRepository.hasKey(productId)) {
+            int stockCount = redisStockRepository.getValue(productId);
+            return Stock.builder()
+                    .productId(productId)
+                    .stockCount(stockCount)
+                    .build();
+        }
+
+        // 그렇지 않으면 DB에서 조회 후 redis에 저장
+        // TODO : 락을 사용하지 않는 읽기 전용 로직으로 변경
+        Stock preStock = stockRepository.findByProductIdForRead(productId)
+                .orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, "[ERROR] stock not found"));
+        redisStockRepository.setKey(productId, preStock);
+        return preStock;
     }
 
     /**
      * 재고 생성(상품 최초 등록 시)
      */
+    @Transactional
     public Stock create(final Long productId, final Stock productStock) {
         return stockRepository.save(productStock);
     }
@@ -35,7 +55,7 @@ public class StockService {
     @Transactional
     public Stock update(final Long reservationProductId, final Stock reservationProductStock) {
         // TODO : 임계영역 처리
-        return stockRepository.findById(reservationProductId)
+        return stockRepository.findByProductId(reservationProductId)
                 .map(productStock -> productStock.update(reservationProductStock.getStockCount()))
                 .map(stockRepository::save)
                 .orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, "[ERROR] reservation product stock not found"));
@@ -46,12 +66,17 @@ public class StockService {
      */
     @Transactional
     public void add(final Long productId, final Stock productStock) {
-        // TODO : 임계영역 처리
-        stockRepository.findById(productId)
-                .map(stock -> stock.addStock(productStock.getStockCount()))
-                .map(stockRepository::save)
-                .orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, "[ERROR] product stock not found"));
-        // 임계영역 끝
+        // TODO : DB에 언제 갱신해줄 것인가?
+//        Stock preStock = stockRepository.findByProductId(productId)
+//                .map(stock -> stock.addStock(productStock.getStockCount()))
+//                .map(stockRepository::save)
+//                .orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, "[ERROR] product stock not found"));
+
+        // DB에 최신화된 재고 수량정보를 redis에 넣어준다.
+        synchronized (this) {
+            Long incrementResult = redisStockRepository.increase(productId, productStock.getStockCount());
+            log.info("재고증가 후 : " + incrementResult);
+        }
     }
 
     /**
@@ -59,12 +84,20 @@ public class StockService {
      */
     @Transactional
     public void subtract(final Long productId, final Stock productStock) {
-        // TODO : 임계영역 처리
-        stockRepository.findById(productId)
-                .map(stock -> stock.subtractStock(productStock.getStockCount()))
-                .map(stockRepository::save)
-                .orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, "[ERROR] product stock not found"));
-        // 임계영역 끝
+        // TODO : DB에 언제 갱신해줄 것인가?
+//        Stock preStock = stockRepository.findByProductId(productId)
+//                .map(stock -> stock.subtractStock(productStock.getStockCount()))
+//                .map(stockRepository::save)
+//                .orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, "[ERROR] product stock not found"));
+
+        synchronized (this) {
+            if (redisStockRepository.decrease(productId, productStock.getStockCount()) < 0) {
+                Long restoreResult = redisStockRepository.increase(productId, productStock.getStockCount());
+                log.info("복구 후 : " + restoreResult);
+                throw new IllegalArgumentException("재고 수량 부족");
+            }
+        }
     }
+
 
 }

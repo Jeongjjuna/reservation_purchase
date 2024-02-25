@@ -8,5 +8,5 @@ public interface StockServiceAdapter {
     void addStock(final Long productId, final OrderStock stockCount);
 
     // 4. 재고수량을 -x 만큼해라
-    void subtract(final Long productId, final OrderStock stockCount);
+    void subtractStock(final Long productId, final OrderStock stockCount);
 }

@@ -21,4 +21,7 @@ public interface ProductFeignClient {
             @PathVariable("reservationProductId") Long reservationProductId,
             ReservationProductStock reservationProductStock
     );
+
+    @RequestMapping(method = RequestMethod.GET, value = "/v1/internal/reservation-time/products/{productId}")
+    Boolean isAfterReservationStartAt(@PathVariable Long productId);
 }

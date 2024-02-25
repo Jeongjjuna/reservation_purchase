@@ -28,4 +28,9 @@ public class ProductClientImpl implements ProductServiceAdapter {
         return productFeignClient.updateReservationProductStock(reservationProductStock.getProductId(), reservationProductStock);
     }
 
+    @Override
+    public Boolean isAfterReservationStartAt(final Long productId) {
+        return productFeignClient.isAfterReservationStartAt(productId);
+    }
+
 }

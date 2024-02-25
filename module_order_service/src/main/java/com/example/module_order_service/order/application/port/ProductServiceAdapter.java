@@ -21,4 +21,6 @@ public interface ProductServiceAdapter {
      * 상품 재고 정보를 통해서 재고정보 업데이트를 요청한다.
      */
     ReservationProductStock update(final ReservationProductStock reservationProductStock);
+
+    Boolean isAfterReservationStartAt(final Long productId);
 }

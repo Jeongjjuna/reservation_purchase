@@ -31,4 +31,9 @@ public class ReservationTime {
                 .reservationStartAt(productCreate.getReservationStartAt())
                 .build();
     }
+
+    public Boolean isAfterReservationStartAt() {
+        LocalDateTime currentTime = LocalDateTime.now();
+        return reservationStartAt.isBefore(currentTime);
+    }
 }

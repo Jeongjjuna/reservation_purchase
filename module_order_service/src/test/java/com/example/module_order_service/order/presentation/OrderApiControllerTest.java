@@ -93,13 +93,15 @@ class OrderApiControllerTest {
                 }
                 """;
 
+        when(productServiceAdapter.isAfterReservationStartAt(any(Long.class)))
+                .thenReturn(true);
         when(productServiceAdapter.findOrderProductById(any(Long.class)))
                 .thenReturn(Optional.of(new OrderProduct("name", "content", 8000, LocalDateTime.now())));
         when(productServiceAdapter.findById(any(Long.class)))
                 .thenReturn(Optional.of(new ReservationProductStock(1L, 3)));
         when(productServiceAdapter.update(any(ReservationProductStock.class)))
                 .thenReturn(new ReservationProductStock(1L, 3));
-        doNothing().when(stockServiceAdapter).subtract(any(Long.class), any(OrderStock.class));
+        doNothing().when(stockServiceAdapter).subtractStock(any(Long.class), any(OrderStock.class));
 
 
         // when, then

@@ -17,7 +17,7 @@ public class StockClientImpl implements StockServiceAdapter {
     }
 
     @Override
-    public void subtract(final Long productId, final OrderStock stockCount) {
-        stockFeignClient.subtract(productId, stockCount);
+    public void subtractStock(final Long productId, final OrderStock stockCount) {
+        stockFeignClient.subtractStock(productId, stockCount);
     }
 }

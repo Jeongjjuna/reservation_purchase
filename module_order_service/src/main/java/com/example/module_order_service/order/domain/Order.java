@@ -56,4 +56,8 @@ public class Order {
         deletedAt = LocalDateTime.now();
         return this;
     }
+
+    public boolean isCanceled() {
+        return !(deletedAt == null);
+    }
 }
