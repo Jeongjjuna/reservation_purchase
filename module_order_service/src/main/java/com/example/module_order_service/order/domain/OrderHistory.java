@@ -53,7 +53,7 @@ public class OrderHistory {
 
     public OrderHistory cancel() {
         if (this.status != Status.PROCESSING) {
-            throw new GlobalException(HttpStatus.CONFLICT, "주문 진행중이 아닙니다. 취소할 수 없습니다.");
+            throw new GlobalException(HttpStatus.CONFLICT, "[ERROR] 주문 진행중이 아닙니다. 취소할 수 없습니다.");
         }
         this.status = Status.CANCELED;
         return this;
@@ -61,7 +61,7 @@ public class OrderHistory {
 
     public OrderHistory complete() {
         if (this.status != Status.PROCESSING) {
-            throw new GlobalException(HttpStatus.CONFLICT, "주문 진행중이 아닙니다. 완료할 수 없습니다.");
+            throw new GlobalException(HttpStatus.CONFLICT, "[ERROR] 주문 진행중이 아닙니다. 완료할 수 없습니다.");
         }
         this.status = Status.COMPLETED;
         return this;

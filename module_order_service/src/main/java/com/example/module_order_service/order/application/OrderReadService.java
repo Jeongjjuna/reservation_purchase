@@ -16,6 +16,6 @@ public class OrderReadService {
 
     public Order find(final Long orderId) {
         return orderRepository.findById(orderId).orElseThrow(() ->
-                new GlobalException(HttpStatus.NOT_FOUND, "[ERROR] order not found"));
+                new GlobalException(HttpStatus.NOT_FOUND, "[ERROR] 주문을 찾을 수 없습니다."));
     }
 }

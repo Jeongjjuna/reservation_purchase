@@ -33,35 +33,19 @@ public class OrderService {
     @Transactional
     public Long create(final OrderCreate orderCreate) {
 
-        // 0. 예약 구매 이전시간에 주문했는가?
-        if (!productServiceAdapter.isAfterReservationStartAt(orderCreate.getProductId())) {
-            throw new GlobalException(HttpStatus.CONFLICT, "해당 상품의 예약 구매 오픈 시간 이전 입니다.");
-        }
+        checkReservationStartAt(orderCreate);
 
-        // 1. 해당 상품이 존재하는가?
-        final OrderProduct orderProduct = productServiceAdapter.findOrderProductById(orderCreate.getProductId())
-                    .orElseThrow(() -> new IllegalArgumentException("해당 상품 재고를 찾을 수 없음"));
-        log.info("feign응답성공 : 상품서비스의 상품조회 요청");
+        final int orderProductPrice = requestOrderProduct(orderCreate).getPrice();
 
-        // 2. 주문 생성
-        final Order order = Order.create(orderCreate, orderProduct.getPrice());
-        final Order savedOrder = orderRepository.save(order);
+        final Order order = Order.create(orderCreate, orderProductPrice);
+        orderRepository.save(order);
 
-        // 3. 주문 기록 생성
-        final OrderHistory orderHistory = OrderHistory.create(savedOrder);
+        final OrderHistory orderHistory = OrderHistory.create(order);
         orderHistoryRepository.save(orderHistory);
 
-        // 4. 재고 서비스 서버에 재고 감소 요청(동기 feign)
-        OrderStock orderStock = OrderStock.builder()
-                .productId(order.getProductId())
-                .stockCount(order.getQuantity())
-                .build();
+        requestSubtractStock(order);
 
-        // 여기서 예외가 발생할 수 있다.
-        stockServiceAdapter.subtractStock(order.getProductId(), orderStock);
-        log.info("feign응답성공 : 재고 서비스의 재고감소 요청");
-
-        return savedOrder.getId();
+        return order.getId();
     }
 
     /**
@@ -71,44 +55,82 @@ public class OrderService {
     @Transactional
     public Order cancel(final Long orderId) {
 
-        // TODO : 애초에 주문 엔티티를 가져올 때 deleted_at == null 인 값만 가져와야 한다.
-        // 1. 해당주문이 존재하는가? 존재하면 주문 취소
-        final Order order  = orderRepository.findById(orderId)
-                .map(Order::cancel)
-                .map(orderRepository::save)
-                .orElseThrow(() -> new IllegalArgumentException("해당 주문을 찾을 수 없음"));
+        final Order order = cancelOrderIfExist(orderId);  // TODO : 주문 엔티티를 가져올 때 deleted_at == null 인 값만 가져와야 한다.
 
-        // 2. 해당 주문 기록이 존재하는가? 존재하면 주문기록 취소
-        final OrderHistory orderHistory = orderHistoryRepository.findByOrderId(order.getId())
-                .map(OrderHistory::cancel)
-                .map(orderHistoryRepository::save)
-                .orElseThrow(() -> new IllegalArgumentException("해당 주문기록을 찾을 수 없음"));
+        cancelOrderHistoryIfExist(orderId);
 
-        // 3. 재고 서비스 서버에 재고 증가 요청(동기 feign)
-        OrderStock orderStock = OrderStock.builder()
-                .productId(order.getProductId())
-                .stockCount(order.getQuantity())
-                .build();
-        stockServiceAdapter.addStock(order.getProductId(), orderStock);
-        log.info("feign응답성공 : 재고서비스의 재고증가 요청");
+        requestAddStock(order);
 
         return order;
     }
 
     @Transactional
     public Order complete(final Long orderId) {
-        final Order order  = orderRepository.findById(orderId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 주문을 찾을 수 없음"));
+        final Order order = findExsistOrder(orderId);
 
-        if (order.isCanceled()) {
-            throw new IllegalArgumentException("이미 삭제된 주문 입니다. 완료할 수 없습니다.");
-        }
+        checkCanceled(order);
 
-        final OrderHistory orderHistory = orderHistoryRepository.findByOrderId(orderId)
-                .map(OrderHistory::complete)
-                .map(orderHistoryRepository::save)
-                .orElseThrow(() -> new IllegalArgumentException("해당 주문기록을 찾을 수 없음"));
+        completeOrderHistoryIfExist(orderId);
 
         return order;
+    }
+
+    private Order findExsistOrder(final Long orderId) {
+        return orderRepository.findById(orderId)
+                .orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, "[ERROR] 해당 주문을 찾을 수 없습니다."));
+    }
+
+    private void checkReservationStartAt(final OrderCreate orderCreate) {
+        if (!productServiceAdapter.isAfterReservationStartAt(orderCreate.getProductId())) {
+            throw new GlobalException(HttpStatus.CONFLICT, "[ERROR] 해당 상품의 예약 구매 오픈 시간 이전 입니다.");
+        }
+    }
+
+    private OrderProduct requestOrderProduct(final OrderCreate orderCreate) {
+        return productServiceAdapter.findOrderProductById(orderCreate.getProductId())
+                .orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, "[ERROR] 해당 상품 재고를 찾을 수 없습니다."));
+    }
+
+    private void requestSubtractStock(final Order order) {
+        OrderStock orderStock = OrderStock.builder()
+                .productId(order.getProductId())
+                .stockCount(order.getQuantity())
+                .build();
+        stockServiceAdapter.subtractStock(order.getProductId(), orderStock);
+    }
+
+    private void requestAddStock(Order order) {
+        OrderStock orderStock = OrderStock.builder()
+                .productId(order.getProductId())
+                .stockCount(order.getQuantity())
+                .build();
+        stockServiceAdapter.addStock(order.getProductId(), orderStock);
+    }
+
+    private OrderHistory cancelOrderHistoryIfExist(final Long orderId) {
+        return orderHistoryRepository.findByOrderId(orderId)
+                .map(OrderHistory::cancel)
+                .map(orderHistoryRepository::save)
+                .orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, "[ERROR] 해당 주문기록을 찾을 수 없습니다."));
+    }
+
+    private Order cancelOrderIfExist(final Long orderId) {
+        return orderRepository.findById(orderId)
+                .map(Order::cancel)
+                .map(orderRepository::save)
+                .orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, "[ERROR] 해당 주문을 찾을 수 없습니다."));
+    }
+
+    private OrderHistory completeOrderHistoryIfExist(final Long orderId) {
+        return orderHistoryRepository.findByOrderId(orderId)
+                .map(OrderHistory::complete)
+                .map(orderHistoryRepository::save)
+                .orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, "[ERROR] 해당 주문기록을 찾을 수 없습니다."));
+    }
+
+    private void checkCanceled(final Order order) {
+        if (order.isCanceled()) {
+            throw new GlobalException(HttpStatus.CONFLICT, "[ERROR] 이미 삭제된 주문 입니다. 완료할 수 없습니다.");
+        }
     }
 }
