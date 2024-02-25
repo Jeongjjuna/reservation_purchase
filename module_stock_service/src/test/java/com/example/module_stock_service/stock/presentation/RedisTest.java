@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+@DisplayName("redis 동작 확인용 테스트")
 @SpringBootTest
 public class RedisTest {
 

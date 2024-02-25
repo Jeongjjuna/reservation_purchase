@@ -30,18 +30,21 @@ public class Stock {
     }
 
     public Stock update(final Integer stockCount) {
+        if (stockCount  < 0) {
+            throw new GlobalException(HttpStatus.CONFLICT, "재고 개수가 0보다 작습니다.");
+        }
         this.stockCount = stockCount;
         return this;
     }
 
     public Stock validateStock() {
         if (stockCount  <= 0) {
-            throw new IllegalArgumentException("재고 개수가 0보다 같거나 작습니다.");
+            throw new GlobalException(HttpStatus.CONFLICT, "재고 개수가 0보다 같거나 작습니다.");
         }
         return this;
     }
 
-    public Stock subtractStock(int quantity) {
+    public Stock subtract(int quantity) {
         System.out.println(stockCount + " : " + quantity);
         if (stockCount < quantity) {
             throw new GlobalException(HttpStatus.CONFLICT, "재고수량이 부족합니다.");
@@ -50,7 +53,7 @@ public class Stock {
         return this;
     }
 
-    public Stock addStock(int quantity) {
+    public Stock add(int quantity) {
         stockCount = stockCount + quantity;
         return this;
     }
