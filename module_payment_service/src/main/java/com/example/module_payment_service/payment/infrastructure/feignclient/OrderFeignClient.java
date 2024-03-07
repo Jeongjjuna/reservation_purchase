@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @FeignClient(name = "orderFeignClient", url = "${feign.orderClient.url}")
 public interface OrderFeignClient {
 
-    @RequestMapping(method = RequestMethod.GET, value = "/v1/internal/orders/{orderId}")
-    Order findById(@PathVariable("orderId") Long orderId);
+    @RequestMapping(method = RequestMethod.GET, value = "/v1/internal/orders/{orderId}", consumes = "application/json")
+    Order findById(@PathVariable final Long orderId);
 
     @RequestMapping(method = RequestMethod.DELETE, value = "/v1/internal/orders/{orderId}", consumes = "application/json")
     Order cancel(@PathVariable final Long orderId);
