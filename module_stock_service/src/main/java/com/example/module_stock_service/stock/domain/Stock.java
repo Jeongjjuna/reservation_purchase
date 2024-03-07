@@ -45,7 +45,6 @@ public class Stock {
     }
 
     public Stock subtract(int quantity) {
-        System.out.println(stockCount + " : " + quantity);
         if (stockCount < quantity) {
             throw new GlobalException(HttpStatus.CONFLICT, "재고수량이 부족합니다.");
         }

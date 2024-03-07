@@ -41,12 +41,11 @@ public class OrderService {
         final Order savedOrder = orderRepository.save(order);
 
         final OrderHistory orderHistory = OrderHistory.create(savedOrder);
-        System.out.println(orderHistory.getOrderId());
         orderHistoryRepository.save(orderHistory);
 
         requestSubtractStock(order);
 
-        return order.getId();
+        return savedOrder.getId();
     }
 
     /**
