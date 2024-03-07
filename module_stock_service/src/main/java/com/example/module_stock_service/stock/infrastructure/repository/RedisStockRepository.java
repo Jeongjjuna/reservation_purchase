@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class RedisStockRepository {
 
-    private static final String PREFIX = "product id : ";
+    private static final String PREFIX = "product_id:";
 
     private final RedisTemplate<String, Integer> productStockRedisTemplate;
 
