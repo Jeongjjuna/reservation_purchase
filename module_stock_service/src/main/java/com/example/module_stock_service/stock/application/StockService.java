@@ -6,12 +6,10 @@ import com.example.module_stock_service.stock.domain.Stock;
 import com.example.module_stock_service.stock.infrastructure.repository.RedisStockRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @AllArgsConstructor
@@ -68,26 +66,13 @@ public class StockService {
      * 재소 수량 증가
      * redis의 원자적 연산을 위해서 동기화 기법 사용. -> 여러대의 서버를 운영할 경우 별도의 redis원자적 연산을 고려해봐야함(ex Lua)
      */
+    @Transactional
     public void add(final Long productId, final Stock productStock) {
-        RLock lock = redissonClient.getLock(productId.toString());
+        Stock preStock = stockRepository.findByProductId(productId)
+                .map(stock -> stock.add(productStock.getStockCount()))
+                .map(stockRepository::save)
+                .orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, "[ERROR] product stock not found"));
 
-        try {
-            boolean available = lock.tryLock(10, 1, TimeUnit.SECONDS);
-
-            if(!available) {
-                System.out.println("lock 획득 실패");
-                return;
-            }
-
-            Stock preStock = stockRepository.findByProductId(productId)
-                    .map(stock -> stock.add(productStock.getStockCount()))
-                    .map(stockRepository::save)
-                    .orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, "[ERROR] product stock not found"));
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        } finally {
-            lock.unlock();
-        }
 
 //        Stock preStock = stockRepository.findByProductId(productId)
 //                .map(stock -> stock.subtract(productStock.getStockCount()))
@@ -103,25 +88,12 @@ public class StockService {
      * 재고 수량 감소
      * redis의 원자적 연산을 위해서 동기화 기법 사용. -> 여러대의 서버를 운영할 경우 별도의 redis원자적 연산을 고려해봐야함(ex Lua)
      */
+    @Transactional
     public void subtract(final Long productId, final Stock productStock) {
-        RLock lock = redissonClient.getLock(productId.toString());
-        try {
-            boolean available = lock.tryLock(10, 1, TimeUnit.SECONDS);
-
-            if(!available) {
-                System.out.println("lock 획득 실패");
-                return;
-            }
-
-            Stock preStock = stockRepository.findByProductId(productId)
-                    .map(stock -> stock.subtract(productStock.getStockCount()))
-                    .map(stockRepository::save)
-                    .orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, "[ERROR] product stock not found"));
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        } finally {
-            lock.unlock();
-        }
+        Stock preStock = stockRepository.findByProductId(productId)
+                .map(stock -> stock.subtract(productStock.getStockCount()))
+                .map(stockRepository::save)
+                .orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, "[ERROR] product stock not found"));
 
 //        Stock preStock = stockRepository.findByProductId(productId)
 //                .map(stock -> stock.subtract(productStock.getStockCount()))

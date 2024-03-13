@@ -3,6 +3,9 @@ package com.example.module_stock_service.stock.presentation.internal;
 import com.example.module_stock_service.stock.application.StockService;
 import com.example.module_stock_service.stock.domain.Stock;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -10,13 +13,18 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import java.util.concurrent.TimeUnit;
 
+@Slf4j
 @AllArgsConstructor
 @RestController
 @RequestMapping("/v1/internal/stock")
 public class StockInternalApiController {
 
     private final StockService stockService;
+
+    private final RedissonClient redissonClient;
+
 
     /**
      * 재고 생성
@@ -48,7 +56,22 @@ public class StockInternalApiController {
             @PathVariable final Long productId,
             @RequestBody final Stock productStock
     ) {
-        stockService.add(productId, productStock);
+        RLock lock = redissonClient.getLock(productId.toString());
+
+        try {
+            boolean available = lock.tryLock(10, 1, TimeUnit.SECONDS);
+
+            if (!available) {
+                log.info("lock 획득 실패");
+                throw new RuntimeException();
+            }
+            stockService.add(productId, productStock);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        } finally {
+            lock.unlock();
+        }
+
         return ResponseEntity.ok().build();
     }
 
@@ -60,7 +83,20 @@ public class StockInternalApiController {
             @PathVariable final Long productId,
             @RequestBody final Stock productStock
     ) {
-        stockService.subtract(productId, productStock);
+        RLock lock = redissonClient.getLock(productId.toString());
+        try {
+            boolean available = lock.tryLock(10, 1, TimeUnit.SECONDS);
+
+            if(!available) {
+                log.info("lock 획득 실패");
+                throw new RuntimeException();
+            }
+            stockService.subtract(productId, productStock);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        } finally {
+            lock.unlock();
+        }
         return ResponseEntity.ok().build();
     }
 
