@@ -27,19 +27,28 @@ public class StockService {
      */
     public Stock read(final Long productId) {
 
-        // redis에 값이 존재한다면 조회 후 리턴
-        if (redisStockRepository.hasKey(productId)) {
-            int stockCount = redisStockRepository.getValue(productId);
-            return Stock.builder()
-                    .productId(productId)
-                    .stockCount(stockCount)
-                    .build();
-        }
+        try {
+            /**
+             * redis 에 재고 수량이 존재 하는 경우 값을 반환
+             */
+            if (redisStockRepository.hasKey(productId)) {
+                int stockCount = redisStockRepository.getValue(productId);
+                return Stock.builder()
+                        .productId(productId)
+                        .stockCount(stockCount)
+                        .build();
+            }
 
-        Stock preStock = stockRepository.findByProductIdForRead(productId)
-                .orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, "[ERROR] 해당 상품의 재고 정보를 찾을 수 없습니다."));
-        redisStockRepository.setKey(productId, preStock);
-        return preStock;
+            /**
+             * redis 에 재고 수량이 존재 하지 않는 다면 데이터베이스에서 redis 로 값을 로드
+             */
+            Stock preStock = stockRepository.findByProductIdForRead(productId)
+                    .orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, "[ERROR] 해당 상품의 재고 정보를 찾을 수 없습니다."));
+            redisStockRepository.setKey(productId, preStock);
+            return preStock;
+        } catch (Exception e){
+            throw new IllegalArgumentException("redis 장애 발생");
+        }
     }
 
     /**
@@ -64,48 +73,37 @@ public class StockService {
 
     /**
      * 재소 수량 증가
-     * redis의 원자적 연산을 위해서 동기화 기법 사용. -> 여러대의 서버를 운영할 경우 별도의 redis원자적 연산을 고려해봐야함(ex Lua)
      */
     @Transactional
     public void add(final Long productId, final Stock productStock) {
-        Stock preStock = stockRepository.findByProductId(productId)
-                .map(stock -> stock.add(productStock.getStockCount()))
-                .map(stockRepository::save)
-                .orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, "[ERROR] product stock not found"));
-
-
-//        Stock preStock = stockRepository.findByProductId(productId)
-//                .map(stock -> stock.subtract(productStock.getStockCount()))
-//                .map(stockRepository::save)
-//                .orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, "[ERROR] product stock not found"));
-//        synchronized (this) { // TODO : DB에 언제 갱신해줄 것인가?
-//            Long incrementResult = redisStockRepository.increase(productId, productStock.getStockCount());
-//            log.info("재고 증가 후 : " + incrementResult);
-//        }
+        synchronized (this) {
+            try {
+                Long incrementResult = redisStockRepository.increase(productId, productStock.getStockCount());
+                log.info("재고 증가 후 : " + incrementResult);
+            } catch (Exception e) {
+                throw new IllegalArgumentException("redis 장애 발생");
+            }
+        }
     }
 
     /**
      * 재고 수량 감소
-     * redis의 원자적 연산을 위해서 동기화 기법 사용. -> 여러대의 서버를 운영할 경우 별도의 redis원자적 연산을 고려해봐야함(ex Lua)
      */
     @Transactional
     public void subtract(final Long productId, final Stock productStock) {
-        Stock preStock = stockRepository.findByProductId(productId)
-                .map(stock -> stock.subtract(productStock.getStockCount()))
-                .map(stockRepository::save)
-                .orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, "[ERROR] product stock not found"));
-
-//        Stock preStock = stockRepository.findByProductId(productId)
-//                .map(stock -> stock.subtract(productStock.getStockCount()))
-//                .map(stockRepository::save)
-//                .orElseThrow(() -> new GlobalException(HttpStatus.NOT_FOUND, "[ERROR] product stock not found"));
-//        synchronized (this) {
-//            if (redisStockRepository.decrease(productId, productStock.getStockCount()) < 0) {
-//                Long restoreResult = redisStockRepository.increase(productId, productStock.getStockCount());
-//                log.info("복구 후 : " + restoreResult);
-//                throw new GlobalException(HttpStatus.CONFLICT, "[ERROR] 재고 수량이 부족 합니다.");
-//            }
-//        }
+        synchronized (this) {
+            try {
+                if (redisStockRepository.decrease(productId, productStock.getStockCount()) < 0) {
+                    Long restoreResult = redisStockRepository.increase(productId, productStock.getStockCount());
+                    log.info("복구 후 : " + restoreResult);
+                    throw new GlobalException(HttpStatus.CONFLICT, "[ERROR] 재고 수량이 부족 합니다.");
+                }
+            } catch (GlobalException e) {
+                throw e;
+            } catch (Exception e) {
+                throw new IllegalArgumentException("redis 장애 발생");
+            }
+        }
     }
 
 }
