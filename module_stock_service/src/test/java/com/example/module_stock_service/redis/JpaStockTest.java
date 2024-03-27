@@ -19,7 +19,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 @SpringBootTest
-public class StockTest {
+public class JpaStockTest {
 
     @Autowired
     private StockService stockService;
@@ -76,7 +76,6 @@ public class StockTest {
         // then
         assertEquals(40,  stock.getStockCount());
     }
-
 
     @DisplayName("재고 100개에 대하여 동시에 80개 요청시 남은 수량이 20개인가")
     @Test
