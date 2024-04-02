@@ -11,7 +11,7 @@ import org.springframework.http.HttpStatus;
 public class Stock {
 
     private Long productId;
-    private Integer stockCount;
+    private volatile int stockCount;
 
     @Builder
     public Stock(final Long productId, final Integer stockCount) {
@@ -48,7 +48,12 @@ public class Stock {
         if (stockCount < quantity) {
             throw new GlobalException(HttpStatus.CONFLICT, "재고수량이 부족합니다.");
         }
-        stockCount = stockCount - quantity;
+        synchronized (this) {
+            if (stockCount < quantity) {
+                throw new GlobalException(HttpStatus.CONFLICT, "재고수량이 부족합니다.");
+            }
+            stockCount = stockCount - quantity;
+        }
         return this;
     }
 
