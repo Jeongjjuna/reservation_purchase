@@ -126,6 +126,7 @@ module_stock_service
 ## 6. 프로젝트 개선 및 추가학습(2024.06 ~ ing)
 
 ### 개선 구조
+개선된 프로젝트 레포지토리 : [레포지토리](https://github.com/Jeongjjuna/reservation_purchase_v2)
 - 프로젝트 개선하기 📝 [블로그 이동](https://wlgns2305.tistory.com/entry/%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-%EA%B7%B8-%EC%9D%B4%ED%9B%84-%EC%84%A0%EC%B0%A9%EC%88%9C-%EC%A3%BC%EB%AC%B8-%EC%9A%94%EC%B2%AD-%EC%84%B1%EB%8A%A5-%EA%B0%9C%EC%84%A0%ED%95%98%EA%B8%B0)
 - 프로젝트 개선하기(보충학습) 📝 [블로그 이동](https://wlgns2305.tistory.com/entry/%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-%EA%B7%B8-%EC%9D%B4%ED%9B%84-%EC%84%A0%EC%B0%A9%EC%88%9C-%EC%A3%BC%EB%AC%B8-%EC%9A%94%EC%B2%AD-%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-%EA%B0%9C%EC%84%A0%ED%95%98%EA%B8%B0%EB%B3%B4%EC%B6%A9%ED%95%99%EC%8A%B5)
 
